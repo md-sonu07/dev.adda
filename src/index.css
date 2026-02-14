@@ -1,0 +1,202 @@
+@import "tailwindcss";
+
+/* Use class-based dark mode (.dark on <html>) */
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  /* ========== Accent ========== */
+  --color-primary: #135bec;
+  --color-primary-light: #4785ff;
+
+  /* ========== Backgrounds ========== */
+  --color-background: #f6f6f8;
+  --color-card: #f8fafc;
+  --color-box: #f1f5f9;
+  --color-button: #f1f5f9;
+
+  /* ========== Text ========== */
+  --color-text-heading: #0f172a;
+  --color-text-body: #334155;
+  --color-text-muted: #64748b;
+
+  /* ========== Borders ========== */
+  --color-border: #e2e8f0;
+
+  /* ========== Typography ========== */
+  --font-display: "Inter", sans-serif;
+
+  /* ========== Radius ========== */
+  --radius-default: 0.25rem;
+  --radius-lg: 0.5rem;
+  --radius-xl: 1rem;
+  --radius-2xl: 1.5rem;
+  --radius-full: 9999px;
+}
+
+/* ========== DARK MODE OVERRIDES ========== */
+.dark {
+  --color-background: #0f172a;
+  --color-card: #111e3171;
+  --color-box: #30363d42;
+  --color-button: #1e293b;
+
+  --color-text-heading: #f1f5f9;
+  --color-text-body: #cbd5e1;
+  --color-text-muted: #94a3b8;
+
+  --color-border: #30363d;
+}
+
+@layer base {
+  body {
+    font-family: var(--font-display);
+    background-color: var(--color-background);
+    color: var(--color-text-heading);
+    min-height: 100vh;
+    transition: background 0.3s ease, color 0.3s ease;
+  }
+
+}
+
+@layer utilities {
+
+  /* Background */
+  .bg-primary {
+    background-color: var(--color-primary);
+  }
+
+  .bg-card {
+    background-color: var(--color-card);
+  }
+
+  .bg-box {
+    background-color: var(--color-box);
+  }
+
+  .bg-button {
+    background-color: var(--color-button);
+  }
+
+  /* Text */
+  .text-primary {
+    color: var(--color-primary);
+  }
+
+  .text-primary-light {
+    color: var(--color-primary-light);
+  }
+
+  .text-body {
+    color: var(--color-text-body);
+  }
+
+  .text-muted {
+    color: var(--color-text-muted);
+  }
+
+  /* Border */
+  .border-default {
+    border-color: var(--color-border);
+  }
+
+  /* Radius */
+  .rounded-default {
+    border-radius: var(--radius-default);
+  }
+
+  .rounded-lg {
+    border-radius: var(--radius-lg);
+  }
+
+  .rounded-xl {
+    border-radius: var(--radius-xl);
+  }
+
+  .rounded-2xl {
+    border-radius: var(--radius-2xl);
+  }
+
+  .rounded-full {
+    border-radius: var(--radius-full);
+  }
+
+  /* Scrollbar */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  /* Custom thin scrollbar */
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: var(--color-border);
+    border-radius: 10px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: var(--color-text-muted);
+  }
+
+  /* ========== Premium Utilities ========== */
+  .slant-glow {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .slant-glow::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -150%;
+    width: 100%;
+    height: 200%;
+    background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transform: rotate(45deg);
+    transition: all 0.7s;
+  }
+
+  .slant-glow:hover::before {
+    left: 150%;
+  }
+}
+
+@keyframes pulse-soft {
+
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.8;
+    transform: scale(0.95);
+  }
+}
+
+.animate-pulse-soft {
+  animation: pulse-soft 2s infinite ease-in-out;
+}
+
+html,
+body {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  display: none;
+}
