@@ -89,6 +89,15 @@ function Articles() {
     fetchPost();
   }, [dispatch, id]);
 
+  useEffect(() => {
+    if (post?.title) {
+      document.title = `${post.title} | Dev Adda`;
+    }
+    return () => {
+      document.title = "Dev Adda | Tech News & Developer Updates";
+    };
+  }, [post]);
+
   if (loading || !post) {
     return <ArticleSkeleton />;
   }

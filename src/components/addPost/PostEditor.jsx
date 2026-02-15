@@ -3,11 +3,12 @@ import { MdAddAPhoto } from 'react-icons/md';
 import { HiOutlineLink, HiXMark, HiPlus, HiOutlineCommandLine, HiOutlineDocumentText, HiOutlineInformationCircle, HiOutlineSparkles, HiCheckCircle, HiOutlineClipboardDocument } from 'react-icons/hi2';
 import TextEditor from './TextEditor';
 import InputModal from '../common/InputModal';
+import SkeletonImage from '../common/SkeletonImage';
 
 import { useDispatch, useSelector } from 'react-redux';
 import { createPostAction } from '../../redux/thunks/postThunk';
 
-const PostEditor = ({ postData, updatePostData, handlePublish, loading }) => {
+const PostEditor = ({ postData, updatePostData, handlePublish, handleSaveDraft, loading, isSavingDraft }) => {
 
     const dispatch = useDispatch();
     const { categories } = useSelector((state) => state.category);
@@ -23,6 +24,26 @@ const PostEditor = ({ postData, updatePostData, handlePublish, loading }) => {
     const [formatTab, setFormatTab] = useState('json');
     const [copiedFormat, setCopiedFormat] = useState(false);
     const [isImageModalOpen, setIsImageModalOpen] = useState(false);
+    const [imagePreview, setImagePreview] = useState('');
+
+    const { title, description, content, category, projectLink, tags, coverImage } = postData;
+
+    useEffect(() => {
+        if (coverImage instanceof File) {
+            const url = URL.createObjectURL(coverImage);
+            setImagePreview(url);
+            return () => URL.revokeObjectURL(url);
+        } else if (typeof coverImage === 'string' && coverImage) {
+            setImagePreview(coverImage);
+        } else {
+            setImagePreview('');
+        }
+    }, [coverImage]);
+
+    useEffect(() => {
+        const words = content.trim().split(/\s+/).length;
+        setReadingTime(Math.max(1, Math.ceil(words / 200)));
+    }, [content]);
 
     const jsonFormatTemplate = `{
   "title": "Your Article Title",
@@ -65,13 +86,6 @@ const hello = "world";
         setCopiedFormat(true);
         setTimeout(() => setCopiedFormat(false), 2000);
     };
-
-    const { title, description, content, category, projectLink, tags, coverImage } = postData;
-
-    useEffect(() => {
-        const words = content.trim().split(/\s+/).length;
-        setReadingTime(Math.max(1, Math.ceil(words / 200)));
-    }, [content]);
 
     const prettifyJson = () => {
         try {
@@ -126,11 +140,7 @@ const hello = "world";
     const handleFileChange = (e) => {
         const file = e.target.files[0];
         if (file) {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                updatePostData({ coverImage: reader.result });
-            };
-            reader.readAsDataURL(file);
+            updatePostData({ coverImage: file });
         }
     };
 
@@ -160,8 +170,8 @@ const hello = "world";
                         }}
                         className="relative group h-64 w-full rounded-xl overflow-hidden border-2 border-dashed border-default hover:border-primary/50 transition-all flex flex-col items-center justify-center cursor-pointer shadow-sm"
                     >
-                        {coverImage ? (
-                            <img src={coverImage} alt="Cover" className="w-full h-full object-cover" />
+                        {imagePreview ? (
+                            <SkeletonImage src={imagePreview} alt="Cover" className="w-full h-full" />
                         ) : (
                             <>
                                 <div className="p-4 rounded-xl text-muted group-hover:text-primary group-hover:bg-primary/10 group-hover:scale-110 transition-all duration-300">
@@ -392,8 +402,13 @@ const hello = "world";
                     </div>
 
                     <div className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full max-w-lg">
-                        <button className="w-full sm:w-auto px-10 py-4 text-muted text-xs font-black uppercase tracking-widest rounded-xl hover:bg-primary/10 transition-all border border-default active:scale-95">
-                            Save Draft
+                        <button
+                            onClick={handleSaveDraft}
+                            disabled={loading || isSavingDraft}
+                            className="w-full sm:w-auto px-10 py-4 text-muted text-xs font-black uppercase tracking-widest rounded-xl hover:bg-primary/10 transition-all border border-default active:scale-95 disabled:opacity-70 flex items-center justify-center gap-2"
+                        >
+                            {isSavingDraft && <div className="size-3 border-2 border-primary/20 border-t-primary rounded-full animate-spin" />}
+                            {isSavingDraft ? 'Saving...' : 'Save Draft'}
                         </button>
                         <button
                             onClick={handlePublish}

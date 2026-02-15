@@ -3,8 +3,9 @@ import { createPostAction, getAllPostsAction, getMyPostsAction, getPostByIdActio
 
 const initialState = {
     posts: [],
-    myPosts: [], // Separate storage for user's own posts
+    myPosts: [],
     singlePost: null,
+    selectedCategory: 'Trending',
     loading: false,
     error: null,
 }
@@ -18,6 +19,9 @@ const postSlice = createSlice({
         },
         clearSinglePost: (state) => {
             state.singlePost = null;
+        },
+        setCategory: (state, action) => {
+            state.selectedCategory = action.payload;
         }
     },
     extraReducers: (builder) => {
@@ -123,5 +127,5 @@ const postSlice = createSlice({
     }
 });
 
-export const { clearPostError, clearSinglePost } = postSlice.actions;
+export const { clearPostError, clearSinglePost, setCategory } = postSlice.actions;
 export default postSlice.reducer;

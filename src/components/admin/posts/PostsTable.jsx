@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getAllPostsAction, updatePostStatusAction, deletePostAction } from '../../../redux/thunks/postThunk';
 import Modal from '../../common/Modal';
 import toast from 'react-hot-toast';
+import SkeletonImage from '../../common/SkeletonImage';
 
 const PostsTable = () => {
     const dispatch = useDispatch();
@@ -13,7 +14,7 @@ const PostsTable = () => {
     const menuRef = useRef(null);
 
     useEffect(() => {
-        dispatch(getAllPostsAction());
+        dispatch(getAllPostsAction({ status: 'all' }));
     }, [dispatch]);
 
     useEffect(() => {
@@ -80,10 +81,10 @@ const PostsTable = () => {
                                     <td className="px-6 py-4 min-w-[300px]">
                                         <div className="flex items-center gap-3">
                                             <div className="size-12 rounded-xl bg-box overflow-hidden border border-default shrink-0">
-                                                <img
+                                                <SkeletonImage
                                                     src={post.coverImage || 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=200&auto=format&fit=crop'}
                                                     alt={post.title}
-                                                    className="w-full h-full object-cover"
+                                                    className="w-full h-full"
                                                 />
                                             </div>
                                             <div>
@@ -96,19 +97,11 @@ const PostsTable = () => {
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap">
                                         <div className="flex items-center gap-2">
-                                            {post.author?.avatar ? (
-                                                <img
-                                                    className="w-6 h-6 rounded-lg object-cover border border-default"
-                                                    src={post.author?.avatar}
-                                                    alt="Admin Profile"
-                                                />
-                                            ) : (
-                                                <img
-                                                    className="w-6 h-6 rounded-lg object-cover border border-default"
-                                                    src={`https://ui-avatars.com/api/?name=${post.author?.fullName}&background=random`}
-                                                    alt="Admin Profile"
-                                                />
-                                            )}
+                                            <SkeletonImage
+                                                className="w-6 h-6 rounded-lg border border-default"
+                                                src={post.author?.avatar || `https://ui-avatars.com/api/?name=${post.author?.fullName}&background=random`}
+                                                alt="Author Profile"
+                                            />
                                             <p className="text-xs font-black text-body">{post.author?.fullName || 'Unknown'}</p>
                                         </div>
                                     </td>

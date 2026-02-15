@@ -1,6 +1,10 @@
 import { IoOptionsOutline } from 'react-icons/io5';
+import { useSearchParams } from 'react-router-dom';
 
 function FeedHeader() {
+    const [searchParams] = useSearchParams();
+    const q = searchParams.get('q');
+
     return (
         <div className="">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
@@ -8,11 +12,15 @@ function FeedHeader() {
                 {/* Heading */}
                 <div className="border-l-[6px] border-primary pl-6 py-1">
                     <h2 className="text-3xl sm:text-4xl font-black tracking-tight text-body">
-                        Developer's <span className="text-primary italic">Feed</span>
+                        {q ? (
+                            <>Results for <span className="text-primary italic">"{q}"</span></>
+                        ) : (
+                            <>Developer's <span className="text-primary italic">Feed</span></>
+                        )}
                     </h2>
 
                     <p className="text-[13px] font-medium text-muted mt-2 tracking-wide uppercase opacity-60">
-                        Curated intelligence for the modern engineer
+                        {q ? `Found matching insights for your search` : `Curated intelligence for the modern engineer`}
                     </p>
                 </div>
 

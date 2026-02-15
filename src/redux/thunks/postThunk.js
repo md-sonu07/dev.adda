@@ -15,9 +15,9 @@ export const createPostAction = createAsyncThunk(
 
 export const getAllPostsAction = createAsyncThunk(
     'post/getAll',
-    async (_, { rejectWithValue }) => {
+    async (params, { rejectWithValue }) => {
         try {
-            const response = await postApi.getPosts();
+            const response = await postApi.getPosts(params);
             return response.data;
         } catch (error) {
             return rejectWithValue(error.response?.data || error.message);

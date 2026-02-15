@@ -1,11 +1,10 @@
-import React from 'react';
-import { HiOutlineMagnifyingGlass, HiOutlineBell, HiOutlinePlusCircle, HiOutlineChevronRight } from 'react-icons/hi2';
+import { HiOutlineMagnifyingGlass, HiOutlineBell, HiOutlinePlusCircle, HiOutlineChevronRight, HiBars3CenterLeft, HiOutlineArrowTopRightOnSquare } from 'react-icons/hi2';
 import { useLocation, Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { toggleTheme } from '../../redux/slices/themeSlice';
 import { HiOutlineMoon, HiOutlineSun, HiOutlineCommandLine } from 'react-icons/hi2';
 
-const AdminHeader = () => {
+const AdminHeader = ({ onMenuClick }) => {
     const { pathname } = useLocation();
     const { isDark } = useSelector((state) => state.theme);
     const { user } = useSelector((state) => state.auth);
@@ -17,11 +16,18 @@ const AdminHeader = () => {
     const formattedPage = currentPage.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
 
     return (
-        <header className="h-20 shrink-0 bg-card/60 backdrop-blur-xl border-b border-default flex items-center justify-between px-8 sticky top-0 z-60 transition-colors duration-500">
+        <header className="h-20 shrink-0 bg-card/60 backdrop-blur-xl border-b border-default flex items-center justify-between px-4 sm:px-8 sticky top-0 z-60 transition-colors duration-500">
             {/* Left side: Navigation Context */}
-            <div className="flex items-center space-x-5">
+            <div className="flex items-center space-x-4 sm:space-x-5">
+                {/* Mobile Menu Toggle */}
+                <button
+                    onClick={onMenuClick}
+                    className="md:hidden p-2.5 rounded-xl bg-box border border-default text-muted hover:text-primary transition-all active:scale-95"
+                >
+                    <HiBars3CenterLeft className="text-xl" />
+                </button>
 
-                <div className="hidden lg:flex flex-col">
+                <div className="md:flex hidden flex-col">
                     <div className="flex items-center gap-2 text-[9px] font-black uppercase tracking-[0.2em] text-muted">
                         <Link to="/admin" className="hover:text-primary transition-colors">Admin</Link>
                         <HiOutlineChevronRight className="text-[10px]" />
@@ -36,7 +42,7 @@ const AdminHeader = () => {
             {/* Right side: Global Actions & Profile */}
             <div className="flex items-center gap-8">
                 {/* Search Interface */}
-                <div className="relative hidden md:flex items-center group">
+                <div className="relative flex items-center group">
                     <div className="absolute left-4 z-10">
                         <HiOutlineMagnifyingGlass className="text-muted text-lg group-focus-within:text-primary transition-colors" />
                     </div>
@@ -56,7 +62,13 @@ const AdminHeader = () => {
                         <HiOutlineBell className="text-xl" />
                         <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-primary rounded-full border-2 border-card animate-pulse shadow-[0_0_8px_rgba(var(--primary-rgb),0.6)]"></span>
                     </button>
-
+                    <Link
+                        to="/"
+                        className="p-2.5 rounded-xl border border-default bg-box hover:bg-primary/10 text-muted hover:text-primary transition-all shadow-sm cursor-pointer group"
+                        title="View Live Site"
+                    >
+                        <HiOutlineArrowTopRightOnSquare className="text-lg group-hover:scale-110 transition-transform duration-500" />
+                    </Link>
 
                     {/* Dark/Light Sync */}
                     <button

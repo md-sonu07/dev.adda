@@ -1,6 +1,7 @@
 import React from 'react';
 import { HiOutlineEye, HiOutlineLink } from 'react-icons/hi2';
 import { useSelector } from 'react-redux';
+import SkeletonImage from '../../common/SkeletonImage';
 
 const RecentPosts = ({ posts: propsPosts }) => {
     const { posts: reduxPosts, loading } = useSelector(state => state.post);
@@ -49,10 +50,10 @@ const RecentPosts = ({ posts: propsPosts }) => {
                                     <td className="px-6 py-4">
                                         <div className="flex items-center gap-4">
                                             <div className="size-11 rounded-md bg-box overflow-hidden border border-default group-hover:border-primary transition-colors shrink-0">
-                                                <img
+                                                <SkeletonImage
                                                     src={post.coverImage || 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=200&auto=format&fit=crop'}
                                                     alt={post.title}
-                                                    className="w-full h-full object-cover grayscale-20 group-hover:grayscale-0 transition-all"
+                                                    className="w-full h-full"
                                                 />
                                             </div>
                                             <div>
@@ -72,8 +73,8 @@ const RecentPosts = ({ posts: propsPosts }) => {
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap">
                                         <div className="flex items-center gap-2.5">
-                                            <img
-                                                className="size-6 rounded-lg object-cover border border-default"
+                                            <SkeletonImage
+                                                className="size-6 rounded-lg border border-default"
                                                 src={post.author?.avatar || `https://ui-avatars.com/api/?name=${post.author?.fullName}&background=random`}
                                                 alt=""
                                             />

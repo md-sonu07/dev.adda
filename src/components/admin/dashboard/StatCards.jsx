@@ -1,4 +1,4 @@
-import React from 'react';
+import { useSelector } from 'react-redux';
 import { HiOutlineUsers, HiOutlineDocumentText, HiOutlineClock, HiOutlineShieldCheck } from 'react-icons/hi2';
 
 const StatCard = ({ title, value, icon: Icon, trend, trendText, color, data }) => (
@@ -32,47 +32,54 @@ const StatCard = ({ title, value, icon: Icon, trend, trendText, color, data }) =
 );
 
 const StatCards = () => {
+    const { totalUsers } = useSelector((state) => state.user);
+    const { posts } = useSelector((state) => state.post);
+    const totalPosts = posts?.length || 0;
+    const pendingPosts = posts?.filter(p => p.status === 'pending')?.length || 0;
+    const approvedPosts = posts?.filter(p => p.status === 'approved')?.length || 0;
+    const trustScore = totalPosts > 0 ? Math.round((approvedPosts / totalPosts) * 100) : 0;
+
     const stats = [
         {
             title: 'Total Users',
-            value: '12,482',
+            value: totalUsers.toLocaleString(),
             icon: HiOutlineUsers,
-            trend: '+5.2%',
-            trendText: 'vs last month',
+            trend: `+${Math.floor(totalUsers * 0.05)}`,
+            trendText: 'est. growth',
             color: 'bg-primary',
             data: [40, 60, 45, 70, 50, 85, 60, 90]
         },
         {
             title: 'Total Posts',
-            value: '1,042',
+            value: totalPosts.toLocaleString(),
             icon: HiOutlineDocumentText,
-            trend: '+12',
+            trend: `+${posts?.filter(p => new Date(p.createdAt).toDateString() === new Date().toDateString()).length}`,
             trendText: 'new today',
             color: 'bg-indigo-500',
             data: [30, 50, 40, 60, 55, 70, 65, 80]
         },
         {
             title: 'Pending Review',
-            value: '24',
+            value: pendingPosts,
             icon: HiOutlineClock,
-            trend: '8 Urgent',
-            trendText: 'priority items',
+            trend: pendingPosts > 5 ? 'High' : 'Normal',
+            trendText: 'workload status',
             color: 'bg-amber-500',
             data: [20, 40, 30, 50, 45, 60, 55, 75]
         },
         {
-            title: 'Verified Authors',
-            value: '89%',
+            title: 'Approval Rate',
+            value: `${trustScore}%`,
             icon: HiOutlineShieldCheck,
-            trend: '+2.4%',
-            trendText: 'trust score growth',
+            trend: trustScore > 80 ? '+High' : 'Neutral',
+            trendText: 'platform health',
             color: 'bg-emerald-500',
             data: [50, 70, 60, 80, 75, 90, 85, 100]
         }
     ];
 
     return (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
             {stats.map((stat, index) => (
                 <StatCard key={index} {...stat} />
             ))}

@@ -2,81 +2,64 @@
 <html lang="en">
 
 <head>
-  <!-- 🔥 Basic Setup -->
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 
-  <!-- 🧠 SEO Title -->
-  <title>Dev Adda — Latest Tech News, Coding Tutorials & Developer Updates</title>
-
-  <!-- 📄 Meta Description -->
+  <!-- 🧠 Core SEO -->
+  <title>Dev Adda | The Ultimate Hub for Developers & Tech Enthusiasts</title>
   <meta name="description"
-    content="Get the latest tech news, coding tutorials, and developer updates. Stay ahead with React, JavaScript, AI, and web development." />
-
-  <!-- 🔑 Keywords -->
+    content="Dev Adda is your premier source for daily tech news, in-depth coding tutorials, and the latest developer trends. Boost your skills in React, JS, AI, and Cloud computing." />
   <meta name="keywords"
-    content="tech news, developer news, dev news, coding tutorials, developer updates, react js, javascript, web development, AI news" />
+    content="developer portal, tech news, coding tutorials, software engineering, react tutorials, javascript updates, AI developments, web dev community, Dev Adda" />
+  <meta name="author" content="Dev Adda Community" />
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
 
-  <!-- 👤 Author -->
-  <meta name="author" content="Dev Adda Team" />
-
-  <!-- 🤖 Robots -->
-  <meta name="robots" content="index, follow" />
-
-  <!-- 🎨 Theme Color -->
-  <meta name="theme-color" content="#f6f6f8" media="(prefers-color-scheme: light)" />
-  <meta name="theme-color" content="#0f172a" media="(prefers-color-scheme: dark)" />
-
-
-  <!-- 🌐 Canonical -->
-  <link rel="canonical" href="https://dev-adda-news.vercel.app/" />
-
-  <!-- 🖼️ Icons -->
-  <link rel="icon" href="/da-title-img.png" />
+  <!-- 🎨 Branding & Theme -->
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#135bec" />
+  <link rel="icon" type="image/png" href="/da-title-img.png" />
   <link rel="apple-touch-icon" href="/da-title-img.png" />
 
-  <!-- ⚡ Performance -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link rel="dns-prefetch" href="//fonts.googleapis.com" />
-  <link rel="dns-prefetch" href="//fonts.gstatic.com" />
-
-  <!-- 🔥 Open Graph -->
-  <meta property="og:title" content="Dev Adda — Tech News & Developer Updates" />
-  <meta property="og:description" content="Latest tech news, coding tutorials, and developer insights in one place." />
-  <meta property="og:image" content="https://dev-adda-news.vercel.app/og-title.png" />
-  <meta property="og:image:width" content="1200" />
-  <meta property="og:image:height" content="630" />
-  <meta property="og:image:alt" content="Dev Adda - Latest Tech News and Developer Updates" />
-  <meta property="og:url" content="https://dev-adda-news.vercel.app/" />
+  <!-- 🌐 Social Sharing (Open Graph) -->
   <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://dev-adda-news.vercel.app/" />
+  <meta property="og:title" content="Dev Adda | Tech News & Developer Insights" />
+  <meta property="og:description"
+    content="Stay ahead of the curve with real-time tech updates and expert coding guides." />
+  <meta property="og:image" content="https://dev-adda-news.vercel.app/og-title.png" />
+  <meta property="og:image:alt" content="Dev Adda - Powering the Tech Community" />
   <meta property="og:site_name" content="Dev Adda" />
   <meta property="og:locale" content="en_US" />
 
-  <!-- 🐦 Twitter -->
+  <!-- 🐦 Twitter Card Logic -->
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Dev Adda — Tech News & Coding Updates" />
-  <meta name="twitter:description" content="Stay updated with the latest in tech, coding, and developer trends." />
+  <meta name="twitter:title" content="Dev Adda | Level Up Your Dev Career" />
+  <meta name="twitter:description" content="Daily tech doses and developer deep-dives in one premium portal." />
   <meta name="twitter:image" content="https://dev-adda-news.vercel.app/og-title.png" />
 
-  <!-- 📊 Structured Data (WITH SEARCH ACTION) -->
-  <script type="application/ld+json">
-      {
-        "@context": "https://schema.org",
-        "@type": "WebSite",
-        "name": "Dev Adda",
-        "url": "https://dev-adda-news.vercel.app/",
-        "potentialAction": {
-          "@type": "SearchAction",
-          "target": "https://dev-adda-news.vercel.app/search?q={search_term_string}",
-          "query-input": "required name=search_term_string"
-        }
-      }
-    </script>
+  <!-- 🚀 Resource Hints -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="canonical" href="https://dev-adda-news.vercel.app/" />
 
+  <!-- 📊 Structured Data (Search & Presence) -->
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "Dev Adda",
+      "alternateName": "DevAdda",
+      "url": "https://dev-adda-news.vercel.app/",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://dev-adda-news.vercel.app/?q={search_term_string}",
+        "query-input": "required name=search_term_string"
+      }
+    }
+  </script>
 </head>
 
-<body>
+<body className="antialiased selection:bg-primary/20">
   <div id="root"></div>
   <script type="module" src="/src/main.jsx"></script>
 </body>

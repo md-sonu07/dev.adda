@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState } from 'react';
+import Modal from '../common/Modal';
 import {
     HiCheckBadge,
     HiOutlinePencilSquare,
@@ -9,18 +10,48 @@ import {
     HiOutlineCalendar,
     HiOutlineMapPin,
     HiOutlineSun,
-    HiOutlineMoon
+    HiOutlineMoon,
+    HiOutlineShieldCheck
 } from 'react-icons/hi2';
-import { IoBookmarksOutline, IoNotificationsOutline } from 'react-icons/io5';
-import { Link } from 'react-router-dom';
+import { IoBookmarksOutline, IoNotificationsOutline, IoLogOutOutline } from 'react-icons/io5';
+import { Link, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { toggleTheme } from '../../redux/slices/themeSlice';
+import { logoutAction } from '../../redux/thunks/authThunk';
+import toast from 'react-hot-toast';
+
+import EditProfileModal from './EditProfileModal';
+import SkeletonImage from '../common/SkeletonImage';
 
 const ProfileHeader = () => {
     const isDark = useSelector((state) => state.theme.isDark);
     const { userProfile, loading } = useSelector((state) => state.user);
     const { myPosts } = useSelector((state) => state.post);
+    const { isAdmin } = useSelector((state) => state.auth);
     const dispatch = useDispatch();
+    const navigate = useNavigate();
+
+    const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+
+    const handleThemeToggle = () => {
+        dispatch(toggleTheme());
+        toast.success(`${!isDark ? 'Dark' : 'Light'} Mode Activated`, {
+            icon: !isDark ? <HiOutlineMoon className="text-primary" /> : <HiOutlineSun className="text-orange-500" />,
+            duration: 2000,
+        });
+    };
+
+
+    const handleLogout = async () => {
+        try {
+            await dispatch(logoutAction()).unwrap();
+            toast.success('Logged out successfully');
+            navigate('/');
+        } catch (error) {
+            toast.error(error || 'Logout failed');
+        }
+    };
 
     if (loading && !userProfile) {
         return (
@@ -80,10 +111,10 @@ const ProfileHeader = () => {
                 <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6">
                     <div className="relative group">
                         <div className="size-40 sm:size-34 rounded-[32px] border-4 border-background overflow-hidden shadow-xl transition-transform duration-500 group-hover:scale-105">
-                            <img
-                                className="w-full h-full object-cover"
+                            <SkeletonImage
+                                src={userData.avatar || `https://ui-avatars.com/api/?name=${userData.fullName || 'User'}&background=random`}
                                 alt={userData.fullName || "User Profile"}
-                                src={userData.avatar || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=200&auto=format&fit=crop"}
+                                className="w-full h-full"
                             />
                         </div>
                         <div className="absolute -bottom-1 -right-1 bg-green-500 size-5 rounded-2xl border-4 border-background shadow-lg"></div>
@@ -115,16 +146,33 @@ const ProfileHeader = () => {
                             )}
                         </div>
 
-                        <div className="flex items-center justify-center sm:justify-start gap-3 pt-1">
+                        <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3 pt-1">
+                            {/* Website Link */}
                             <a href="#" className="p-2 rounded-xl border border-default hover:bg-primary/5 hover:border-primary/50 text-muted hover:text-primary transition-all shadow-sm">
                                 <HiOutlineGlobeAlt className="text-lg" />
                             </a>
-                            <a href="#" className="p-2 rounded-xl border border-default hover:bg-primary/5 hover:border-primary/50 text-muted hover:text-primary transition-all shadow-sm">
-                                <HiOutlineCodeBracket className="text-lg" />
-                            </a>
+
+                            {/* Share Link */}
+                            <button className="p-2 rounded-xl border border-default hover:bg-primary/5 hover:border-primary/50 text-muted hover:text-primary transition-all shadow-sm">
+                                <HiOutlineShare className="text-lg" />
+                            </button>
+
+                            {/* Admin Dashboard */}
+                            {isAdmin && (
+                                <Link
+                                    to="/admin/dashboard"
+                                    className="p-2 rounded-xl border border-primary/20 bg-primary/5 text-primary hover:bg-primary/10 transition-all shadow-sm flex items-center gap-2"
+                                    title="Admin Dashboard"
+                                >
+                                    <HiOutlineShieldCheck className="text-lg" />
+                                    <span className="text-[10px] font-black uppercase tracking-widest px-1">Admin</span>
+                                </Link>
+                            )}
+
+                            {/* Theme Toggle */}
                             <button
-                                onClick={() => dispatch(toggleTheme())}
-                                className="p-2 rounded-xl border border-default hover:bg-primary/10 hover:border-primary/50 text-muted hover:text-primary transition-all shadow-sm cursor-pointer"
+                                onClick={handleThemeToggle}
+                                className="p-2 sm:hidden flex rounded-xl border border-default hover:bg-primary/10 hover:border-primary/50 text-muted hover:text-primary transition-all shadow-sm cursor-pointer"
                                 title={isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
                             >
                                 {isDark ? (
@@ -133,29 +181,37 @@ const ProfileHeader = () => {
                                     <HiOutlineMoon className="text-lg transition-transform duration-300 hover:-rotate-12" />
                                 )}
                             </button>
-                            <div className="md:hidden flex items-center gap-3">
-                                <div className="w-px h-8 bg-border mx-1"></div>
-                                <Link to="/bookmarks" className="p-2 rounded-xl border border-default hover:bg-primary/5 hover:border-primary/50 text-muted hover:text-primary transition-all shadow-sm">
-                                    <IoBookmarksOutline className="text-xl" />
-                                </Link>
-                                <Link to="/notifications" className="p-2 rounded-xl border border-default hover:bg-primary/5 hover:border-primary/50 text-muted hover:text-primary transition-all shadow-sm relative">
-                                    <IoNotificationsOutline className="text-xl" />
-                                    <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border-2 border-background"></span>
-                                </Link>
-                            </div>
 
+                            {/* Bookmarks & Notifications (Separated) */}
+                            <Link to="/bookmarks" className="p-2 sm:hidden flex rounded-xl border border-default hover:bg-primary/5 hover:border-primary/50 text-muted hover:text-primary transition-all shadow-sm">
+                                <IoBookmarksOutline className="text-xl" />
+                            </Link>
+
+                            <Link to="/notifications" className="p-2 sm:hidden flex rounded-xl border border-default hover:bg-primary/5 hover:border-primary/50 text-muted hover:text-primary transition-all shadow-sm relative">
+                                <IoNotificationsOutline className="text-xl" />
+                                <span className="absolute top-2.5 right-2.5 flex h-2 w-2">
+                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                                    <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+                                </span>
+                            </Link>
                         </div>
                     </div>
                 </div>
 
                 <div className="flex flex-col sm:flex-row md:flex-col gap-2 w-full md:w-auto">
-                    <button className="flex-1 flex items-center justify-center gap-2.5 bg-primary hover:bg-primary/90 text-white text-[10px] font-black uppercase tracking-widest py-3 px-6 rounded-xl transition-all shadow-lg shadow-primary/20 active:scale-95 group">
+                    <button
+                        onClick={() => setIsEditModalOpen(true)}
+                        className="flex-1 flex items-center justify-center gap-2.5 bg-primary hover:bg-primary/90 text-white text-[10px] font-black uppercase tracking-widest py-3 px-6 rounded-xl transition-all shadow-lg shadow-primary/20 active:scale-90 group cursor-pointer"
+                    >
                         <HiOutlinePencilSquare className="text-lg group-hover:rotate-12 transition-transform" />
                         Edit Profile
                     </button>
-                    <button className="flex-1 flex items-center justify-center gap-2.5 border border-default text-muted text-[10px] font-black uppercase tracking-widest py-3 px-6 rounded-xl transition-all active:scale-95 group hover:border-primary/50 hover:text-primary">
-                        <HiOutlineShare className="text-lg group-hover:scale-110 transition-transform" />
-                        Share
+                    <button
+                        onClick={() => setIsLogoutModalOpen(true)}
+                        className="flex-1 flex items-center justify-center gap-2.5 border border-default text-muted text-[10px] font-black uppercase tracking-widest py-3 px-6 rounded-xl transition-all active:scale-90 group cursor-pointer hover:border-red-500/50 hover:text-red-500 hover:bg-red-500/5"
+                    >
+                        <IoLogOutOutline className="text-lg group-hover:scale-110 transition-transform" />
+                        Logout
                     </button>
                 </div>
             </div>
@@ -175,6 +231,23 @@ const ProfileHeader = () => {
                     <p className="text-[9px] uppercase tracking-widest font-black text-muted mt-1">Following</p>
                 </div>
             </div>
+            <Modal
+                isOpen={isLogoutModalOpen}
+                onClose={() => setIsLogoutModalOpen(false)}
+                onConfirm={handleLogout}
+                title="Logout"
+                type="danger"
+                confirmText="Logout"
+                cancelText="Cancel"
+            >
+                <p>Are you sure you want to logout?</p>
+            </Modal>
+
+            <EditProfileModal
+                isOpen={isEditModalOpen}
+                onClose={() => setIsEditModalOpen(false)}
+                user={userData}
+            />
         </div>
     );
 };

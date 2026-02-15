@@ -4,8 +4,8 @@ export const createPost = (postData) => {
     return api.post("/posts/articles", postData);
 }
 
-export const getPosts = () => {
-    return api.get("/posts/articles");
+export const getPosts = (params) => {
+    return api.get("/posts/articles", { params });
 }
 
 export const getMyPosts = () => {

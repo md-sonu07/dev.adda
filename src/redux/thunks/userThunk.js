@@ -24,3 +24,15 @@ export const getAllUsersAction = createAsyncThunk(
         }
     }
 );
+
+export const updateProfileAction = createAsyncThunk(
+    'user/updateProfile',
+    async (userData, { rejectWithValue }) => {
+        try {
+            const response = await userApi.updateProfile(userData);
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(error.response?.data || error.message);
+        }
+    }
+);

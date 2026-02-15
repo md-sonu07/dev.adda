@@ -1,7 +1,7 @@
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
-import { deletePostAction } from '../../redux/thunks/postThunk';
+import { deletePostAction, updatePostAction } from '../../redux/thunks/postThunk';
 import Modal from '../common/Modal';
 import {
     HiOutlineClock,
@@ -13,7 +13,8 @@ import {
     HiOutlineExclamationCircle,
     HiChevronDown,
     HiOutlinePencilSquare,
-    HiOutlineTrash
+    HiOutlineTrash,
+    HiOutlineCloudArrowUp
 } from 'react-icons/hi2';
 import { useState } from 'react';
 
@@ -45,6 +46,19 @@ const ProfilePosts = ({ activeTab }) => {
     const handleEdit = (e, id) => {
         e.stopPropagation();
         navigate(`/edit-post/${id}`);
+    };
+
+    const handlePushPost = async (e, id) => {
+        e.stopPropagation();
+        try {
+            await dispatch(updatePostAction({
+                id,
+                postData: { userStatus: 'published', status: 'pending' }
+            })).unwrap();
+            toast.success('Post submitted for admin review!');
+        } catch (error) {
+            toast.error(error?.message || 'Failed to submit post');
+        }
     };
 
     // For other tabs (saved, history, liked), we might still need mock data if not implemented in backend
@@ -133,13 +147,17 @@ const ProfilePosts = ({ activeTab }) => {
                             {/* Status overlay on image */}
                             {activeTab === 'posted' && (
                                 <div className={`absolute bottom-0 inset-x-0 flex items-center justify-center gap-1 py-1 text-[8px] font-black uppercase tracking-widest
-                                    ${post.status === 'approved'
-                                        ? 'bg-green-500/90 text-white'
-                                        : post.status === 'rejected'
-                                            ? 'bg-red-500/90 text-white'
-                                            : 'bg-amber-500/90 text-white'
+                                    ${post.userStatus === 'draft'
+                                        ? 'bg-slate-500/90 text-white'
+                                        : post.status === 'approved'
+                                            ? 'bg-green-500/90 text-white'
+                                            : post.status === 'rejected'
+                                                ? 'bg-red-500/90 text-white'
+                                                : 'bg-amber-500/90 text-white'
                                     }`}>
-                                    {post.status === 'approved' ? (
+                                    {post.userStatus === 'draft' ? (
+                                        <><HiOutlineClock className="text-xs" /> Draft</>
+                                    ) : post.status === 'approved' ? (
                                         <><HiOutlineCheckCircle className="text-xs" /> Live</>
                                     ) : post.status === 'rejected' ? (
                                         <><HiOutlineExclamationCircle className="text-xs" /> Rejected</>
@@ -181,6 +199,17 @@ const ProfilePosts = ({ activeTab }) => {
                                             >
                                                 <HiOutlinePencilSquare className="text-sm" />
                                             </button>
+
+                                            {post.userStatus === 'draft' && (
+                                                <button
+                                                    onClick={(e) => handlePushPost(e, post._id)}
+                                                    className="p-1.5 text-primary hover:bg-primary hover:text-white transition-all rounded-lg bg-primary/10 border border-primary/20 hover:border-primary"
+                                                    title="Push to Review"
+                                                >
+                                                    <HiOutlineCloudArrowUp className="text-sm" />
+                                                </button>
+                                            )}
+
                                             <button
                                                 onClick={(e) => handleDeleteClick(e, post._id)}
                                                 className="p-1.5 text-muted hover:text-red-500 transition-colors rounded-lg bg-box/50 border border-default hover:border-red-500/50"

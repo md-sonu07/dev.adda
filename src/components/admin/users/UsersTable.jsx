@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { HiOutlineEllipsisVertical } from 'react-icons/hi2';
 import { useDispatch, useSelector } from 'react-redux';
 import { getAllUsersAction } from '../../../redux/thunks/userThunk';
+import SkeletonImage from '../../common/SkeletonImage';
 
 const UsersTable = () => {
     const dispatch = useDispatch();
@@ -40,10 +41,10 @@ const UsersTable = () => {
                                     <td className="px-6 py-4">
                                         <div className="flex items-center gap-3">
                                             <div className="size-10 rounded-xl bg-box overflow-hidden border border-default">
-                                                <img
+                                                <SkeletonImage
                                                     src={user.avatar || `https://ui-avatars.com/api/?name=${user.fullName}&background=random`}
                                                     alt={user.fullName}
-                                                    className="w-full h-full object-cover"
+                                                    className="w-full h-full"
                                                 />
                                             </div>
                                             <div>

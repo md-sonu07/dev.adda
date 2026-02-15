@@ -11,15 +11,19 @@ import {
     HiOutlineXMark
 } from 'react-icons/hi2';
 import advertisements from '../../assets/data/advertisment.js';
+import SkeletonImage from '../../components/common/SkeletonImage';
+
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
 function Feed() {
     const dispatch = useDispatch();
-    const { posts, loading } = useSelector((state) => state.post);
-
+    const [searchParams] = useSearchParams();
+    const q = searchParams.get('q');
+    const { posts, loading, selectedCategory } = useSelector((state) => state.post);
 
     useEffect(() => {
-        dispatch(getAllPostsAction());
-    }, [dispatch]);
+        dispatch(getAllPostsAction({ q }));
+    }, [dispatch, q]);
 
     const formatTime = (dateString) => {
         const date = new Date(dateString);
@@ -32,10 +36,41 @@ function Feed() {
         return `${Math.floor(diffInSeconds / 86400)}d ago`;
     };
 
+    // --- Dynamic Filtering Logic ---
+    const getFilteredPosts = () => {
+        let filtered = [...posts].filter(post => post.status === 'approved');
+
+        if (selectedCategory.startsWith('#')) {
+            const tag = selectedCategory.slice(1).toLowerCase();
+            return filtered.filter(post =>
+                post.tags?.some(t => t.toLowerCase() === tag)
+            );
+        }
+
+        switch (selectedCategory) {
+            case 'Latest':
+                return filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            case 'Trending':
+                // For trending, we could sort by likes or just show most recent
+                return filtered.sort((a, b) => (b.likes?.length || 0) - (a.likes?.length || 0));
+            case 'Following':
+                // Placeholder: currently shows all approved posts
+                return filtered;
+            default:
+                return filtered;
+        }
+    };
+
+    const filteredPosts = getFilteredPosts();
+
     if (loading && posts.length === 0) {
         return (
-            <div className="flex justify-center py-20">
-                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+            <div className="max-w-[1400px] py-4">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    {[1, 2, 3, 4].map((i) => (
+                        <SkeletonCard key={i} />
+                    ))}
+                </div>
             </div>
         );
     }
@@ -43,7 +78,7 @@ function Feed() {
     return (
         <div className="max-w-[1400px] py-4">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {posts.filter(post => post.status === 'approved').map((post) => (
+                {filteredPosts.map((post) => (
                     <ArticleCard key={post._id} article={post} formatTime={formatTime} />
                 ))}
             </div>
@@ -76,7 +111,7 @@ function Feed() {
             )}
 
             {!loading && posts.length === 0 && (
-                <div className="text-center py-20 bg-card rounded-2xl border border-default border-dashed">
+                <div className="text-center mt-10 shadow-xl py-20 bg-card rounded-2xl border border-default border-dashed">
                     <p className="text-muted font-medium">No articles found in the feed.</p>
                 </div>
             )}
@@ -84,7 +119,38 @@ function Feed() {
     );
 }
 
+const SkeletonCard = () => {
+    return (
+        <div className="flex flex-col sm:flex-row bg-card rounded-2xl border border-default overflow-hidden h-auto sm:h-72 animate-pulse">
+            <div className="w-full sm:w-[65%] p-4 md:p-6 flex flex-col justify-between">
+                <div>
+                    <div className="flex gap-2 mb-4">
+                        <div className="h-4 w-16 bg-box rounded-md"></div>
+                        <div className="h-4 w-16 bg-box rounded-md"></div>
+                    </div>
+                    <div className="h-7 w-5/6 bg-box rounded-lg mb-3"></div>
+                    <div className="h-7 w-2/3 bg-box rounded-lg mb-4"></div>
+                    <div className="space-y-2.5">
+                        <div className="h-3 w-full bg-box rounded-md"></div>
+                        <div className="h-3 w-4/5 bg-box rounded-md"></div>
+                    </div>
+                </div>
+                <div className="flex items-center gap-2 mt-4">
+                    <div className="h-8 w-12 bg-box rounded-full"></div>
+                    <div className="h-8 w-12 bg-box rounded-full"></div>
+                    <div className="h-8 w-8 bg-box rounded-full ml-auto"></div>
+                    <div className="h-8 w-8 bg-box rounded-full"></div>
+                </div>
+            </div>
+            <div className="w-full sm:w-[35%] p-3">
+                <div className="h-44 sm:h-full w-full bg-box rounded-xl"></div>
+            </div>
+        </div>
+    );
+};
+
 const ArticleCard = ({ article, formatTime }) => {
+    const navigate = useNavigate();
     // Generate some deterministic colors for tags since we don't have them in DB
     const tagColors = [
         "text-primary bg-primary/10",
@@ -106,8 +172,16 @@ const ArticleCard = ({ article, formatTime }) => {
         const charCodeSum = name.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
         return authorColors[charCodeSum % authorColors.length];
     };
+
+    const handleCardClick = () => {
+        navigate(`/article/${article?._id}`);
+    };
+
     return (
-        <div className="group flex flex-col sm:flex-row bg-card rounded-2xl border border-default overflow-hidden hover:border-primary/50 transition-all duration-300 cursor-pointer h-auto sm:h-72 shadow-sm">
+        <div
+            onClick={handleCardClick}
+            className="group flex flex-col sm:flex-row bg-card rounded-2xl border border-default overflow-hidden hover:border-primary/50 transition-all duration-300 cursor-pointer h-auto sm:h-72 shadow-sm"
+        >
 
             {/* LEFT CONTENT */}
             <div className="w-full sm:w-[65%] p-4 md:p-6 flex flex-col justify-between">
@@ -133,27 +207,45 @@ const ArticleCard = ({ article, formatTime }) => {
                 </div>
 
                 <div className="flex items-center gap-1.5 font-display text-body">
-                    <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-box hover:bg-primary/10 transition-all text-[10px] font-bold">
+                    <button
+                        onClick={(e) => e.stopPropagation()}
+                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-box hover:bg-primary/10 transition-all text-[10px] font-bold"
+                    >
                         <HiOutlineHandThumbUp className="text-base" />
                         {article.likes ? article.likes.length : 0}
                     </button>
 
-                    <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-box hover:bg-primary/10 transition-all text-[10px] font-bold">
+                    <button
+                        onClick={(e) => e.stopPropagation()}
+                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-box hover:bg-primary/10 transition-all text-[10px] font-bold"
+                    >
                         <HiOutlineChatBubbleBottomCenterText className="text-base" />
                         0
                     </button>
                     {article.tags?.includes("ADD") && (
-                        <button className="flex items-center cursor-pointer gap-1.5 px-3 py-1.5 rounded-full bg-red-500/10 hover:bg-red-500/20 transition-all text-[10px] font-bold text-red-500 m-auto">
+                        <button
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                // Add remove ad logic if needed
+                            }}
+                            className="flex items-center cursor-pointer gap-1.5 px-3 py-1.5 rounded-full bg-red-500/10 hover:bg-red-500/20 transition-all text-[10px] font-bold text-red-500 m-auto"
+                        >
                             Remove Ad
                             <HiOutlineXMark className="text-base" />
                         </button>
                     )}
 
-                    <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-box hover:bg-primary/10 transition-all text-[10px] font-bold ml-auto">
+                    <button
+                        onClick={(e) => e.stopPropagation()}
+                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-box hover:bg-primary/10 transition-all text-[10px] font-bold ml-auto"
+                    >
                         <HiOutlineBookmark className="text-base" />
                     </button>
 
-                    <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-box hover:bg-primary/10 transition-all text-[10px] font-bold">
+                    <button
+                        onClick={(e) => e.stopPropagation()}
+                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-box hover:bg-primary/10 transition-all text-[10px] font-bold"
+                    >
                         <HiOutlineShare className="text-base" />
                     </button>
                 </div>
@@ -162,30 +254,25 @@ const ArticleCard = ({ article, formatTime }) => {
             {/* RIGHT IMAGE */}
             <div className="w-full sm:w-[35%] p-3">
                 <div className="relative h-full w-full rounded-xl overflow-hidden group/img">
-                    <img
-                        alt={article.title}
-                        className="w-full h-44 sm:h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                    <SkeletonImage
                         src={article.coverImage || "https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=2000&auto=format&fit=crop"}
+                        alt={article.title}
+                        className="w-full h-44 sm:h-full group-hover:scale-110 transition-transform duration-700"
                     />
 
                     {/* Hover Overlay */}
-                    <a
-                        href={`/article/${article?._id || "#"}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="absolute inset-0 bg-black/40 opacity-0 group-hover/img:opacity-100 transition-all duration-300 flex items-center justify-center backdrop-blur-[2px] z-10"
-                    >
+                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover/img:opacity-100 transition-all duration-300 flex items-center justify-center backdrop-blur-[2px] z-10">
                         <div className="bg-white/20 backdrop-blur-md border border-white/30 px-4 py-2 rounded-full flex items-center gap-2 transform translate-y-4 group-hover/img:translate-y-0 transition-transform duration-300">
-                            <span className="text-white text-xs font-bold uppercase tracking-wider">Visit Project</span>
+                            <span className="text-white text-xs font-bold uppercase tracking-wider">Read article</span>
                             <HiArrowUpRight className="text-white text-sm" />
                         </div>
-                    </a>
+                    </div>
 
                     {/* Author */}
                     <div className="absolute top-0 left-0 right-0 p-3 bg-linear-to-b from-black/70 to-transparent">
                         <div className="flex items-center gap-2">
                             {article.author?.avatar ? (
-                                <img src={article.author.avatar} alt="" className="h-6 w-6 rounded-full border border-white/20 object-cover" />
+                                <SkeletonImage src={article.author.avatar} alt="" className="h-6 w-6 rounded-full border border-white/20" />
                             ) : (
                                 <div className={`h-6 w-6 rounded-full border border-white/20 ${getAuthorColor(article.author?.fullName)}`}></div>
                             )}

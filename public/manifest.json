@@ -1,0 +1,25 @@
+{
+    "short_name": "Dev Adda",
+    "name": "Dev Adda | Developer Community News",
+    "icons": [
+        {
+            "src": "da-title-img.png",
+            "sizes": "64x64 32x32 24x24 16x16",
+            "type": "image/png"
+        },
+        {
+            "src": "da-title-img.png",
+            "type": "image/png",
+            "sizes": "192x192"
+        },
+        {
+            "src": "da-title-img.png",
+            "type": "image/png",
+            "sizes": "512x512"
+        }
+    ],
+    "start_url": ".",
+    "display": "standalone",
+    "theme_color": "#135bec",
+    "background_color": "#0f172a"
+}

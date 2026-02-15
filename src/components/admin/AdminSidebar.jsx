@@ -1,7 +1,9 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
     HiOutlineCommandLine,
+    HiXMark,
     HiOutlineSquares2X2,
     HiOutlineUsers,
     HiOutlineDocumentText,
@@ -15,6 +17,8 @@ import {
 } from 'react-icons/hi2';
 import { useDispatch, useSelector } from 'react-redux';
 import { logoutAction } from '../../redux/thunks/authThunk';
+import Logo from '../common/Logo';
+import SkeletonImage from '../common/SkeletonImage';
 import toast from 'react-hot-toast';
 
 const NavLink = ({ to, icon: Icon, label, active }) => (
@@ -36,15 +40,28 @@ const SectionTitle = ({ children }) => (
     </p>
 );
 
-const AdminSidebar = () => {
+const AdminSidebar = ({ isOpen, onClose }) => {
     const { pathname } = useLocation();
     const dispatch = useDispatch();
     const { user } = useSelector(state => state.auth);
+
+    // Initialize state immediately to prevent "flash" of sidebar on mobile
+    const [isMobile, setIsMobile] = React.useState(() =>
+        typeof window !== 'undefined' ? window.innerWidth < 768 : false
+    );
+
+    // Dynamic breakpoint detection
+    React.useEffect(() => {
+        const checkMobile = () => setIsMobile(window.innerWidth < 768);
+        window.addEventListener('resize', checkMobile);
+        return () => window.removeEventListener('resize', checkMobile);
+    }, []);
 
     const handleLogout = async () => {
         try {
             await dispatch(logoutAction()).unwrap();
             toast.success('Admin logged out');
+            if (onClose) onClose();
         } catch (error) {
             toast.error('Logout failed');
         }
@@ -64,76 +81,96 @@ const AdminSidebar = () => {
     ];
 
     return (
-        <aside className="w-64 shrink-0 bg-card border-r border-default hidden md:flex flex-col">
-            <div className="p-6">
-                <Link to="/admin" className="flex items-center space-x-3 text-primary group">
-                    <div className="size-8 bg-primary rounded flex items-center justify-center group-hover:scale-110 transition-transform">
-                        <HiOutlineCommandLine className="text-white text-lg" />
-                    </div>
-                    <span className="font-black text-xl tracking-tight uppercase text-body">DevAdda</span>
-                </Link>
-            </div>
-
-            <nav className="flex-1 px-4 py-2 space-y-1 overflow-y-auto no-scrollbar">
-                <Link
-                    to="/"
-                    className="flex items-center px-3 py-2.5 text-sm font-medium rounded-lg text-muted hover:bg-primary/10 hover:text-primary transition-all duration-200"
-                >
-                    <HiOutlineArrowTopRightOnSquare className="mr-3 text-lg" />
-                    View Live Site
-                </Link>
-                <SectionTitle>Main Menu</SectionTitle>
-                {mainMenu.map((item) => (
-                    <NavLink
-                        key={item.to}
-                        {...item}
-                        active={pathname === item.to || (item.to === '/admin/dashboard' && pathname === '/admin')}
+        <>
+            {/* MOBILE BACKDROP */}
+            <AnimatePresence>
+                {isOpen && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        onClick={onClose}
+                        className="fixed inset-0 z-100 bg-black/60 backdrop-blur-sm md:hidden"
                     />
-                ))}
+                )}
+            </AnimatePresence>
 
-                <SectionTitle>Editorial</SectionTitle>
-                {editorialMenu.map((item) => (
-                    <NavLink key={item.to} {...item} active={pathname === item.to} />
-                ))}
-
-                <SectionTitle>System</SectionTitle>
-                <NavLink to="/admin/settings" icon={HiOutlineCog6Tooth} label="Settings" active={pathname === '/admin/settings'} />
-
-                <div className="pt-4 mt-4 border-t border-box border-default/50">
-
-
+            {/* SIDEBAR CONTAINER */}
+            <motion.aside
+                initial={false}
+                animate={{
+                    x: isMobile ? (isOpen ? 0 : -300) : 0,
+                }}
+                transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+                className={`fixed md:static inset-y-0 left-0 z-110 w-72 shrink-0 bg-card border-r border-default flex flex-col transition-none`}
+            >
+                {/* Mobile Close Button */}
+                <div className="md:hidden absolute top-6 right-6">
                     <button
-                        onClick={handleLogout}
-                        className="w-full flex items-center px-3 py-2.5 text-sm font-medium rounded-xl text-rose-500 hover:bg-rose-500/10 transition-all mt-1"
+                        onClick={onClose}
+                        className="p-2.5 rounded-xl bg-box border border-default text-muted hover:text-primary transition-all"
                     >
-                        <HiOutlineArrowLeftOnRectangle className="mr-3 text-lg" />
-                        Logout
+                        <HiXMark className="text-xl" />
                     </button>
                 </div>
-            </nav>
 
-            <div className="p-4 border-t border-default">
-                <div className="flex items-center p-3 rounded-xl bg-box border border-default">
-                    {user?.avatar ? (
-                        <img
-                            className="w-8 h-8 rounded-lg object-cover border border-default"
-                            src={user?.avatar}
-                            alt="Admin Profile"
+                <div className="p-6">
+                    <Logo to="/admin" />
+                </div>
+
+                <nav className="flex-1 px-4 py-2 space-y-1 overflow-y-auto no-scrollbar">
+                    <Link
+                        to="/"
+                        className="flex items-center px-3 py-2.5 text-sm font-medium rounded-lg text-muted hover:bg-primary/10 hover:text-primary transition-all duration-200"
+                    >
+                        <HiOutlineArrowTopRightOnSquare className="mr-3 text-lg" />
+                        View Live Site
+                    </Link>
+                    <SectionTitle>Main Menu</SectionTitle>
+                    {mainMenu.map((item) => (
+                        <NavLink
+                            key={item.to}
+                            {...item}
+                            active={pathname === item.to || (item.to === '/admin/dashboard' && pathname === '/admin')}
                         />
-                    ) : (
-                        <img
-                            className="w-8 h-8 rounded-lg object-cover border border-default"
-                            src={`https://ui-avatars.com/api/?name=${user?.fullName}&background=random`}
+                    ))}
+
+                    <SectionTitle>Editorial</SectionTitle>
+                    {editorialMenu.map((item) => (
+                        <NavLink key={item.to} {...item} active={pathname === item.to} />
+                    ))}
+
+                    <SectionTitle>System</SectionTitle>
+                    <NavLink to="/admin/settings" icon={HiOutlineCog6Tooth} label="Settings" active={pathname === '/admin/settings'} />
+
+                    <div className="pt-4 mt-4 border-t border-box border-default/50">
+
+
+                        <button
+                            onClick={handleLogout}
+                            className="w-full flex items-center px-3 py-2.5 text-sm font-medium rounded-xl text-rose-500 hover:bg-rose-500/10 transition-all mt-1"
+                        >
+                            <HiOutlineArrowLeftOnRectangle className="mr-3 text-lg" />
+                            Logout
+                        </button>
+                    </div>
+                </nav>
+
+                <div className="p-4 border-t border-default">
+                    <div className="flex items-center p-3 rounded-xl bg-box border border-default">
+                        <SkeletonImage
+                            src={user?.avatar || `https://ui-avatars.com/api/?name=${user?.fullName || 'Admin'}&background=random`}
                             alt="Admin Profile"
+                            className="w-8 h-8 rounded-lg border border-default"
                         />
-                    )}
-                    <div className="ml-3 overflow-hidden">
-                        <p className="text-xs font-black truncate text-body">{user?.fullName || 'Admin'}</p>
-                        <p className="text-[10px] text-muted uppercase font-bold tracking-tight">{user?.role || 'Admin'}</p>
+                        <div className="ml-3 overflow-hidden">
+                            <p className="text-xs font-black truncate text-body">{user?.fullName || 'Loading...'}</p>
+                            <p className="text-[10px] text-muted uppercase font-bold tracking-tight">{user?.role || 'Admin'}</p>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </aside>
+            </motion.aside>
+        </>
     );
 };
 
