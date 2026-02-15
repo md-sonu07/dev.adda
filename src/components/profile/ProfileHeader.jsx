@@ -148,12 +148,12 @@ const ProfileHeader = () => {
 
                         <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3 pt-1">
                             {/* Website Link */}
-                            <a href="#" className="p-2 rounded-xl border border-default hover:bg-primary/5 hover:border-primary/50 text-muted hover:text-primary transition-all shadow-sm">
+                            <a href="#" className="p-2 hidden sm:flex rounded-xl border border-default hover:bg-primary/5 hover:border-primary/50 text-muted hover:text-primary transition-all shadow-sm">
                                 <HiOutlineGlobeAlt className="text-lg" />
                             </a>
 
                             {/* Share Link */}
-                            <button className="p-2 rounded-xl border border-default hover:bg-primary/5 hover:border-primary/50 text-muted hover:text-primary transition-all shadow-sm">
+                            <button className="p-2 hidden sm:flex rounded-xl border border-default hover:bg-primary/5 hover:border-primary/50 text-muted hover:text-primary transition-all shadow-sm">
                                 <HiOutlineShare className="text-lg" />
                             </button>
 
