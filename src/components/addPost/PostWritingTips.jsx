@@ -1,17 +1,14 @@
-import React, { useState } from 'react';
-import { createPortal } from 'react-dom';
 import {
     HiOutlineLightBulb,
     HiOutlineGlobeAlt,
     HiOutlineLockClosed,
     HiCheck,
     HiOutlinePresentationChartBar,
-    HiOutlineDocumentText,
-    HiXMark
 } from 'react-icons/hi2';
 
+import { motion } from 'framer-motion';
+
 const PostWritingTips = ({ postData = {}, updatePostData }) => {
-    const [isMarkdownModalOpen, setIsMarkdownModalOpen] = useState(false);
     const { title = '', description = '', tags = [], coverImage = null, visibility = 'public' } = postData;
 
     const checklist = [
@@ -43,27 +40,35 @@ const PostWritingTips = ({ postData = {}, updatePostData }) => {
                     Publish Settings
                 </h5>
 
-                <div className="grid grid-cols-2 gap-2">
+                <div className="flex p-1 bg-card/50 border border-default rounded-2xl relative overflow-hidden">
                     <button
                         onClick={() => updatePostData?.({ visibility: 'public' })}
-                        className={`flex items-center justify-center gap-2 p-3 rounded-xl text-[10px] font-black uppercase tracking-widest border transition-all ${visibility === 'public'
-                                ? 'bg-primary text-white border-primary'
-                                : 'text-muted border-default hover:border-primary/30'
-                            }`}
+                        className={`relative flex-1 flex items-center justify-center gap-2 py-3.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-colors duration-500 ${visibility === 'public' ? 'text-white' : 'text-muted'}`}
                     >
-                        <HiOutlineGlobeAlt className="text-sm" />
-                        Public
+                        {visibility === 'public' && (
+                            <motion.div
+                                layoutId="active-pill"
+                                className="absolute inset-0 bg-primary rounded-2xl shadow-lg shadow-primary/20 z-0"
+                                transition={{ type: "spring", bounce: 0.15, duration: 0.6 }}
+                            />
+                        )}
+                        <HiOutlineGlobeAlt className="text-sm relative z-10" />
+                        <span className="relative z-10">Public</span>
                     </button>
 
                     <button
                         onClick={() => updatePostData?.({ visibility: 'private' })}
-                        className={`flex items-center justify-center gap-2 p-3 rounded-xl text-[10px] font-black uppercase tracking-widest border transition-all ${visibility === 'private'
-                                ? 'bg-primary text-white border-primary'
-                                : 'text-muted border-default hover:border-primary/30'
-                            }`}
+                        className={`relative flex-1 flex items-center justify-center gap-2 py-3.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-colors duration-500 ${visibility === 'private' ? 'text-white' : 'text-muted'}`}
                     >
-                        <HiOutlineLockClosed className="text-sm" />
-                        Private
+                        {visibility === 'private' && (
+                            <motion.div
+                                layoutId="active-pill"
+                                className="absolute inset-0 bg-primary rounded-2xl shadow-lg shadow-primary/20 z-0"
+                                transition={{ type: "spring", bounce: 0.15, duration: 0.6 }}
+                            />
+                        )}
+                        <HiOutlineLockClosed className="text-sm relative z-10" />
+                        <span className="relative z-10">Private</span>
                     </button>
                 </div>
             </div>

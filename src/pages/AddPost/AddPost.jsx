@@ -148,12 +148,22 @@ function AddPost() {
                 </div>
             </div>
 
-            {/* Header Section */}
-            <div className="hidden lg:block border-b border-default bg-card/50 px-10 py-8">
-                <div className="max-w-[1400px] mx-auto flex items-end justify-between">
-                    <div className="space-y-1">
-                        <h1 className="text-3xl font-black tracking-tight text-body">Craft Your Story</h1>
-                        <p className="text-xs font-bold text-muted uppercase tracking-[0.2em] opacity-80">Transform your ideas into a global publication</p>
+            {/* Compact Editor Status Bar */}
+            <div className="hidden lg:block sticky top-0 z-30 bg-background/80 backdrop-blur-xl border-b border-default px-10 py-3.5">
+                <div className="max-w-[1400px] mx-auto flex items-center justify-between">
+                    <div className="flex items-center gap-6">
+                        <h1 className="text-xs font-black tracking-[0.2em] uppercase text-body">Station Editor</h1>
+                        <div className="h-3 w-px bg-default opacity-50" />
+                        <div className="flex items-center gap-5 text-[10px] font-bold text-muted uppercase tracking-widest leading-none">
+                            <span>{postData.content.replace(/<[^>]*>/g, '').trim() === '' ? 0 : postData.content.replace(/<[^>]*>/g, '').trim().split(/\s+/).length} words</span>
+                            <div className="size-1 rounded-full bg-default opacity-30" />
+                            <span>{Math.max(1, Math.ceil(postData.content.replace(/<[^>]*>/g, '').trim().split(/\s+/).length / 200))} min read</span>
+                        </div>
+                    </div>
+
+                    <div className="flex items-center gap-2.5 opacity-80">
+                        <div className="size-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.3)]" />
+                        <span className="text-[9px] font-black uppercase tracking-widest text-muted">Cloud Synced</span>
                     </div>
                 </div>
             </div>
