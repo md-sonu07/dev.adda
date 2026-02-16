@@ -116,7 +116,7 @@ function Navbar() {
                 <Logo collapsed={searchQuery.length > 0} />
 
                 {/* CENTER: SEARCH */}
-                <div className="flex-1 max-w-xl">
+                <div className="flex-1 max-w-xl ">
                     <div className="relative group flex items-center">
                         <div className="absolute left-4 z-10 text-muted/40 group-focus-within:text-primary transition-colors duration-300">
                             <IoSearch className="text-lg" />
@@ -289,7 +289,7 @@ function Navbar() {
                     >
                         <div className="h-10 w-10 rounded-xl overflow-hidden border-2 border-default group-hover:border-primary/60 group-hover:scale-105 transition-all duration-500 shadow-sm">
                             <SkeletonImage
-                                src={user?.avatar || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=100&auto=format&fit=crop"}
+                                src={user?.avatar || `https://ui-avatars.com/api/?name=${user?.fullName || 'User'}&background=random`}
                                 alt="Profile"
                                 className="w-full h-full"
                             />

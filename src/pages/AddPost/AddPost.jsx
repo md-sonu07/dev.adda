@@ -76,7 +76,7 @@ function AddPost() {
             toast.success("Draft saved successfully! View it on your profile.");
             navigate('/profile');
         } catch (error) {
-            toast.error(error.message || "Failed to save draft");
+            toast.error(error.message || error || "Failed to save draft");
         } finally {
             setIsSavingDraft(false);
         }
@@ -113,7 +113,7 @@ function AddPost() {
             toast.success("Post published successfully!");
             navigate('/');
         } catch (error) {
-            toast.error(error.message || "Failed to publish post");
+            toast.error(error.message || error || "Failed to publish post");
         }
     };
 
