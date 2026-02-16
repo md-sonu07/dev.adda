@@ -50,7 +50,7 @@ function App() {
       {!shouldHideNav && <Navbar />}
       <AppRoutes />
       {!shouldHideNav && <MobileActions />}
-      {pathname !== "/create-post" && !shouldHideNav && <Footer />}
+      {pathname !== "/create-post" && pathname !== "/profile" && !shouldHideNav && <Footer />}
     </div>
   );
 }

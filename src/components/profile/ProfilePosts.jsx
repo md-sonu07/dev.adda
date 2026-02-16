@@ -18,6 +18,8 @@ import {
 } from 'react-icons/hi2';
 import { useState } from 'react';
 
+import SkeletonImage from '../common/SkeletonImage';
+
 const ProfilePosts = ({ activeTab }) => {
     const { myPosts, loading } = useSelector((state) => state.post);
     const dispatch = useDispatch();
@@ -59,6 +61,10 @@ const ProfilePosts = ({ activeTab }) => {
         } catch (error) {
             toast.error(error?.message || 'Failed to submit post');
         }
+    };
+
+    const handleCardClick = (id) => {
+        navigate(`/article/${id}`);
     };
 
     // For other tabs (saved, history, liked), we might still need mock data if not implemented in backend
@@ -137,10 +143,14 @@ const ProfilePosts = ({ activeTab }) => {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {filteredPosts.map((post) => (
-                    <div key={post._id} className="group rounded-xl border border-default p-4 flex gap-4 hover:border-primary/40 transition-all duration-300 cursor-pointer">
+                    <div
+                        key={post._id}
+                        onClick={() => handleCardClick(post._id)}
+                        className="group rounded-xl border border-default p-4 flex gap-4 hover:border-primary/40 transition-all duration-300 cursor-pointer"
+                    >
                         <div className="size-24 rounded-lg overflow-hidden shrink-0 relative">
-                            <img
-                                src={post.coverImage || 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=600&auto=format&fit=crop'}
+                            <SkeletonImage
+                                src={post.coverImage || `https://ui-avatars.com/api/?name=${encodeURIComponent(post.title)}&background=random&size=512&color=fff&bold=true`}
                                 alt={post.title}
                                 className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                             />

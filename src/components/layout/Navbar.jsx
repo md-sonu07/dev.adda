@@ -228,74 +228,94 @@ function Navbar() {
                 {/* RIGHT: ACTIONS */}
                 <div className="flex items-center gap-2 sm:gap-4 shrink-0">
 
-                    {/* Enhanced Create Button */}
+                    {/* ALWAYS SHOW: Story Button (Redirects to login if guest) */}
                     <Link
-                        to="/create-post"
-                        className="hidden md:flex items-center gap-2 px-5 py-3 rounded-xl bg-primary text-white text-sm font-bold shadow-lg shadow-primary/20 hover:shadow-primary/40 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300 slant-glow group"
+                        to={user ? "/create-post" : "/login"}
+                        className="hidden md:flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-white text-sm font-bold shadow-lg shadow-primary/20 hover:shadow-primary/40 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300 slant-glow group"
                     >
                         <IoAdd className="text-xl group-hover:rotate-90 transition-transform duration-500" />
                         <span className="tracking-tight">Story</span>
                     </Link>
 
-                    {/* Action Group Island */}
-                    <div className="flex items-center gap-1 p-1 bg-box/40 rounded-xl border border-default transition-all duration-500 overflow-hidden sm:opacity-100 sm:w-auto max-sm:w-0 max-sm:opacity-0 max-sm:p-0 max-sm:border-0 max-sm:pointer-events-none">
-                        {/* Theme Toggle */}
-                        <button
-                            onClick={handleThemeToggle}
-                            className="p-2 rounded-xl text-muted hover:text-primary hover:bg-card active:scale-90 transition-all duration-200 cursor-pointer"
-                            title={isDark ? 'Light Mode' : 'Dark Mode'}
-                        >
-                            {isDark ? <HiOutlineSun className="text-xl shrink-0 hover:rotate-180 transition-all duration-300" /> : <HiOutlineMoon className="text-xl shrink-0" />}
-                        </button>
+                    {user ? (
+                        <>
+                            {/* User Action Island */}
+                            <div className="flex items-center gap-1 p-1 bg-box/40 rounded-xl border border-default transition-all duration-500 overflow-hidden sm:opacity-100 sm:w-auto max-sm:w-0 max-sm:opacity-0 max-sm:p-0 max-sm:border-0 max-sm:pointer-events-none">
+                                {/* Theme Toggle */}
+                                <button
+                                    onClick={handleThemeToggle}
+                                    className="p-2 rounded-xl text-muted hover:text-primary hover:bg-card active:scale-90 transition-all duration-200 cursor-pointer"
+                                    title={isDark ? 'Light Mode' : 'Dark Mode'}
+                                >
+                                    {isDark ? <HiOutlineSun className="text-xl shrink-0" /> : <HiOutlineMoon className="text-xl shrink-0" />}
+                                </button>
 
-                        {/* Bookmarks */}
-                        <Link
-                            to="/bookmarks"
-                            className="p-2 rounded-xl text-muted hover:text-primary hover:bg-card transition-all duration-200 "
-                        >
-                            <IoBookmarksOutline className="text-xl shrink-0" />
-                        </Link>
+                                {/* Bookmarks */}
+                                <Link
+                                    to="/bookmarks"
+                                    className="p-2 rounded-xl text-muted hover:text-primary hover:bg-card transition-all duration-200 "
+                                >
+                                    <IoBookmarksOutline className="text-xl shrink-0" />
+                                </Link>
 
-                        {/* Notifications */}
-                        <Link
-                            to="/notifications"
-                            className="p-2 rounded-xl text-muted hover:text-primary hover:bg-card relative transition-all duration-200"
-                        >
-                            <IoNotificationsOutline className="text-xl shrink-0" />
-                            <span className="absolute top-2.5 right-2.5 flex h-2 w-2">
-                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                                <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
-                            </span>
-                        </Link>
-                    </div>
-                    {/* Division Bar Section */}
-                    <div className="h-7 w-[2px] bg-primary/60 mx-1 hidden sm:block opacity-80"></div>
+                                {/* Notifications */}
+                                <Link
+                                    to="/notifications"
+                                    className="p-2 rounded-xl text-muted hover:text-primary hover:bg-card relative transition-all duration-200"
+                                >
+                                    <IoNotificationsOutline className="text-xl shrink-0" />
+                                    <span className="absolute top-2.5 right-2.5 flex h-2 w-2">
+                                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                                        <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+                                    </span>
+                                </Link>
+                            </div>
 
-                    {/* Admin Dashboard */}
-                    {isAdmin && (
-                        <Link
-                            to="/admin/dashboard"
-                            className="p-2.5 hidden sm:flex rounded-lg text-primary bg-primary/5 hover:bg-primary/10 border border-primary/20 transition-all duration-200 shrink-0"
-                            title="Admin Dashboard"
-                        >
-                            <HiOutlineShieldCheck className="text-xl" />
-                        </Link>
-                    )}
+                            {/* Admin Dashboard */}
+                            {isAdmin && (
+                                <Link
+                                    to="/admin/dashboard"
+                                    className="p-2.5 hidden sm:flex rounded-lg text-primary bg-primary/5 hover:bg-primary/10 border border-primary/20 transition-all duration-200 shrink-0"
+                                    title="Admin Dashboard"
+                                >
+                                    <HiOutlineShieldCheck className="text-xl" />
+                                </Link>
+                            )}
 
-                    {/* Profile */}
-                    <Link
-                        to="/profile"
-                        className="group relative shrink-0"
-                    >
-                        <div className="h-10 w-10 rounded-xl overflow-hidden border-2 border-default group-hover:border-primary/60 group-hover:scale-105 transition-all duration-500 shadow-sm">
-                            <SkeletonImage
-                                src={user?.avatar || `https://ui-avatars.com/api/?name=${user?.fullName || 'User'}&background=random`}
-                                alt="Profile"
-                                className="w-full h-full"
-                            />
+                            {/* Profile */}
+                            <Link
+                                to="/profile"
+                                className="group relative shrink-0"
+                            >
+                                <div className="h-10 w-10 rounded-xl overflow-hidden border-2 border-default group-hover:border-primary/60 group-hover:scale-105 transition-all duration-500 shadow-sm">
+                                    <SkeletonImage
+                                        src={user?.avatar || `https://ui-avatars.com/api/?name=${user?.fullName || 'User'}&background=random`}
+                                        alt="Profile"
+                                        className="w-full h-full"
+                                    />
+                                </div>
+                                <div className="absolute -bottom-0.5 -right-0.5 size-3 bg-green-500 rounded-full border-2 border-background shadow-md"></div>
+                            </Link>
+                        </>
+                    ) : (
+                        <div className="flex items-center gap-2">
+                            {/* Theme Toggle for guests */}
+                            <button
+                                onClick={handleThemeToggle}
+                                className="p-2.5 rounded-xl text-muted hover:text-primary hover:bg-box/50 active:scale-95 transition-all duration-200 cursor-pointer border border-transparent hover:border-default shadow-sm"
+                                title={isDark ? 'Light Mode' : 'Dark Mode'}
+                            >
+                                {isDark ? <HiOutlineSun className="text-xl shrink-0" /> : <HiOutlineMoon className="text-xl shrink-0" />}
+                            </button>
+
+                            <Link
+                                to="/login"
+                                className="px-6 py-2.5 rounded-xl bg-box/50 text-body border border-default text-sm font-bold hover:bg-box hover:border-primary/30 transition-all duration-300"
+                            >
+                                Login
+                            </Link>
                         </div>
-                        <div className="absolute -bottom-0.5 -right-0.5 size-3 bg-green-500 rounded-full border-2 border-background shadow-md"></div>
-                    </Link>
+                    )}
                 </div>
             </div>
         </nav>

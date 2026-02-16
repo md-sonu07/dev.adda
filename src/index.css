@@ -21,6 +21,7 @@
 
   /* ========== Borders ========== */
   --color-border: #e2e8f0;
+  --color-default: var(--color-border);
 
   /* ========== Typography ========== */
   --font-display: "Inter", sans-serif;
@@ -92,11 +93,6 @@
 
   .text-muted {
     color: var(--color-text-muted);
-  }
-
-  /* Border */
-  .border-default {
-    border-color: var(--color-border);
   }
 
   /* Radius */

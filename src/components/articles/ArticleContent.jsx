@@ -1,27 +1,40 @@
-import React from 'react';
-import { IoCopyOutline } from 'react-icons/io5';
 import ArticleMobileActions from './ArticleMobileActions';
+import SkeletonImage from '../common/SkeletonImage';
+import './ArticleContent.css';
 
 const ArticleContent = ({ post }) => {
     return (
-        <section className="prose prose-slate dark:prose-invert max-w-none text-slate-700 dark:text-slate-300 leading-relaxed text-lg">
+        <section className="transition-all duration-300">
+            {/* Main Article Poster */}
+            {post?.coverImage && (
+                <div className="mb-10 rounded-4xl overflow-hidden shadow-2xl border border-default">
+                    <SkeletonImage
+                        src={post.coverImage}
+                        alt={post.title}
+                        className="w-full h-auto aspect-video object-cover"
+                    />
+                </div>
+            )}
+
             {/* Dynamic Content */}
             <div
-                className="mb-8"
+                className="article-content-body mb-8"
                 dangerouslySetInnerHTML={{ __html: post?.content }}
             />
 
             {/* Dynamic Tags */}
-            <div className="flex flex-wrap gap-3 mt-10 mb-12">
+            <div className="flex flex-wrap gap-2 mt-10 mb-12">
                 {post?.tags?.map((tag, idx) => (
                     <span
                         key={idx}
-                        className="px-3 py-1 rounded-full bg-slate-200 dark:bg-[#232f48] text-slate-600 dark:text-[#92a4c9] text-sm font-medium"
+                        className="px-3.5 py-1.5 rounded-xl bg-box border border-default text-muted text-[10px] font-black uppercase tracking-widest hover:border-primary/40 hover:text-primary transition-all cursor-pointer"
                     >
                         #{tag}
                     </span>
                 ))}
             </div>
+
+
             <ArticleMobileActions />
         </section>
     );

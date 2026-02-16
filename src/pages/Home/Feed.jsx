@@ -255,7 +255,7 @@ const ArticleCard = ({ article, formatTime }) => {
             <div className="w-full sm:w-[35%] p-3">
                 <div className="relative h-full w-full rounded-xl overflow-hidden group/img">
                     <SkeletonImage
-                        src={article.coverImage || "https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=2000&auto=format&fit=crop"}
+                        src={article.coverImage || `https://ui-avatars.com/api/?name=${encodeURIComponent(article.title)}&background=random&size=512&color=fff&bold=true`}
                         alt={article.title}
                         className="w-full h-44 sm:h-full group-hover:scale-110 transition-transform duration-700"
                     />
@@ -271,11 +271,11 @@ const ArticleCard = ({ article, formatTime }) => {
                     {/* Author */}
                     <div className="absolute top-0 left-0 right-0 p-3 bg-linear-to-b from-black/70 to-transparent">
                         <div className="flex items-center gap-2">
-                            {article.author?.avatar ? (
-                                <SkeletonImage src={article.author.avatar} alt="" className="h-6 w-6 rounded-full border border-white/20" />
-                            ) : (
-                                <div className={`h-6 w-6 rounded-full border border-white/20 ${getAuthorColor(article.author?.fullName)}`}></div>
-                            )}
+                            <SkeletonImage
+                                src={article.author?.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(article.author?.fullName || 'A')}&background=random`}
+                                alt=""
+                                className="h-6 w-6 rounded-full border border-white/20"
+                            />
                             <span className="text-[10px] font-semibold text-white truncate">
                                 {article.author?.fullName || "Anonymous"}
                             </span>

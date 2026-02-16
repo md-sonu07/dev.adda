@@ -27,7 +27,7 @@ const ProfileHeader = () => {
     const isDark = useSelector((state) => state.theme.isDark);
     const { userProfile, loading } = useSelector((state) => state.user);
     const { myPosts } = useSelector((state) => state.post);
-    const { isAdmin } = useSelector((state) => state.auth);
+    const { isAdmin, user } = useSelector((state) => state.auth);
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
@@ -102,6 +102,8 @@ const ProfileHeader = () => {
             </div>
         );
     }
+
+    if (!user) return null;
 
     const userData = userProfile || {};
 

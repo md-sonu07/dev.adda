@@ -140,7 +140,7 @@ const Signup = () => {
                 {/* Back Button */}
                 <button
                     onClick={() => navigate(-1)}
-                    className="absolute top-6 left-6 flex items-center gap-2 text-muted hover:text-primary transition-colors group"
+                    className="absolute top-6 left-6 flex items-center gap-2 text-muted hover:text-primary transition-all duration-300 group px-3 py-1.5 rounded-lg hover:bg-primary/5 border border-transparent hover:border-primary/20"
                 >
                     <HiArrowLeft className="text-lg group-hover:-translate-x-1 transition-transform" />
                     <span className="text-[10px] font-black uppercase tracking-widest">Back</span>
@@ -243,15 +243,15 @@ const Signup = () => {
                             <button
                                 type="submit"
                                 disabled={loading}
-                                className="w-full bg-primary hover:bg-primary/90 disabled:opacity-70 disabled:cursor-not-allowed text-white font-black uppercase tracking-widest text-[11px] py-4 rounded-xl transition-all active:scale-[0.98] flex items-center justify-center gap-2.5 group shadow-xl shadow-primary/20 hover:shadow-2xl hover:shadow-primary/30 mt-2"
+                                className="w-full bg-primary hover:bg-primary/90 disabled:opacity-70 disabled:cursor-not-allowed text-white font-black uppercase tracking-widest text-[11px] py-4 rounded-xl transition-all active:scale-[0.98] flex items-center justify-center gap-2.5 group shadow-xl shadow-primary/20 hover:shadow-2xl hover:shadow-primary/40 slant-glow overflow-hidden relative mt-2"
                             >
                                 {loading ? (
                                     <div className="size-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                                 ) : (
-                                    <>
+                                    <div className="flex items-center justify-center gap-2.5 relative z-10 font-black">
                                         Create Account
-                                        <HiArrowRight className="text-base group-hover:translate-x-1 transition-transform" />
-                                    </>
+                                        <HiArrowRight className="text-base group-hover:translate-x-1 transition-transform duration-300" />
+                                    </div>
                                 )}
                             </button>
                         </form>
@@ -267,17 +267,17 @@ const Signup = () => {
 
                         {/* Social */}
                         <div className="grid grid-cols-2 gap-3">
-                            <button className="flex items-center justify-center gap-2.5 py-3 border border-default rounded-xl hover:bg-primary/5 hover:border-primary/30 transition-all active:scale-95 group">
-                                <RiGithubFill className="text-xl group-hover:scale-110 transition-transform" />
+                            <button className="flex items-center justify-center gap-2.5 py-3.5 border border-default rounded-xl hover:bg-box/80 hover:border-primary/30 hover:shadow-md transition-all active:scale-95 group">
+                                <RiGithubFill className="text-xl group-hover:scale-110 group-hover:text-primary transition-all duration-300" />
                                 <span className="text-[10px] font-black uppercase tracking-widest">GitHub</span>
                             </button>
-                            <button className="flex items-center justify-center gap-2.5 py-3 border border-default rounded-xl hover:bg-primary/5 hover:border-primary/30 transition-all active:scale-95 group">
-                                <RiGoogleFill className="text-xl text-red-500 group-hover:scale-110 transition-transform" />
+                            <button className="flex items-center justify-center gap-2.5 py-3.5 border border-default rounded-xl hover:bg-box/80 hover:border-primary/30 hover:shadow-md transition-all active:scale-95 group">
+                                <RiGoogleFill className="text-xl text-red-500 group-hover:scale-110 transition-all duration-300" />
                                 <span className="text-[10px] font-black uppercase tracking-widest">Google</span>
                             </button>
                         </div>
 
-                        <p className="text-center text-xs font-bold text-muted pt-2">
+                        <p className="text-center text-sm font-bold text-muted pt-2">
                             Already registered? <Link to="/login" className="text-primary hover:underline ml-1 font-black">Sign in instead</Link>
                         </p>
                     </div>
