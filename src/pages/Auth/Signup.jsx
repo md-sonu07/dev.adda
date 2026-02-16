@@ -20,6 +20,7 @@ import { registerAction } from '../../redux/thunks/authThunk';
 import { clearError } from '../../redux/slices/authSlice';
 import { useEffect } from 'react';
 import toast from 'react-hot-toast';
+import Logo from '../../components/common/Logo';
 
 const Signup = () => {
     const [showPassword, setShowPassword] = useState(false);
@@ -80,12 +81,7 @@ const Signup = () => {
 
                 {/* Top logo */}
                 <div className="relative z-10">
-                    <div className="flex items-center gap-3">
-                        <div className="size-10 flex items-center justify-center rounded-xl bg-white/20 backdrop-blur-sm">
-                            <HiOutlineCommandLine className="text-xl text-white" />
-                        </div>
-                        <span className="text-white font-black text-xl tracking-tight uppercase">DevDaily</span>
-                    </div>
+                    <Logo disableHover className="invert brightness-0" />
                 </div>
 
                 {/* Center content */}
@@ -148,11 +144,9 @@ const Signup = () => {
 
                 <div className="w-full max-w-[440px] animate-in fade-in slide-in-from-bottom-4 duration-700">
                     {/* Mobile logo */}
-                    <div className="flex flex-col items-center mb-8 lg:items-start">
-                        <div className="size-12 flex items-center justify-center rounded-xl bg-primary/10 text-primary mb-4 lg:hidden">
-                            <HiOutlineCommandLine className="text-2xl" />
-                        </div>
-                        <h1 className="text-2xl font-black tracking-tight uppercase lg:text-3xl">Create Account</h1>
+                    <div className="flex flex-col items-center mb-6 lg:items-start">
+                        <Logo iconOnly />
+                        <h1 className="text-2xl font-black tracking-tight uppercase lg:text-3xl mt-4">Create Account</h1>
                         <p className="text-muted text-sm font-bold mt-1">Join the developer community</p>
                     </div>
 

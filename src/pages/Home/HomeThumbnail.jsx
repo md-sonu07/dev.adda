@@ -12,7 +12,7 @@ const HomeThumbnail = () => {
                 <div className="sticky top-0 h-full w-full overflow-hidden">
                     <img
                         alt="The Future of LLMs"
-                        className="absolute inset-0 w-full h-full object-cover blur-[1px] scale-105"
+                        className="absolute inset-0 w-full h-full object-cover blur-[1px] brightness-70 scale-105"
                         src="https://images.unsplash.com/photo-1677442136019-21780ecad995?q=80&w=2000&auto=format&fit=crop"
                     />
                     {/* Layered Masks for Depth */}
@@ -27,7 +27,7 @@ const HomeThumbnail = () => {
                 <div className="max-w-5xl space-y-8 md:space-y-10 mt-10 md:mt-20">
                     {/* Headline Architecture */}
                     <div className="space-y-4">
-                        <h1 className="text-5xl sm:text-5xl md:text-7xl font-black text-white leading-[0.9] tracking-tighter drop-shadow-2xl">
+                        <h1 className="text-5xl sm:text-5xl md:text-7xl font-black text-white/80 leading-[0.9] tracking-tighter drop-shadow-2xl">
                             The Revolution <br />
                             <span className="text-primary-light italic">of Neural Flux</span>
                         </h1>

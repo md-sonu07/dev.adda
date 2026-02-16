@@ -1,7 +1,7 @@
 import { Link, useNavigate, useSearchParams, useLocation } from 'react-router-dom';
 import { IoSearch, IoAdd, IoBookmarksOutline, IoNotificationsOutline, IoCloseOutline } from 'react-icons/io5';
 import { useState, useEffect, useRef } from 'react';
-import { HiOutlineMoon, HiOutlineSun, HiOutlineShieldCheck } from 'react-icons/hi2';
+import { HiOutlineMoon, HiOutlineSun, HiOutlineShieldCheck, HiUser } from 'react-icons/hi2';
 
 import { useDispatch, useSelector } from 'react-redux';
 import { toggleTheme } from '../../redux/slices/themeSlice';
@@ -118,13 +118,13 @@ function Navbar() {
                 {/* CENTER: SEARCH */}
                 <div className="flex-1 max-w-xl ">
                     <div className="relative group flex items-center">
-                        <div className="absolute left-4 z-10 text-muted/40 group-focus-within:text-primary transition-colors duration-300">
+                        <div className={`absolute left-4 z-10 text-muted/40 transition-all duration-300 ${searchQuery ? 'opacity-0 pointer-events-none' : 'group-focus-within:opacity-0 group-focus-within:pointer-events-none'}`}>
                             <IoSearch className="text-lg" />
                         </div>
 
                         <input
                             ref={searchInputRef}
-                            className="w-full bg-box/30 hover:bg-box/50 text-body border border-default rounded-lg py-2.5 pl-11 pr-14 text-sm transition-all outline-none duration-300 focus:bg-card focus:border-primary/50 focus:ring-4 focus:ring-primary/10 placeholder:text-muted/40"
+                            className={`w-full bg-box/30 hover:bg-box/50 text-body border border-default rounded-lg py-2.5 sm:pr-14 pr-2 text-sm transition-all outline-none duration-300 focus:bg-card focus:border-primary/50 focus:ring-4 focus:ring-primary/10 placeholder:text-muted/40 ${searchQuery ? 'pl-4' : 'pl-11 focus:pl-4'}`}
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                             onKeyDown={handleSearch}
@@ -132,7 +132,7 @@ function Navbar() {
                             type="text"
                         />
 
-                        <div className="absolute right-3 flex items-center gap-1">
+                        <div className="absolute right-3 hidden md:flex items-center gap-1">
                             {searchQuery && (
                                 <>
                                     <button
@@ -141,9 +141,9 @@ function Navbar() {
                                         className="p-1.5 hover:bg-box rounded-md transition-colors text-muted hover:text-primary cursor-pointer active:scale-90"
                                         title="Clear search"
                                     >
-                                        <IoCloseOutline className="text-xl" />
+                                        <IoCloseOutline className="text-md" />
                                     </button>
-                                    <div className="w-1 h-4 bg-default mx-1"></div>
+                                    <div className="w-[2px] h-4 bg-default mx-1"></div>
                                 </>
                             )}
 
@@ -175,15 +175,15 @@ function Navbar() {
                                     className="fixed inset-0 z-90"
                                     onClick={() => setSearchResults([])}
                                 />
-                                <div className="absolute top-[calc(100%+8px)] inset-x-0 bg-card/80 dark:bg-black/60 border border-default rounded-2xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200 z-100 backdrop-blur-xl">
-                                    <div className="p-2">
+                                <div className="max-sm:fixed max-sm:inset-x-4 max-sm:top-20 sm:absolute sm:top-[calc(100%+8px)] sm:inset-x-0 bg-card/90 dark:bg-black/80 border border-default rounded-2xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-300 z-100 backdrop-blur-2xl">
+                                    <div className="p-2 sm:p-4">
                                         {isSearching ? (
-                                            <div className="flex items-center justify-center py-8 gap-3">
-                                                <div className="size-4 border-2 border-primary/20 border-t-primary rounded-full animate-spin" />
+                                            <div className="flex items-center justify-center py-12 gap-3">
+                                                <div className="size-5 border-2 border-primary/20 border-t-primary rounded-full animate-spin" />
                                                 <span className="text-xs font-bold text-muted uppercase tracking-widest">Searching...</span>
                                             </div>
                                         ) : (
-                                            <div className="space-y-1">
+                                            <div className="space-y-1 sm:space-y-2">
                                                 {searchResults.map((post) => (
                                                     <Link
                                                         key={post._id}
@@ -191,18 +191,18 @@ function Navbar() {
                                                         onClick={() => {
                                                             setSearchResults([]);
                                                         }}
-                                                        className="flex items-center gap-4 p-2.5 rounded-xl hover:bg-box/50 transition-all group/item"
+                                                        className="flex items-center gap-4 p-3 sm:p-4 rounded-xl hover:bg-box/50 transition-all group/item"
                                                     >
-                                                        <div className="size-12 rounded-lg overflow-hidden border border-default shrink-0">
+                                                        <div className="size-16 sm:size-12 rounded-lg overflow-hidden border border-default shrink-0">
                                                             <SkeletonImage src={post.coverImage} alt={post.title} className="w-full h-full" />
                                                         </div>
                                                         <div className="flex-1 min-w-0">
-                                                            <h4 className="text-sm font-bold text-body truncate group-hover/item:text-primary transition-colors">{post.title}</h4>
-                                                            <p className="text-[10px] text-muted font-black uppercase tracking-tight mt-1 truncate">
+                                                            <h4 className="text-base sm:text-sm font-bold text-body truncate group-hover/item:text-primary transition-colors">{post.title}</h4>
+                                                            <p className="text-[11px] sm:text-[10px] text-muted font-black uppercase tracking-tight mt-1 truncate">
                                                                 {post.author?.fullName} • {post.category?.categoryName}
                                                             </p>
                                                         </div>
-                                                        <HiOutlineArrowRight className="opacity-0 group-hover/item:opacity-100 group-hover/item:text-primary transition-all pr-1" />
+                                                        <HiOutlineArrowRight className="opacity-0 sm:group-hover/item:opacity-100 sm:group-hover/item:text-primary transition-all pr-1" />
                                                     </Link>
                                                 ))}
 
@@ -211,7 +211,7 @@ function Navbar() {
                                                         navigate(`/?q=${searchQuery}`);
                                                         setSearchResults([]);
                                                     }}
-                                                    className="w-full mt-2 py-3 bg-primary/5 hover:bg-primary/10 text-primary dark:text-white text-[10px] font-black uppercase tracking-widest transition-all rounded-xl flex items-center justify-center gap-2 cursor-pointer"
+                                                    className="w-full mt-2 py-4 sm:py-3 bg-primary hover:bg-primary/80 dark:bg-primary/20 dark:hover:bg-primary/70  text-white dark:text-white text-[11px] sm:text-[10px] font-black uppercase tracking-widest transition-all rounded-xl flex items-center justify-center gap-2 cursor-pointer"
                                                 >
                                                     See all results for "{searchQuery}"
                                                     <HiOutlineArrowRight />
@@ -231,7 +231,7 @@ function Navbar() {
                     {/* ALWAYS SHOW: Story Button (Redirects to login if guest) */}
                     <Link
                         to={user ? "/create-post" : "/login"}
-                        className="hidden md:flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-white text-sm font-bold shadow-lg shadow-primary/20 hover:shadow-primary/40 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300 slant-glow group"
+                        className="hidden md:flex items-center gap-2 px-5 py-2.5 rounded-[12px] bg-primary text-white text-sm font-bold shadow-lg shadow-primary/20 hover:shadow-primary/40 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300 slant-glow group"
                     >
                         <IoAdd className="text-xl group-hover:rotate-90 transition-transform duration-500" />
                         <span className="tracking-tight">Story</span>
@@ -298,21 +298,23 @@ function Navbar() {
                             </Link>
                         </>
                     ) : (
-                        <div className="flex items-center gap-2">
-                            {/* Theme Toggle for guests */}
+                        <div className="flex items-center gap-1.5">
+                            {/* Theme Toggle */}
                             <button
                                 onClick={handleThemeToggle}
-                                className="p-2.5 rounded-xl text-muted hover:text-primary hover:bg-box/50 active:scale-95 transition-all duration-200 cursor-pointer border border-transparent hover:border-default shadow-sm"
+                                className="size-10 flex items-center justify-center bg-box/50 rounded-lg text-muted hover:text-primary hover:bg-box transition-colors cursor-pointer active:scale-95"
                                 title={isDark ? 'Light Mode' : 'Dark Mode'}
                             >
-                                {isDark ? <HiOutlineSun className="text-xl shrink-0" /> : <HiOutlineMoon className="text-xl shrink-0" />}
+                                {isDark ? <HiOutlineSun size={20} /> : <HiOutlineMoon size={20} />}
                             </button>
 
+                            {/* Login */}
                             <Link
                                 to="/login"
-                                className="px-6 py-2.5 rounded-xl bg-box/50 text-body border border-default text-sm font-bold hover:bg-box hover:border-primary/30 transition-all duration-300"
+                                className="size-10 flex items-center justify-center bg-box/50 text-muted hover:text-primary hover:bg-box rounded-lg transition-colors active:scale-95"
+                                title="Sign In"
                             >
-                                Login
+                                <HiUser size={20} />
                             </Link>
                         </div>
                     )}

@@ -18,6 +18,7 @@ import { loginAction } from '../../redux/thunks/authThunk';
 import { clearError } from '../../redux/slices/authSlice';
 import { useEffect } from 'react';
 import toast from 'react-hot-toast';
+import Logo from '../../components/common/Logo';
 
 const Login = () => {
     const [showPassword, setShowPassword] = useState(false);
@@ -70,12 +71,7 @@ const Login = () => {
 
                 {/* Top logo */}
                 <div className="relative z-10">
-                    <div className="flex items-center gap-3">
-                        <div className="size-10 flex items-center justify-center rounded-xl bg-white/20 backdrop-blur-sm">
-                            <HiOutlineCommandLine className="text-xl text-white" />
-                        </div>
-                        <span className="text-white font-black text-xl tracking-tight uppercase">DevDaily</span>
-                    </div>
+                    <Logo disableHover className="invert brightness-0" />
                 </div>
 
                 {/* Center content */}
@@ -138,11 +134,9 @@ const Login = () => {
 
                 <div className="w-full max-w-[400px] animate-in fade-in slide-in-from-bottom-4 duration-700">
                     {/* Mobile logo (shown only on mobile) */}
-                    <div className="flex flex-col items-center mb-8 lg:items-start">
-                        <div className="size-12 flex items-center justify-center rounded-xl bg-primary/10 text-primary mb-4 lg:hidden">
-                            <HiOutlineCommandLine className="text-2xl" />
-                        </div>
-                        <h1 className="text-2xl font-black tracking-tight uppercase lg:text-3xl">Sign In</h1>
+                    <div className="flex flex-col items-center mb-6 lg:items-start">
+                        <Logo iconOnly />
+                        <h1 className="text-2xl font-black tracking-tight uppercase lg:text-3xl mt-4">Sign In</h1>
                         <p className="text-muted text-sm font-bold mt-1">Enter your credentials to continue</p>
                     </div>
 
