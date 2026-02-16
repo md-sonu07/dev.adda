@@ -206,7 +206,7 @@ const hello = "world";
                         {coverImage && (
                             <button
                                 onClick={(e) => { e.stopPropagation(); updatePostData({ coverImage: null }); }}
-                                className="absolute top-4 right-4 p-2 bg-background/50 text-muted rounded-full hover:bg-red-500 hover:text-white transition-all opacity-0 group-hover:opacity-100"
+                                className="absolute top-4 right-4 p-2 bg-rose-500/90 text-white rounded-full lg:opacity-0 lg:group-hover:opacity-100 transition-all duration-300 backdrop-blur-md shadow-lg border border-white/20 active:scale-90"
                             >
                                 <HiXMark className="text-xl" />
                             </button>
