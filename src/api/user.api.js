@@ -13,3 +13,9 @@ export const updateProfile = (userData) => {
         },
     });
 }
+export const updateUserRole = (userId, role) => {
+    return api.patch(`/user/${userId}/role`, { role });
+}
+export const deleteUser = (userId) => {
+    return api.delete(`/user/${userId}`);
+}

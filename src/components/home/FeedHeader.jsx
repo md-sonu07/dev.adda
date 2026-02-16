@@ -1,9 +1,11 @@
 import { IoOptionsOutline } from 'react-icons/io5';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useLocation } from 'react-router-dom';
 
 function FeedHeader() {
     const [searchParams] = useSearchParams();
+    const location = useLocation();
     const q = searchParams.get('q');
+    const isArticlesPage = location.pathname === '/articles';
 
     return (
         <div className="">
@@ -14,13 +16,15 @@ function FeedHeader() {
                     <h2 className="text-3xl sm:text-4xl font-black tracking-tight text-body">
                         {q ? (
                             <>Results for <span className="text-primary italic">"{q}"</span></>
+                        ) : isArticlesPage ? (
+                            <>Article <span className="text-primary italic">Index</span></>
                         ) : (
                             <>Developer's <span className="text-primary italic">Feed</span></>
                         )}
                     </h2>
 
                     <p className="text-[13px] font-medium text-muted mt-2 tracking-wide uppercase opacity-60">
-                        {q ? `Found matching insights for your search` : `Curated intelligence for the modern engineer`}
+                        {q ? `Found matching insights for your search` : isArticlesPage ? `Explore our complete collection of stories` : `Curated intelligence for the modern engineer`}
                     </p>
                 </div>
 

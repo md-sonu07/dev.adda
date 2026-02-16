@@ -15,7 +15,8 @@ function AppRoutes() {
     return (
         <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/articles" element={<Articles />} />
+            <Route path="/article/:id" element={<Articles />} />
+            <Route path="/articles" element={<Home />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
 
@@ -34,9 +35,6 @@ function AppRoutes() {
             <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
             <Route path="/bookmarks" element={<ProtectedRoute><SavePost /></ProtectedRoute>} />
             <Route path="/notifications" element={<ProtectedRoute><ComingSoon featureName="Notifications Center" /></ProtectedRoute>} />
-
-            {/* Catch All */}
-            <Route path="/article/:id" element={<Articles />} />
             <Route path="*" element={<NotFound />} />
         </Routes>
     );

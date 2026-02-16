@@ -36,3 +36,27 @@ export const updateProfileAction = createAsyncThunk(
         }
     }
 );
+
+export const updateUserRoleAction = createAsyncThunk(
+    'user/updateRole',
+    async ({ userId, role }, { rejectWithValue }) => {
+        try {
+            const response = await userApi.updateUserRole(userId, role);
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(error.response?.data || error.message);
+        }
+    }
+);
+
+export const deleteUserAction = createAsyncThunk(
+    'user/delete',
+    async (userId, { rejectWithValue }) => {
+        try {
+            const response = await userApi.deleteUser(userId);
+            return { userId, ...response.data };
+        } catch (error) {
+            return rejectWithValue(error.response?.data || error.message);
+        }
+    }
+);

@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { MdAddAPhoto } from 'react-icons/md';
-import { HiOutlineLink, HiXMark, HiPlus, HiOutlineCommandLine, HiOutlineDocumentText, HiOutlineInformationCircle, HiOutlineSparkles, HiCheckCircle, HiOutlineClipboardDocument } from 'react-icons/hi2';
+import { HiOutlineLink, HiXMark, HiPlus, HiOutlineCommandLine, HiOutlineDocumentText, HiOutlineInformationCircle, HiOutlineSparkles, HiCheckCircle, HiOutlineClipboardDocument, HiChevronDown } from 'react-icons/hi2';
 import TextEditor from './TextEditor';
 import InputModal from '../common/InputModal';
 import SkeletonImage from '../common/SkeletonImage';
+import { motion, AnimatePresence } from 'framer-motion';
 
 import { useDispatch, useSelector } from 'react-redux';
 import { createPostAction } from '../../redux/thunks/postThunk';
@@ -25,6 +26,7 @@ const PostEditor = ({ postData, updatePostData, handlePublish, handleSaveDraft, 
     const [copiedFormat, setCopiedFormat] = useState(false);
     const [isImageModalOpen, setIsImageModalOpen] = useState(false);
     const [imagePreview, setImagePreview] = useState('');
+    const [isCategoryDropdownOpen, setIsCategoryDropdownOpen] = useState(false);
 
     const { title, description, content, category, projectLink, tags, coverImage } = postData;
 
@@ -251,24 +253,50 @@ const hello = "world";
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300">
                     <div className="flex flex-col gap-3">
                         <label className="block text-[10px] font-black uppercase tracking-[0.2em] text-muted ml-1">Article Category</label>
-                        <div className="relative group">
-                            <select
-                                value={category}
-                                onChange={(e) => updatePostData({ category: e.target.value })}
-                                className="w-full p-4 outline-none rounded-xl  border border-default shadow-sm focus:border-primary/50 focus:ring-0 transition-all text-body font-bold appearance-none cursor-pointer bg-transparent"
+                        <div className="relative">
+                            <button
+                                type="button"
+                                onClick={() => setIsCategoryDropdownOpen(!isCategoryDropdownOpen)}
+                                className="w-full flex items-center justify-between p-4 bg-transparent border border-default rounded-xl shadow-sm focus-within:border-primary/50 transition-all text-body font-bold"
                             >
-                                <option value="" disabled>Select Category</option>
-                                {categories && categories.map((cat) => (
-                                    <option key={cat._id} value={cat._id}>
-                                        {cat.categoryName}
-                                    </option>
-                                ))}
-                            </select>
-                            <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-muted group-focus-within:text-primary transition-colors">
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M19 9l-7 7-7-7" />
-                                </svg>
-                            </div>
+                                <span className={category ? "text-body" : "text-muted/40"}>
+                                    {category
+                                        ? (categories?.find(cat => cat._id === category)?.categoryName || "Selected Category")
+                                        : "Select Category"}
+                                </span>
+                                <HiChevronDown className={`text-base transition-transform duration-300 ${isCategoryDropdownOpen ? 'rotate-180' : ''}`} />
+                            </button>
+
+                            <AnimatePresence>
+                                {isCategoryDropdownOpen && (
+                                    <>
+                                        <div className="fixed inset-0 z-40" onClick={() => setIsCategoryDropdownOpen(false)} />
+                                        <motion.div
+                                            initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                                            exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                                            className="absolute left-0 top-full mt-2 w-full bg-card border border-default rounded-xl shadow-2xl overflow-hidden z-50 p-1.5"
+                                        >
+                                            {categories && categories.map((cat) => (
+                                                <button
+                                                    key={cat._id}
+                                                    type="button"
+                                                    onClick={() => {
+                                                        updatePostData({ category: cat._id });
+                                                        setIsCategoryDropdownOpen(false);
+                                                    }}
+                                                    className={`w-full text-left px-4 py-3 mb-1 rounded-xl text-xs font-bold transition-all ${category === cat._id
+                                                            ? 'bg-primary text-white shadow-lg shadow-primary/20'
+                                                            : 'hover:bg-box text-muted hover:text-body'
+                                                        }`}
+                                                >
+                                                    {cat.categoryName}
+                                                </button>
+                                            ))}
+                                        </motion.div>
+                                    </>
+                                )}
+                            </AnimatePresence>
                         </div>
                     </div>
                     <div className="flex flex-col gap-3">

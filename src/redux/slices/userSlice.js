@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { getUserProfileAction, getAllUsersAction, updateProfileAction } from "../thunks/userThunk";
+import { getUserProfileAction, getAllUsersAction, updateProfileAction, updateUserRoleAction, deleteUserAction } from "../thunks/userThunk";
 
 const initialState = {
     userProfile: null,
@@ -54,6 +54,37 @@ const userSlice = createSlice({
                 state.error = null;
             })
             .addCase(updateProfileAction.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
+            })
+            // Update User Role
+            .addCase(updateUserRoleAction.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(updateUserRoleAction.fulfilled, (state, action) => {
+                state.loading = false;
+                if (action.payload.User) {
+                    state.users = state.users.map(user =>
+                        user._id === action.payload.User._id ? action.payload.User : user
+                    );
+                }
+                state.error = null;
+            })
+            .addCase(updateUserRoleAction.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
+            })
+            // Delete User
+            .addCase(deleteUserAction.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(deleteUserAction.fulfilled, (state, action) => {
+                state.loading = false;
+                state.users = state.users.filter(user => user._id !== action.payload.userId);
+                state.totalUsers -= 1;
+                state.error = null;
+            })
+            .addCase(deleteUserAction.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload;
             });

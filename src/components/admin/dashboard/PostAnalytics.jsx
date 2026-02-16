@@ -11,9 +11,14 @@ import {
     Cell
 } from 'recharts';
 import { useSelector } from 'react-redux';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
+import { HiChevronDown } from 'react-icons/hi2';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const PostAnalytics = () => {
+    const [isOpen, setIsOpen] = useState(false);
+    const [selectedPeriod, setSelectedPeriod] = useState('Last 7 Days');
+    const periods = ['Last 7 Days', 'Last 30 Days'];
     const { isDark } = useSelector((state) => state.theme);
     const { posts } = useSelector((state) => state.post);
 
@@ -128,10 +133,45 @@ const PostAnalytics = () => {
                         <h3 className="text-[10px] font-black uppercase tracking-widest text-muted mb-1">Performance</h3>
                         <h2 className="text-sm font-black text-body uppercase tracking-widest">Engagement Depth</h2>
                     </div>
-                    <select className="bg-box border border-default rounded-lg px-3 py-1.5 text-[10px] font-black uppercase tracking-widest outline-none focus:border-primary/50">
-                        <option>Last 7 Days</option>
-                        <option>Last 30 Days</option>
-                    </select>
+                    <div className="relative">
+                        <button
+                            onClick={() => setIsOpen(!isOpen)}
+                            className="bg-box border border-default rounded-lg px-3 py-1.5 text-[10px] font-black uppercase tracking-widest outline-none focus:border-primary/50 flex items-center gap-2 hover:bg-default transition-all"
+                        >
+                            {selectedPeriod}
+                            <HiChevronDown className={`text-xs transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
+                        </button>
+
+                        <AnimatePresence>
+                            {isOpen && (
+                                <>
+                                    <div className="fixed inset-0 z-40" onClick={() => setIsOpen(false)} />
+                                    <motion.div
+                                        initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                                        exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                                        className="absolute right-0 top-full mt-2 w-full min-w-[120px] bg-card border border-default rounded-2xl shadow-2xl overflow-hidden z-50 p-1.5"
+                                    >
+                                        {periods.map((period) => (
+                                            <button
+                                                key={period}
+                                                onClick={() => {
+                                                    setSelectedPeriod(period);
+                                                    setIsOpen(false);
+                                                }}
+                                                className={`w-full text-left px-3 py-2.5 mb-1 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${selectedPeriod === period
+                                                    ? 'bg-primary text-white shadow-lg shadow-primary/20'
+                                                    : 'hover:bg-box text-muted hover:text-body'
+                                                    }`}
+                                            >
+                                                {period}
+                                            </button>
+                                        ))}
+                                    </motion.div>
+                                </>
+                            )}
+                        </AnimatePresence>
+                    </div>
                 </div>
 
                 <div className="h-[280px] w-full">

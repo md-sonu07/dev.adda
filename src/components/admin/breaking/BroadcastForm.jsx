@@ -1,7 +1,11 @@
-import React from 'react';
-import { HiOutlineMegaphone } from 'react-icons/hi2';
+import React, { useState } from 'react';
+import { HiOutlineMegaphone, HiChevronDown } from 'react-icons/hi2';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const BroadcastForm = () => {
+    const [isOpen, setIsOpen] = useState(false);
+    const [selectedType, setSelectedType] = useState('General Info');
+    const types = ['General Info', 'Breaking Event', 'Emergency Alert'];
     return (
         <div className="bg-card border border-default rounded-2xl p-6 shadow-sm h-fit sticky top-24">
             <div className="flex items-center gap-2 mb-6">
@@ -16,11 +20,47 @@ const BroadcastForm = () => {
                 </div>
                 <div>
                     <label className="block text-[10px] font-black uppercase tracking-widest text-muted mb-2">Notice Type</label>
-                    <select className="w-full px-4 py-3 bg-box border border-default rounded-xl text-[10px] font-black uppercase tracking-widest outline-none">
-                        <option>General Info</option>
-                        <option>Breaking Event</option>
-                        <option>Emergency Alert</option>
-                    </select>
+                    <div className="relative">
+                        <button
+                            type="button"
+                            onClick={() => setIsOpen(!isOpen)}
+                            className="w-full px-4 py-3 bg-box border border-default rounded-xl text-[10px] font-black uppercase tracking-widest outline-none flex items-center justify-between hover:bg-default transition-all"
+                        >
+                            {selectedType}
+                            <HiChevronDown className={`text-sm transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
+                        </button>
+
+                        <AnimatePresence>
+                            {isOpen && (
+                                <>
+                                    <div className="fixed inset-0 z-40" onClick={() => setIsOpen(false)} />
+                                    <motion.div
+                                        initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                                        exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                                        className="absolute left-0 top-full mt-2 w-full bg-card border border-default rounded-2xl shadow-2xl overflow-hidden z-50 p-1.5"
+                                    >
+                                        {types.map((type) => (
+                                            <button
+                                                key={type}
+                                                type="button"
+                                                onClick={() => {
+                                                    setSelectedType(type);
+                                                    setIsOpen(false);
+                                                }}
+                                                className={`w-full text-left px-3 py-2.5 mb-1 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${selectedType === type
+                                                    ? 'bg-primary text-white shadow-lg shadow-primary/20'
+                                                    : 'hover:bg-box text-muted hover:text-body'
+                                                    }`}
+                                            >
+                                                {type}
+                                            </button>
+                                        ))}
+                                    </motion.div>
+                                </>
+                            )}
+                        </AnimatePresence>
+                    </div>
                 </div>
                 <div>
                     <label className="block text-[10px] font-black uppercase tracking-widest text-muted mb-2">Short Description</label>

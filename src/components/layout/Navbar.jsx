@@ -20,7 +20,7 @@ function Navbar() {
     const [searchResults, setSearchResults] = useState([]);
     const [isSearching, setIsSearching] = useState(false);
     const { isDark } = useSelector((state) => state.theme);
-    const { isAdmin, user } = useSelector((state) => state.auth);
+    const { isAdmin, user, loading } = useSelector((state) => state.auth);
     const dispatch = useDispatch();
     const searchInputRef = useRef(null);
 
@@ -229,15 +229,23 @@ function Navbar() {
                 <div className="flex items-center gap-2 sm:gap-4 shrink-0">
 
                     {/* ALWAYS SHOW: Story Button (Redirects to login if guest) */}
-                    <Link
-                        to={user ? "/create-post" : "/login"}
-                        className="hidden md:flex items-center gap-2 px-5 py-2.5 rounded-[12px] bg-primary text-white text-sm font-bold shadow-lg shadow-primary/20 hover:shadow-primary/40 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300 slant-glow group"
-                    >
-                        <IoAdd className="text-xl group-hover:rotate-90 transition-transform duration-500" />
-                        <span className="tracking-tight">Story</span>
-                    </Link>
+                    {!loading && (
+                        <Link
+                            to={user ? "/create-post" : "/login"}
+                            className="hidden md:flex items-center gap-2 px-5 py-2.5 rounded-[12px] bg-primary text-white text-sm font-bold shadow-lg shadow-primary/20 hover:shadow-primary/40 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300 slant-glow group"
+                        >
+                            <IoAdd className="text-xl group-hover:rotate-90 transition-transform duration-500" />
+                            <span className="tracking-tight">Story</span>
+                        </Link>
+                    )}
 
-                    {user ? (
+                    {loading ? (
+                        /* Skeleton loader to prevent flicker */
+                        <div className="flex items-center gap-2">
+                            <div className="w-24 h-10 bg-box/40 rounded-xl animate-pulse border border-default hidden md:block"></div>
+                            <div className="size-10 bg-box/40 rounded-xl animate-pulse border border-default"></div>
+                        </div>
+                    ) : user ? (
                         <>
                             {/* User Action Island */}
                             <div className="flex items-center gap-1 p-1 bg-box/40 rounded-xl border border-default transition-all duration-500 overflow-hidden sm:opacity-100 sm:w-auto max-sm:w-0 max-sm:opacity-0 max-sm:p-0 max-sm:border-0 max-sm:pointer-events-none">

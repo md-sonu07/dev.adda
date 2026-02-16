@@ -13,10 +13,13 @@ import {
     HiOutlineNewspaper,
     HiOutlineCog6Tooth,
     HiOutlineArrowLeftOnRectangle,
-    HiOutlineArrowTopRightOnSquare
+    HiOutlineArrowTopRightOnSquare,
+    HiOutlineSun,
+    HiOutlineMoon
 } from 'react-icons/hi2';
 import { useDispatch, useSelector } from 'react-redux';
 import { logoutAction } from '../../redux/thunks/authThunk';
+import { toggleTheme } from '../../redux/slices/themeSlice';
 import Logo from '../common/Logo';
 import SkeletonImage from '../common/SkeletonImage';
 import toast from 'react-hot-toast';
@@ -24,18 +27,26 @@ import toast from 'react-hot-toast';
 const NavLink = ({ to, icon: Icon, label, active }) => (
     <Link
         to={to}
-        className={`flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${active
-            ? 'bg-primary/10 text-primary border border-primary/20'
-            : 'text-muted hover:bg-primary/10 hover:text-primary'
-            }`}
+        className="relative flex items-center px-4 py-3 text-sm font-bold rounded-xl group transition-all duration-300"
     >
-        <Icon className={`mr-3 text-lg ${active ? 'text-primary' : ''}`} />
-        {label}
+        {/* Sophisticated Fluid Background */}
+        {active && (
+            <motion.div
+                layoutId="active-pill"
+                className="absolute inset-0 bg-primary/10 border border-primary/20 rounded-lg"
+                transition={{ type: "spring", stiffness: 350, damping: 30 }}
+            />
+        )}
+
+        <div className={`relative z-10 flex items-center gap-3.5 w-full transition-colors duration-300 ${active ? 'text-primary' : 'text-body/60 group-hover:text-body'}`}>
+            <Icon className={`text-xl transition-all duration-300 ${active ? 'scale-105' : 'group-hover:scale-110 group-hover:text-primary'}`} />
+            <span className="truncate tracking-tight">{label}</span>
+        </div>
     </Link>
 );
 
 const SectionTitle = ({ children }) => (
-    <p className="px-3 text-[10px] font-black uppercase tracking-widest text-muted mt-4 mb-2">
+    <p className="px-5 text-[10px] font-black uppercase tracking-widest text-body/30 mt-6 mb-2">
         {children}
     </p>
 );
@@ -44,6 +55,7 @@ const AdminSidebar = ({ isOpen, onClose }) => {
     const { pathname } = useLocation();
     const dispatch = useDispatch();
     const { user } = useSelector(state => state.auth);
+    const { isDark } = useSelector(state => state.theme);
 
     // Initialize state immediately to prevent "flash" of sidebar on mobile
     const [isMobile, setIsMobile] = React.useState(() =>
@@ -65,6 +77,10 @@ const AdminSidebar = ({ isOpen, onClose }) => {
         } catch (error) {
             toast.error('Logout failed');
         }
+    };
+
+    const handleThemeToggle = () => {
+        dispatch(toggleTheme());
     };
 
     const mainMenu = [
@@ -104,11 +120,12 @@ const AdminSidebar = ({ isOpen, onClose }) => {
                 transition={{ type: 'spring', damping: 25, stiffness: 200 }}
                 className={`fixed md:static inset-y-0 left-0 z-110 w-72 shrink-0 bg-card border-r border-default flex flex-col transition-none`}
             >
-                {/* Mobile Close Button */}
-                <div className="md:hidden absolute top-6 right-6">
+                {/* Mobile Actions (Top Right) */}
+                <div className="md:hidden absolute top-6 right-6 flex items-center gap-2">
+                    {/* Close Button */}
                     <button
                         onClick={onClose}
-                        className="p-2.5 rounded-xl bg-box border border-default text-muted hover:text-primary transition-all"
+                        className="p-2.5 rounded-xl bg-box border border-default text-muted hover:text-primary transition-all active:scale-95"
                     >
                         <HiXMark className="text-xl" />
                     </button>
@@ -121,9 +138,9 @@ const AdminSidebar = ({ isOpen, onClose }) => {
                 <nav className="flex-1 px-4 py-2 space-y-1 overflow-y-auto no-scrollbar">
                     <Link
                         to="/"
-                        className="flex items-center px-3 py-2.5 text-sm font-medium rounded-lg text-muted hover:bg-primary/10 hover:text-primary transition-all duration-200"
+                        className="flex items-center px-4 py-3 text-sm font-bold rounded-md text-body/60 hover:bg-primary/5 transition-all duration-300 group"
                     >
-                        <HiOutlineArrowTopRightOnSquare className="mr-3 text-lg" />
+                        <HiOutlineArrowTopRightOnSquare className="mr-3.5 text-xl group-hover:scale-110 transition-transform" />
                         View Live Site
                     </Link>
                     <SectionTitle>Main Menu</SectionTitle>
@@ -141,14 +158,30 @@ const AdminSidebar = ({ isOpen, onClose }) => {
                     ))}
 
                     <SectionTitle>System</SectionTitle>
+                    <button
+                        onClick={handleThemeToggle}
+                        className="w-full flex items-center px-4 py-3 text-sm font-bold rounded-md text-body/60 hover:bg-primary/5 hover:text-primary transition-all duration-300 group cursor-pointer"
+                    >
+                        {isDark ? (
+                            <>
+                                <HiOutlineSun className="mr-3.5 text-xl group-hover:scale-110 transition-transform" />
+                                Light Mode
+                            </>
+                        ) : (
+                            <>
+                                <HiOutlineMoon className="mr-3.5 text-xl group-hover:scale-110 transition-transform" />
+                                Dark Mode
+                            </>
+                        )}
+                    </button>
                     <NavLink to="/admin/settings" icon={HiOutlineCog6Tooth} label="Settings" active={pathname === '/admin/settings'} />
 
-                    <div className="pt-4 mt-4 border-t border-box border-default/50">
+                    <div className="pt-4 mt-4 border-t border-box">
 
 
                         <button
                             onClick={handleLogout}
-                            className="w-full flex items-center px-3 py-2.5 text-sm font-medium rounded-xl text-rose-500 hover:bg-rose-500/10 transition-all mt-1"
+                            className="w-full flex items-center px-3 py-2.5 text-sm font-medium rounded-md text-rose-500 hover:bg-rose-500/10 transition-all mt-1"
                         >
                             <HiOutlineArrowLeftOnRectangle className="mr-3 text-lg" />
                             Logout

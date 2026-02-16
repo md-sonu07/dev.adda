@@ -1,7 +1,8 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { HiOutlineEllipsisVertical, HiOutlineEye, HiOutlineChatBubbleLeftRight, HiOutlineCheckCircle, HiOutlineXCircle, HiOutlineClock, HiOutlineTrash } from 'react-icons/hi2';
+import { HiOutlineEllipsisVertical, HiOutlineEye, HiOutlineChatBubbleLeftRight, HiOutlineCheckCircle, HiOutlineXCircle, HiOutlineClock, HiOutlineTrash, HiOutlineUserMinus } from 'react-icons/hi2';
 import { useDispatch, useSelector } from 'react-redux';
 import { getAllPostsAction, updatePostStatusAction, deletePostAction } from '../../../redux/thunks/postThunk';
+import { deleteUserAction } from '../../../redux/thunks/userThunk';
 import Modal from '../../common/Modal';
 import toast from 'react-hot-toast';
 import SkeletonImage from '../../common/SkeletonImage';
@@ -11,6 +12,7 @@ const PostsTable = () => {
     const { posts, loading } = useSelector(state => state.post);
     const [activeMenu, setActiveMenu] = useState(null);
     const [deleteModal, setDeleteModal] = useState({ isOpen: false, postId: null });
+    const [deleteUserModal, setDeleteUserModal] = useState({ isOpen: false, userId: null });
     const menuRef = useRef(null);
 
     useEffect(() => {
@@ -46,6 +48,20 @@ const PostsTable = () => {
         }
     };
 
+    const confirmDeleteUser = async () => {
+        try {
+            await dispatch(deleteUserAction(deleteUserModal.userId)).unwrap();
+            toast.success('Author deleted successfully');
+            // Refresh posts as some might have been removed if cascaded (though backend doesn't show cascade yet)
+            dispatch(getAllPostsAction({ status: 'all' }));
+        } catch (error) {
+            toast.error(error?.message || 'Failed to delete author');
+        } finally {
+            setDeleteUserModal({ isOpen: false, userId: null });
+            setActiveMenu(null);
+        }
+    };
+
     const handleDeleteClick = (e, id) => {
         e.stopPropagation();
         setDeleteModal({ isOpen: true, postId: id });
@@ -74,7 +90,7 @@ const PostsTable = () => {
                             <th className="px-6 py-4"></th>
                         </tr>
                     </thead>
-                    <tbody className="divide-y divide-box divide-default">
+                    <tbody className="divide-y divide-box">
                         {posts && posts.length > 0 ? (
                             posts.map((post) => (
                                 <tr key={post._id} className="hover:bg-box/30 transition-colors group">
@@ -106,19 +122,23 @@ const PostsTable = () => {
                                         </div>
                                     </td>
                                     <td className="px-6 py-4">
-                                        <div className="flex items-center gap-2">
-                                            <span className={`text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-lg border flex items-center gap-1.5 ${post.status === 'approved'
-                                                ? 'text-emerald-500 bg-emerald-500/10 border-emerald-500/20'
-                                                : post.status === 'rejected'
-                                                    ? 'text-red-500 bg-red-500/10 border-red-500/20'
-                                                    : 'text-amber-500 bg-amber-500/10 border-amber-500/20'
-                                                }`}>
-                                                {post.status === 'approved' && <div className="size-1 rounded-full bg-emerald-500 animate-pulse" />}
-                                                {post.status}
-                                            </span>
-                                            <span className={`text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded-md border ${post.userStatus === 'published' ? 'text-blue-500 bg-blue-500/5 border-blue-500/10' : 'text-muted bg-box border-default'}`}>
-                                                {post.userStatus}
-                                            </span>
+                                        <div className="flex items-center gap-3">
+                                            {/* Minimalist Indicator Dot */}
+                                            <div className={`size-2 rounded-full shrink-0 ${post.status === 'approved' ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.3)]' :
+                                                post.status === 'rejected' ? 'bg-rose-500' : 'bg-amber-500 animate-pulse'
+                                                }`} />
+
+                                            <div className="flex flex-col gap-0.5">
+                                                <span className={`text-[11px] font-black uppercase tracking-widest leading-none ${post.status === 'approved' ? 'text-emerald-600 dark:text-emerald-400' :
+                                                    post.status === 'rejected' ? 'text-rose-600 dark:text-rose-400' :
+                                                        'text-amber-600 dark:text-amber-400'
+                                                    }`}>
+                                                    {post.status}
+                                                </span>
+                                                <span className="text-[10px] font-bold text-muted/50 uppercase tracking-tight leading-none">
+                                                    {post.userStatus}
+                                                </span>
+                                            </div>
                                         </div>
                                     </td>
                                     <td className="px-6 py-4">
@@ -140,7 +160,7 @@ const PostsTable = () => {
                                         <div className="relative inline-block text-left">
                                             <button
                                                 onClick={() => setActiveMenu(activeMenu === post._id ? null : post._id)}
-                                                className="p-2 text-muted hover:text-primary hover:bg-box rounded-xl transition-all"
+                                                className="p-2 text-muted hover:text-primary hover:bg-box rounded-xl transition-all cursor-pointer"
                                             >
                                                 <HiOutlineEllipsisVertical className="text-xl" />
                                             </button>
@@ -148,7 +168,7 @@ const PostsTable = () => {
                                             {activeMenu === post._id && (
                                                 <div
                                                     ref={menuRef}
-                                                    className="absolute right-0 mt-2 w-48 bg-slate-800 [&_button]:cursor-pointer border border-default rounded-xl shadow-2xl z-50 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200"
+                                                    className="absolute right-0 mt-2 w-48 bg-white/80 dark:bg-gray-800 [&_button]:cursor-pointer border border-default rounded-xl shadow-2xl z-50 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200"
                                                 >
                                                     <div className="p-2 space-y-1">
                                                         <button
@@ -170,6 +190,17 @@ const PostsTable = () => {
                                                         >
                                                             <HiOutlineTrash className="text-lg group-hover/item:scale-110 transition-transform" />
                                                             Delete Post
+                                                        </button>
+
+                                                        <button
+                                                            onClick={() => {
+                                                                setDeleteUserModal({ isOpen: true, userId: post.author?._id });
+                                                            }}
+                                                            className="w-full flex items-center gap-3 px-3 py-2 text-xs font-black uppercase tracking-widest text-muted hover:text-rose-600 hover:bg-rose-600/5 rounded-xl transition-all group/item"
+                                                            disabled={!post.author?._id}
+                                                        >
+                                                            <HiOutlineUserMinus className="text-lg group-hover/item:scale-110 transition-transform" />
+                                                            Delete Author
                                                         </button>
 
                                                         <div className="h-px bg-default mx-2 my-1" />
@@ -232,7 +263,7 @@ const PostsTable = () => {
                     <button className="px-4 py-2 bg-card border border-default rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-box transition-all">Next</button>
                 </div>
             </div>
-            {/* Confirmation Modal */}
+            {/* Post Confirmation Modal */}
             <Modal
                 isOpen={deleteModal.isOpen}
                 onClose={() => setDeleteModal({ isOpen: false, postId: null })}
@@ -242,6 +273,18 @@ const PostsTable = () => {
                 confirmText="Delete Post"
             >
                 Are you sure you want to permanently delete this post? This action is irreversible.
+            </Modal>
+
+            {/* User Confirmation Modal */}
+            <Modal
+                isOpen={deleteUserModal.isOpen}
+                onClose={() => setDeleteUserModal({ isOpen: false, userId: null })}
+                onConfirm={confirmDeleteUser}
+                title="Delete Author?"
+                type="danger"
+                confirmText="Delete Author"
+            >
+                Are you sure you want to permanently delete this author? This will remove their entire account and associated profile. This action cannot be undone.
             </Modal>
         </div>
     );

@@ -1,25 +1,34 @@
+import { useLocation } from "react-router-dom";
 import Feed from "./Feed.jsx";
 import HomeThumbnail from "./HomeThumbnail.jsx";
 import CategoryFilter from "../../components/home/CategoryFilter";
 import FeedHeader from "../../components/home/FeedHeader";
 
 function Home() {
+    const location = useLocation();
+    const isArticlesPage = location.pathname === '/articles';
+
     return (
         <main className="min-h-screen w-full animate-in fade-in slide-in-from-bottom-4 duration-700">
             {/* Floating Sticky Navigation Overlay */}
-            <div className="sticky sm:top-6 top-10 px-4 sm:px-0 inset-x-0 z-30 h-0 pointer-events-none">
-                <div className="max-w-[1400px] mx-auto pointer-events-auto">
+            <div className={`sticky inset-x-0 z-30 transition-all duration-500 ${isArticlesPage
+                ? "top-16 py-4"
+                : "sm:top-6 top-10 h-0 pointer-events-none"
+                }`}>
+                <div className="max-w-[1400px] mx-auto px-8 sm:px-14 pointer-events-auto">
                     <CategoryFilter />
                 </div>
             </div>
 
-            {/* Immersive Full-Screen Hero Section */}
-            <div className="relative w-full h-screen">
-                <HomeThumbnail />
-            </div>
+            {/* Immersive Full-Screen Hero Section - Hidden on /articles */}
+            {!isArticlesPage && (
+                <div className="relative w-full h-screen">
+                    <HomeThumbnail />
+                </div>
+            )}
 
             {/* Content Section */}
-            <div className="max-w-[1400px] mx-auto px-8 sm:px-14 pt-16 bg-background">
+            <div className={`max-w-[1400px] mx-auto px-8 sm:px-14 bg-background transition-all duration-500 ${isArticlesPage ? 'pt-6' : 'pt-16'}`}>
                 <FeedHeader />
                 <div className="mt-8">
                     <Feed />
