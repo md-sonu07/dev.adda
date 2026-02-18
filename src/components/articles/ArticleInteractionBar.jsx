@@ -1,35 +1,35 @@
 import React from 'react';
 import { HiOutlineHandThumbUp, HiOutlineChatBubbleBottomCenterText, HiOutlineBookmark, HiOutlineShare } from 'react-icons/hi2';
+import { motion } from 'framer-motion';
 
 const ArticleInteractionBar = () => {
+    const actions = [
+        { icon: HiOutlineHandThumbUp, label: '1.2k', color: 'hover:text-blue-500' },
+        { icon: HiOutlineChatBubbleBottomCenterText, label: '45', color: 'hover:text-green-500' },
+        { icon: HiOutlineBookmark, color: 'hover:text-yellow-500' },
+        { icon: HiOutlineShare, color: 'hover:text-indigo-500' },
+    ];
+
     return (
-        <aside className="hidden xl:flex flex-col items-center gap-6 sticky-interaction-bar mt-20">
-            <div className="flex flex-col items-center gap-2 group">
-                <button
-                    className="flex size-12 items-center justify-center rounded-full bg-slate-100 dark:bg-[#232f48] text-slate-600 dark:text-slate-400 hover:text-primary hover:bg-primary/10 transition-all border border-transparent hover:border-primary/30">
-                    <HiOutlineHandThumbUp className="text-xl" />
-                </button>
-                <span className="text-xs font-bold text-slate-500 dark:text-slate-400">1.2k</span>
-            </div>
-            <div className="flex flex-col items-center gap-2 group">
-                <button
-                    className="flex size-12 items-center justify-center rounded-full bg-slate-100 dark:bg-[#232f48] text-slate-600 dark:text-slate-400 hover:text-primary hover:bg-primary/10 transition-all border border-transparent hover:border-primary/30">
-                    <HiOutlineChatBubbleBottomCenterText className="text-xl" />
-                </button>
-                <span className="text-xs font-bold text-slate-500 dark:text-slate-400">45</span>
-            </div>
-            <div className="flex flex-col items-center gap-2 group">
-                <button
-                    className="flex size-12 items-center justify-center rounded-full bg-slate-100 dark:bg-[#232f48] text-slate-600 dark:text-slate-400 hover:text-primary hover:bg-primary/10 transition-all border border-transparent hover:border-primary/30">
-                    <HiOutlineBookmark className="text-xl" />
-                </button>
-            </div>
-            <div className="flex flex-col items-center gap-2 group">
-                <button
-                    className="flex size-12 items-center justify-center rounded-full bg-slate-100 dark:bg-[#232f48] text-slate-600 dark:text-slate-400 hover:text-primary hover:bg-primary/10 transition-all border border-transparent hover:border-primary/30">
-                    <HiOutlineShare className="text-xl" />
-                </button>
-            </div>
+        <aside className="hidden xl:flex flex-col items-center gap-8 sticky top-32 mt-24">
+            {actions.map((action, idx) => (
+                <motion.div
+                    key={idx}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.1 * idx, duration: 0.5 }}
+                    className="flex flex-col items-center gap-2 group"
+                >
+                    <button
+                        className={`flex size-12 items-center justify-center rounded-2xl bg-box/40 dark:bg-[#1a2333]/40 backdrop-blur-md border border-default hover:border-primary/30 text-muted transition-all duration-300 shadow-sm hover:shadow-lg hover:shadow-primary/10 active:scale-90 ${action.color}`}
+                    >
+                        <action.icon className="text-xl group-hover:scale-110 transition-transform" />
+                    </button>
+                    {action.label && (
+                        <span className="text-[10px] font-black tracking-tighter text-muted/80">{action.label}</span>
+                    )}
+                </motion.div>
+            ))}
         </aside>
     );
 };

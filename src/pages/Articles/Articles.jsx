@@ -7,11 +7,11 @@ import ReadingProgressBar from '../../components/articles/ReadingProgressBar'
 import { useParams } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { getPostByIdAction } from '../../redux/thunks/postThunk'
-import { useEffect } from 'react'
+import { useEffect, useLayoutEffect } from 'react'
 
 const ArticleSkeleton = () => {
   return (
-    <div className="min-h-screen bg-background transition-colors duration-500 animate-pulse">
+    <div className="min-h-screen bg-background transition-colors duration-500 animate-pulse flex flex-col">
       <main className="mx-auto flex w-full max-w-[1280px] items-start gap-8 px-4 py-8 md:px-10">
         {/* Left Sticky Bar Skeleton */}
         <div className="hidden lg:flex flex-col gap-6 sticky top-24 pt-4">
@@ -81,6 +81,10 @@ function Articles() {
   const dispatch = useDispatch();
   const { singlePost: post, loading } = useSelector((state) => state.post);
 
+  useLayoutEffect(() => {
+    window.scrollTo(0, 0);
+  }, [id]);
+
   useEffect(() => {
     if (!id) return;
     async function fetchPost() {
@@ -105,19 +109,23 @@ function Articles() {
 
 
   return (
-    <div className="min-h-screen bg-background-light dark:bg-background-dark">
+    <div className="min-h-screen bg-background">
       <ReadingProgressBar />
       <main className="mx-auto flex w-full max-w-[1280px] grow items-start gap-8 px-4 py-8 md:px-10">
         {/* Left Sticky Interaction Bar (Desktop) */}
         <ArticleInteractionBar />
 
         {/* Center Content Area */}
-        <article className="flex flex-1 flex-col max-w-[800px] overflow-hidden">
+        <article className="flex flex-1 flex-col max-w-[840px] overflow-hidden">
           <ArticleHero post={post} />
           <ArticleContent post={post} />
 
-          {/* Divider */}
-          <hr className="border-slate-200 dark:border-[#232f48] my-10" />
+          {/* Premium Bottom Section Divider */}
+          <div className="flex items-center gap-6 my-16">
+            <div className="flex-1 h-px bg-linear-to-r from-transparent via-default to-transparent" />
+            <div className="size-2 rounded-full bg-primary/20 border border-primary/40 animate-pulse" />
+            <div className="flex-1 h-px bg-linear-to-r from-transparent via-default to-transparent opacity-0" />
+          </div>
 
           <ArticleComments />
         </article>
