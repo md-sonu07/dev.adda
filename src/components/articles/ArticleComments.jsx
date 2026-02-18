@@ -5,44 +5,48 @@ import { MdFormatBold } from 'react-icons/md';
 
 const ArticleComments = () => {
     return (
-        <section className="mb-20" id="comments">
-            <div className="flex items-center justify-between mb-8">
-                <h3 className="text-2xl font-bold text-slate-900 dark:text-white">Discussion (45)</h3>
-                <div className="flex items-center gap-2 text-sm font-medium text-slate-500 dark:text-slate-400">
+        <section className="mb-24 pt-10" id="comments">
+            <div className="flex items-center justify-between mb-10">
+                <div className="flex items-center gap-4">
+                    <h3 className="text-2xl md:text-3xl font-black text-text-heading">Discussion</h3>
+                    <span className="bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-black tracking-widest">45</span>
+                </div>
+                <div className="hidden sm:flex items-center gap-2 text-[11px] font-black uppercase tracking-widest text-muted">
                     <span>Sort by:</span>
-                    <button className="text-primary flex items-center gap-1">
-                        Top <HiChevronDown className="text-xs" />
+                    <button className="text-primary hover:underline transition-all flex items-center gap-1.5 cursor-pointer">
+                        Trending <HiChevronDown className="text-xs" />
                     </button>
                 </div>
             </div>
 
-            {/* Comment Input */}
-            <div className="bg-slate-100 dark:bg-[#1a2233] p-4 rounded-xl border border-slate-200 dark:border-[#232f48] mb-12">
-                <div className="flex gap-4">
-                    <div
-                        className="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 shrink-0"
-                        style={{
-                            backgroundImage: 'url("https://lh3.googleusercontent.com/aida-public/AB6AXuBXocbmxMc8rzD36P0oTKHlNalwLE0K3ZwUQ0AzpL51xUfaKAeG_Yy8CRNKz4M3qJKcUlSKn0ravQ9MALK7qkDZ6JaW7R2Lwl4Xx_MdKFnItYlzMiqWmmgzzzDvNRjb0c53PVFbiCd8-98kmF0MNOksX7C2lriDwyQGjKvl40Qs-hOpd8RzbU4nDnPnGCPv8Fc0BFrcQWVgegjkOrCZEyLiJwBxcr7YxTN0ZgSjwaUHPy3UsqMtfonG3EHpe6pvseeMJyQWhyBbFkJF")'
-                        }}
-                    ></div>
+            {/* Premium Comment Input */}
+            <div className="bg-box/40 dark:bg-[#1a2333]/40 backdrop-blur-sm p-6 rounded-3xl border border-default mb-16 shadow-sm group focus-within:border-primary/30 transition-all duration-300">
+                <div className="flex gap-5">
+                    <div className="size-12 rounded-full overflow-hidden border-2 border-primary/20 bg-background shrink-0">
+                        <img
+                            src="https://ui-avatars.com/api/?name=User&background=random"
+                            className="w-full h-full object-cover"
+                            alt="CurrentUser"
+                        />
+                    </div>
                     <div className="flex-1">
                         <textarea
-                            className="w-full bg-white dark:bg-[#101622] border border-slate-200 dark:border-[#232f48] rounded-lg p-3 text-slate-900 dark:text-white placeholder:text-slate-500 dark:placeholder:text-[#92a4c9] focus:ring-1 focus:ring-primary focus:border-primary min-h-[100px] text-sm resize-none mb-3"
-                            placeholder="Add to the discussion..."
+                            className="w-full bg-background/50 border border-default rounded-2xl p-4 text-text-heading placeholder:text-muted/60 focus:ring-2 focus:ring-primary/10 focus:border-primary/40 min-h-[120px] text-[15px] font-medium resize-none mb-4 transition-all shadow-inner"
+                            placeholder="Share your technical perspective..."
                         ></textarea>
-                        <div className="flex items-center justify-between">
-                            <div className="flex gap-2">
-                                <button className="p-2 text-slate-500 hover:text-primary transition-colors">
+                        <div className="flex flex-wrap items-center justify-between gap-4">
+                            <div className="flex gap-1">
+                                <button title="Attach Image" className="p-2.5 rounded-xl text-muted hover:text-primary hover:bg-primary/5 transition-all">
                                     <IoImageOutline className="text-xl" />
                                 </button>
-                                <button className="p-2 text-slate-500 hover:text-primary transition-colors">
+                                <button title="Add Code" className="p-2.5 rounded-xl text-muted hover:text-primary hover:bg-primary/5 transition-all">
                                     <IoCodeOutline className="text-xl" />
                                 </button>
-                                <button className="p-2 text-slate-500 hover:text-primary transition-colors">
+                                <button title="Bold Text" className="p-2.5 rounded-xl text-muted hover:text-primary hover:bg-primary/5 transition-all">
                                     <MdFormatBold className="text-xl" />
                                 </button>
                             </div>
-                            <button className="bg-primary text-white px-5 py-2 rounded-lg font-bold text-sm hover:opacity-90">
+                            <button className="bg-primary text-white px-8 py-3 rounded-xl font-black uppercase tracking-[0.15em] text-[11px] hover:bg-primary/90 transition-all shadow-lg shadow-primary/20 active:scale-95">
                                 Post Comment
                             </button>
                         </div>
@@ -51,96 +55,77 @@ const ArticleComments = () => {
             </div>
 
             {/* Comment Threads */}
-            <div className="space-y-8">
-                {/* Comment 1 */}
-                <div className="flex gap-4">
-                    <div
-                        className="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 shrink-0"
-                        style={{
-                            backgroundImage: 'url("https://lh3.googleusercontent.com/aida-public/AB6AXuC3DQgMruYGoQue4ERJjnMLzouAj5srjoo5CYxbw32YsUBhNdH4BIRsHasDPKqmEBdb9Ws9LeVnO_6YqDqHFIop30Z6tQ9vOuHH7c4hh7LR5m-puQHO6L79WSFXaq8H2zCMJ46UEM1qQKIwZ7tBOD_nn7A9td-YAkwf3BPhjMcsZ3n-lYdlHOrtASD-l59KuEDFC8Io3iC04BNfpnXyieTBwCcO3fBhAy0azP3pbFms9ea85dML4Wp5owp1sYKYgXac-vREpqRn2pj5")'
-                        }}
-                    ></div>
-                    <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-1">
-                            <span className="font-bold text-slate-900 dark:text-white">Alex Rivera</span>
-                            <span className="text-xs text-slate-500 dark:text-slate-400">• 2h ago</span>
-                        </div>
-                        <p className="text-slate-700 dark:text-slate-300 text-sm leading-relaxed mb-3">
-                            Great breakdown of the ownership model. I found that the 'Copy' vs 'Clone' distinction was also a major sticking point when I started. Maybe a future article on that?
-                        </p>
-                        <div className="flex items-center gap-4">
-                            <button className="flex items-center gap-1.5 text-xs font-bold text-slate-500 hover:text-primary transition-colors">
-                                <HiOutlineHandThumbUp className="text-sm" /> 12
-                            </button>
-                            <button className="flex items-center gap-1.5 text-xs font-bold text-slate-500 hover:text-primary transition-colors">
-                                <HiOutlineChatBubbleBottomCenterText className="text-sm" /> Reply
-                            </button>
-                        </div>
-
-                        {/* Nested Reply */}
-                        <div className="mt-6 pl-6 border-l-2 border-slate-200 dark:border-[#232f48] space-y-6">
-                            <div className="flex gap-4">
-                                <div
-                                    className="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-8 shrink-0 ring-2 ring-primary/40"
-                                    style={{
-                                        backgroundImage: 'url("https://lh3.googleusercontent.com/aida-public/AB6AXuBzlUuSLSBnwYg59pZiJbf2pESq5PNwN_XBt0KBHWOZTrr8k8dDkvaFWSQs7acIQmfi9vCVFrgj0ciXMeR0OHiOXg2Qv78V0kg8Gsma-pdcJQXJOhijMYOUmZntsTJjdOzJC9W3hmpqyJ-1EBkLvJs0ZI--jUu2fiSQw1MtjRxgiJgKbcLop_LIiM1Xt5qYzDBzXXyKjnAXpwJgp76gk4riWNDB4_osp6TeidmgXf3JJYauTInz0y0_spNbwFNs_TT0QDzlN5-yepWh")'
-                                    }}
-                                ></div>
-                                <div className="flex-1">
-                                    <div className="flex items-center gap-2 mb-1">
-                                        <span className="font-bold text-slate-900 dark:text-white">Jane Doe</span>
-                                        <span className="bg-primary/20 text-primary text-[10px] px-1.5 py-0.5 rounded font-bold uppercase tracking-wide">
-                                            Author
-                                        </span>
-                                        <span className="text-xs text-slate-500 dark:text-slate-400">• 1h ago</span>
-                                    </div>
-                                    <p className="text-slate-700 dark:text-slate-300 text-sm leading-relaxed mb-3">
-                                        Thanks Alex! Definitely. I'm planning a "Rust Type System" series that will cover Copy, Clone, and traits like Send/Sync in depth.
-                                    </p>
-                                    <div className="flex items-center gap-4">
-                                        <button className="flex items-center gap-1.5 text-xs font-bold text-slate-500 hover:text-primary transition-colors">
-                                            <HiOutlineHandThumbUp className="text-sm" /> 5
-                                        </button>
-                                        <button className="flex items-center gap-1.5 text-xs font-bold text-slate-500 hover:text-primary transition-colors">
-                                            <HiOutlineChatBubbleBottomCenterText className="text-sm" /> Reply
-                                        </button>
-                                    </div>
+            <div className="space-y-12">
+                {[1, 2].map((_, i) => (
+                    <div key={i} className="group/comment">
+                        <div className="flex gap-5">
+                            <div className="size-11 rounded-full overflow-hidden border border-default ring-4 ring-transparent group-hover/comment:ring-primary/5 transition-all duration-500 shrink-0 shadow-sm">
+                                <img 
+                                    src={`https://ui-avatars.com/api/?name=${i === 0 ? 'Alex' : 'Marcus'}&background=random`} 
+                                    className="w-full h-full object-cover grayscale-[0.5] group-hover/comment:grayscale-0 transition-all duration-500"
+                                    alt="User"
+                                />
+                            </div>
+                            <div className="flex-1">
+                                <div className="flex items-center gap-3 mb-2">
+                                    <span className="font-black text-text-heading text-[15px]">{i === 0 ? 'Alex Rivera' : 'Marcus Smith'}</span>
+                                    <span className="text-[10px] font-bold text-muted uppercase tracking-widest">• {i === 0 ? '2h ago' : '4h ago'}</span>
                                 </div>
+                                <p className="text-text-body text-[15px] leading-relaxed mb-4 font-medium opacity-90">
+                                    {i === 0 
+                                        ? "Great breakdown of the ownership model. I found that the 'Copy' vs 'Clone' distinction was also a major sticking point when I started. Maybe a future article on that?"
+                                        : "Does this model significantly impact compilation times compared to C++? I've heard the borrow checker can be quite slow on larger projects."
+                                    }
+                                </p>
+                                <div className="flex items-center gap-6">
+                                    <button className="flex items-center gap-2 text-[11px] font-black uppercase tracking-widest text-muted hover:text-primary transition-all group/btn">
+                                        <HiOutlineHandThumbUp className="text-sm group-hover/btn:-translate-y-0.5 transition-transform" /> 
+                                        <span>{i === 0 ? '12' : '2'}</span>
+                                    </button>
+                                    <button className="flex items-center gap-2 text-[11px] font-black uppercase tracking-widest text-muted hover:text-primary transition-all group/btn">
+                                        <HiOutlineChatBubbleBottomCenterText className="text-sm group-hover/btn:-translate-y-0.5 transition-transform" /> 
+                                        <span>Reply</span>
+                                    </button>
+                                </div>
+
+                                {i === 0 && (
+                                    <div className="mt-8 pl-8 border-l-2 border-primary/10 space-y-8">
+                                        <div className="flex gap-4">
+                                            <div className="size-9 rounded-full overflow-hidden border-2 border-primary/20 bg-background shrink-0 shadow-sm">
+                                                <img 
+                                                    src="https://ui-avatars.com/api/?name=Jane&background=random" 
+                                                    className="w-full h-full object-cover"
+                                                    alt="Author"
+                                                />
+                                            </div>
+                                            <div className="flex-1 bg-primary/5 p-5 rounded-2xl border border-primary/10">
+                                                <div className="flex items-center gap-2 mb-2">
+                                                    <span className="font-black text-text-heading text-sm">Jane Doe</span>
+                                                    <span className="bg-primary text-white text-[8px] px-2 py-0.5 rounded-full font-black uppercase tracking-[0.2em]">
+                                                        Author
+                                                    </span>
+                                                    <span className="text-[10px] font-bold text-muted uppercase tracking-widest">• 1h ago</span>
+                                                </div>
+                                                <p className="text-text-body text-sm leading-relaxed mb-4 font-medium">
+                                                    Thanks Alex! Definitely. I'm planning a "Rust Type System" series that will cover Copy, Clone, and traits like Send/Sync in depth.
+                                                </p>
+                                                <div className="flex items-center gap-6">
+                                                    <button className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-primary/70 hover:text-primary transition-all">
+                                                        <HiOutlineHandThumbUp className="text-sm" /> 5
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </div>
-                </div>
-
-                {/* Comment 2 */}
-                <div className="flex gap-4">
-                    <div
-                        className="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 shrink-0"
-                        style={{
-                            backgroundImage: 'url("https://lh3.googleusercontent.com/aida-public/AB6AXuAKDPaE3EEi5XHH-_JOUfDuQj97YtZU7G6L-kGhh_2SJZxcSY4qeS7gQh-xk52Gg08ne7R51TnikGDkoNtQIKa2hAtBw3mZFVhRzv_NzLnZAgYuhcGqzWYhMMGMWkbRUJl8XT8-w_Q_lgtLlKKKQukhBmwwdWIZyh5vSFUUEuuN6GuSQoCTobc5e_mRmIi0Nvhb9nHnYmaykwFbVO_8qTuDDqpYYHFonVTf9G0FMRXCe8D-RbvG8JXQV2kb_jcjeoQN0QKHhZK7-GHO")'
-                        }}
-                    ></div>
-                    <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-1">
-                            <span className="font-bold text-slate-900 dark:text-white">Marcus Smith</span>
-                            <span className="text-xs text-slate-500 dark:text-slate-400">• 4h ago</span>
-                        </div>
-                        <p className="text-slate-700 dark:text-slate-300 text-sm leading-relaxed mb-3">
-                            Does this model significantly impact compilation times compared to C++? I've heard the borrow checker can be quite slow on larger projects.
-                        </p>
-                        <div className="flex items-center gap-4">
-                            <button className="flex items-center gap-1.5 text-xs font-bold text-slate-500 hover:text-primary transition-colors">
-                                <HiOutlineHandThumbUp className="text-sm" /> 2
-                            </button>
-                            <button className="flex items-center gap-1.5 text-xs font-bold text-slate-500 hover:text-primary transition-colors">
-                                <HiOutlineChatBubbleBottomCenterText className="text-sm" /> Reply
-                            </button>
-                        </div>
-                    </div>
-                </div>
+                ))}
             </div>
 
-            <button className="w-full mt-10 py-3 rounded-xl border border-dashed border-slate-300 dark:border-[#232f48] text-slate-500 dark:text-[#92a4c9] font-bold text-sm hover:bg-slate-50 dark:hover:bg-[#1a2233] transition-colors">
-                Load More Comments
+            <button className="w-full mt-16 py-4 rounded-2xl border-2 border-dashed border-default text-muted font-black text-[11px] uppercase tracking-[0.2em] hover:bg-box hover:text-primary hover:border-primary/30 transition-all duration-300 cursor-pointer shadow-sm hover:shadow-md active:scale-[0.99]">
+                View All 42 Comments
             </button>
         </section>
     );
