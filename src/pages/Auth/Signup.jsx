@@ -163,6 +163,7 @@ const Signup = () => {
                                             <HiOutlineUser className="text-lg" />
                                         </div>
                                         <input
+                                            id="fullName"
                                             className="block w-full pl-11 pr-4 py-3.5 border border-default focus:border-primary/50 rounded-xl outline-none transition-all text-sm font-bold placeholder:text-muted/40 focus:shadow-lg focus:shadow-primary/5"
                                             placeholder="John Doe"
                                             type="text"
@@ -179,6 +180,7 @@ const Signup = () => {
                                             <span className="text-sm font-black">@</span>
                                         </div>
                                         <input
+                                            id="userName"
                                             className="block w-full pl-11 pr-4 py-3.5 border border-default focus:border-primary/50 rounded-xl outline-none transition-all text-sm font-bold placeholder:text-muted/40 focus:shadow-lg focus:shadow-primary/5"
                                             placeholder="johndoe"
                                             type="text"
@@ -198,6 +200,7 @@ const Signup = () => {
                                         <HiOutlineEnvelope className="text-lg" />
                                     </div>
                                     <input
+                                        id="email"
                                         className="block w-full pl-11 pr-4 py-3.5 border border-default focus:border-primary/50 rounded-xl outline-none transition-all text-sm font-bold placeholder:text-muted/40 focus:shadow-lg focus:shadow-primary/5"
                                         placeholder="developer@email.com"
                                         type="email"
@@ -216,6 +219,7 @@ const Signup = () => {
                                         <HiOutlineLockClosed className="text-lg" />
                                     </div>
                                     <input
+                                        id="password"
                                         className="block w-full pl-11 pr-12 py-3.5 border border-default focus:border-primary/50 rounded-xl outline-none transition-all text-sm font-bold placeholder:text-muted/40 focus:shadow-lg focus:shadow-primary/5"
                                         placeholder="••••••••"
                                         type={showPassword ? "text" : "password"}

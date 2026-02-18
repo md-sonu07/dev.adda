@@ -151,6 +151,8 @@ const Login = () => {
                                         <HiOutlineEnvelope className="text-lg" />
                                     </div>
                                     <input
+                                        id="email"
+                                        name="email"
                                         className="block w-full pl-11 pr-4 py-3.5 border border-default focus:border-primary/50 rounded-xl outline-none transition-all text-sm font-bold placeholder:text-muted/40 focus:shadow-lg focus:shadow-primary/5"
                                         placeholder="name@email.com"
                                         type="email"
@@ -171,6 +173,8 @@ const Login = () => {
                                         <HiOutlineLockClosed className="text-lg" />
                                     </div>
                                     <input
+                                        id="password"
+                                        name="password"
                                         className="block w-full pl-11 pr-12 py-3.5 border border-default focus:border-primary/50 rounded-xl outline-none transition-all text-sm font-bold placeholder:text-muted/40 focus:shadow-lg focus:shadow-primary/5"
                                         placeholder="••••••••"
                                         type={showPassword ? "text" : "password"}

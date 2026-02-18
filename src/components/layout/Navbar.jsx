@@ -124,6 +124,8 @@ function Navbar() {
 
                         <input
                             ref={searchInputRef}
+                            id="search-input"
+                            name="q"
                             className={`w-full bg-box/30 hover:bg-box/50 text-body border border-default rounded-lg py-2.5 sm:pr-14 pr-2 text-sm transition-all outline-none duration-300 focus:bg-card focus:border-primary/50 focus:ring-4 focus:ring-primary/10 placeholder:text-muted/40 ${searchQuery ? 'pl-4' : 'pl-11 focus:pl-4'}`}
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}

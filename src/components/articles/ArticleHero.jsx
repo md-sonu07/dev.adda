@@ -79,11 +79,11 @@ const ArticleHero = ({ post }) => {
                     </div>
 
                     <div className="flex items-center gap-2 sm:gap-3">
-                        <button className="flex-1 sm:flex-none flex items-center justify-center gap-2 text-muted hover:text-primary font-black uppercase tracking-[0.2em] text-[9px] px-4 sm:px-5 py-2.5 rounded-xl border border-default/60 hover:border-primary/30 transition-all bg-background/50 backdrop-blur-sm group/share">
+                        <button className="flex-1 sm:flex-none flex items-center justify-center gap-2 text-muted hover:text-primary font-black uppercase tracking-[0.2em] text-[10px] px-4 sm:px-5 py-2.5 rounded-[12px] border border-default/60 hover:border-primary/30 transition-all bg-background/50 backdrop-blur-sm group/share">
                             <HiShare className="text-sm transition-transform group-hover/share:-rotate-12" />
                             <span>Share</span>
                         </button>
-                        <button className="flex-1 sm:flex-none bg-primary text-white px-5 sm:px-7 py-2.5 sm:py-3 rounded-xl font-black uppercase tracking-[0.15em] sm:tracking-[0.2em] text-[10px] hover:shadow-[0_10px_20px_rgba(19,91,236,0.25)] transition-all active:scale-95 shadow-lg shadow-primary/10">
+                        <button className="flex-1 sm:flex-none bg-primary text-white px-5 sm:px-7 py-2.5 sm:py-3 rounded-[12px] font-black uppercase tracking-[0.15em] sm:tracking-[0.2em] text-[10px] hover:shadow-[0_10px_20px_rgba(19,91,236,0.25)] transition-all active:scale-95 shadow-lg shadow-primary/10">
                             Follow Author
                         </button>
                     </div>

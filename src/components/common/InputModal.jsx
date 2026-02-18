@@ -61,6 +61,8 @@ const InputModal = ({
                             <label className="text-[10px] font-black uppercase tracking-widest text-muted block ml-1">{label}</label>
                             <input
                                 autoFocus
+                                id="modal-input"
+                                name="modal-input"
                                 type="text"
                                 value={value}
                                 onChange={(e) => setValue(e.target.value)}
