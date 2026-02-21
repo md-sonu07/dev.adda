@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { getUserProfileAction, getAllUsersAction, updateProfileAction, updateUserRoleAction, deleteUserAction } from "../thunks/userThunk";
+import { getUserProfileAction, getAllUsersAction, updateProfileAction, updateUserRoleAction, deleteUserAction, getUserByIdAction } from "../thunks/userThunk";
 
 const initialState = {
     userProfile: null,
@@ -85,6 +85,19 @@ const userSlice = createSlice({
                 state.error = null;
             })
             .addCase(deleteUserAction.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
+            })
+            // Get User By Id
+            .addCase(getUserByIdAction.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(getUserByIdAction.fulfilled, (state, action) => {
+                state.loading = false;
+                state.userProfile = action.payload.UserProfile;
+                state.error = null;
+            })
+            .addCase(getUserByIdAction.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload;
             });

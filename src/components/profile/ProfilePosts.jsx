@@ -1,5 +1,5 @@
 import { useSelector, useDispatch } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import { deletePostAction, updatePostAction } from '../../redux/thunks/postThunk';
 import Modal from '../common/Modal';
@@ -21,11 +21,16 @@ import { useState } from 'react';
 import SkeletonImage from '../common/SkeletonImage';
 
 const ProfilePosts = ({ activeTab }) => {
-    const { myPosts, loading } = useSelector((state) => state.post);
+    const { id } = useParams();
+    const { user } = useSelector((state) => state.auth);
+    const { posts, myPosts, loading } = useSelector((state) => state.post);
+
+    const isOwnProfile = !id || id === user?._id;
+    const displayPosts = isOwnProfile ? myPosts : posts;
+
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const [deleteModal, setDeleteModal] = useState({ isOpen: false, postId: null });
-    console.log("myPosts", myPosts);
 
     const handleDeleteClick = (e, id) => {
         e.stopPropagation();
@@ -79,13 +84,13 @@ const ProfilePosts = ({ activeTab }) => {
             likes: [],
             comments: [],
             status: 'approved',
-            coverImage: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?q=80&w=600&auto=format&fit=crop'
+            coverImage: ''
         },
         // Add more mocks if needed
     ];
 
     // Map backend posts to include the 'tab' property for filtering
-    const backendPosts = myPosts.map(post => ({
+    const backendPosts = displayPosts.map(post => ({
         ...post,
         tab: 'posted'
     }));
@@ -96,7 +101,7 @@ const ProfilePosts = ({ activeTab }) => {
         : mockPosts.filter(post => post.tab === activeTab);
 
     const tabLabels = {
-        posted: 'Your Articles',
+        posted: isOwnProfile ? 'Your Articles' : 'Articles',
         saved: 'Saved Articles',
         history: 'Recently Read',
         liked: 'Liked Posts'
@@ -200,7 +205,7 @@ const ProfilePosts = ({ activeTab }) => {
                                     {new Date(post.createdAt).toLocaleDateString()}
                                 </span>
                                 <div className="flex items-center gap-1">
-                                    {activeTab === 'posted' ? (
+                                    {(activeTab === 'posted' && isOwnProfile) ? (
                                         <>
                                             <button
                                                 onClick={(e) => handleEdit(e, post._id)}

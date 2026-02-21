@@ -19,3 +19,7 @@ export const updateUserRole = (userId, role) => {
 export const deleteUser = (userId) => {
     return api.delete(`/user/${userId}`);
 }
+
+export const getUserById = (id) => {
+    return api.get(`/user/${id}`);
+}

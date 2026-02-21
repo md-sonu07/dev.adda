@@ -60,3 +60,15 @@ export const deleteUserAction = createAsyncThunk(
         }
     }
 );
+
+export const getUserByIdAction = createAsyncThunk(
+    'user/getById',
+    async (id, { rejectWithValue }) => {
+        try {
+            const response = await userApi.getUserById(id);
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(error.response?.data || error.message);
+        }
+    }
+);

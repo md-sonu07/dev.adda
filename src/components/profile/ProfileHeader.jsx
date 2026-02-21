@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import Modal from '../common/Modal';
 import {
     HiCheckBadge,
@@ -14,22 +14,50 @@ import {
     HiOutlineShieldCheck
 } from 'react-icons/hi2';
 import { IoBookmarksOutline, IoNotificationsOutline, IoLogOutOutline } from 'react-icons/io5';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { toggleTheme } from '../../redux/slices/themeSlice';
 import { logoutAction } from '../../redux/thunks/authThunk';
+import { followUserAction, unfollowUserAction, getFollowersAction, getFollowingAction } from '../../redux/thunks/followThunk';
 import toast from 'react-hot-toast';
 
 import EditProfileModal from './EditProfileModal';
 import SkeletonImage from '../common/SkeletonImage';
 
 const ProfileHeader = () => {
+    const { id } = useParams();
     const isDark = useSelector((state) => state.theme.isDark);
     const { userProfile, loading } = useSelector((state) => state.user);
     const { myPosts } = useSelector((state) => state.post);
+    const { followers, following } = useSelector((state) => state.follow);
     const { isAdmin, user } = useSelector((state) => state.auth);
+
     const dispatch = useDispatch();
     const navigate = useNavigate();
+
+    const isOwnProfile = !id || id === user?._id;
+    const isFollowing = followers.some(f => f._id === user?._id);
+
+    const handleFollow = async () => {
+        if (!user) {
+            toast.error("Please login to follow");
+            return navigate('/login');
+        }
+        try {
+            if (isFollowing) {
+                await dispatch(unfollowUserAction(id)).unwrap();
+                toast.success('Unfollowed successfully');
+            } else {
+                await dispatch(followUserAction(id)).unwrap();
+                toast.success('Followed successfully');
+            }
+            // Re-fetch data to reflect changes instantly
+            dispatch(getFollowersAction(id));
+            dispatch(getFollowingAction(id));
+        } catch (error) {
+            toast.error(error?.message || 'Action failed');
+        }
+    };
 
     const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -201,20 +229,34 @@ const ProfileHeader = () => {
                 </div>
 
                 <div className="flex flex-col sm:flex-row md:flex-col gap-2 w-full md:w-auto">
-                    <button
-                        onClick={() => setIsEditModalOpen(true)}
-                        className="flex-1 flex items-center justify-center gap-2.5 bg-primary hover:bg-primary/90 text-white text-[10px] font-black uppercase tracking-widest py-3 px-6 rounded-xl transition-all shadow-lg shadow-primary/20 active:scale-90 group cursor-pointer"
-                    >
-                        <HiOutlinePencilSquare className="text-lg group-hover:rotate-12 transition-transform" />
-                        Edit Profile
-                    </button>
-                    <button
-                        onClick={() => setIsLogoutModalOpen(true)}
-                        className="flex-1 flex items-center justify-center gap-2.5 border border-default text-muted text-[10px] font-black uppercase tracking-widest py-3 px-6 rounded-xl transition-all active:scale-90 group cursor-pointer hover:border-red-500/50 hover:text-red-500 hover:bg-red-500/5"
-                    >
-                        <IoLogOutOutline className="text-lg group-hover:scale-110 transition-transform" />
-                        Logout
-                    </button>
+                    {isOwnProfile ? (
+                        <>
+                            <button
+                                onClick={() => setIsEditModalOpen(true)}
+                                className="flex-1 flex items-center justify-center gap-2.5 bg-primary hover:bg-primary/90 text-white text-[10px] font-black uppercase tracking-widest py-3 px-6 rounded-xl transition-all shadow-lg shadow-primary/20 active:scale-90 group cursor-pointer"
+                            >
+                                <HiOutlinePencilSquare className="text-lg group-hover:rotate-12 transition-transform" />
+                                Edit Profile
+                            </button>
+                            <button
+                                onClick={() => setIsLogoutModalOpen(true)}
+                                className="flex-1 flex items-center justify-center gap-2.5 border border-default text-muted text-[10px] font-black uppercase tracking-widest py-3 px-6 rounded-xl transition-all active:scale-90 group cursor-pointer hover:border-red-500/50 hover:text-red-500 hover:bg-red-500/5"
+                            >
+                                <IoLogOutOutline className="text-lg group-hover:scale-110 transition-transform" />
+                                Logout
+                            </button>
+                        </>
+                    ) : (
+                        <button
+                            onClick={handleFollow}
+                            className={`flex-1 flex items-center justify-center gap-2.5 text-[10px] font-black uppercase tracking-widest py-3 px-12 rounded-xl transition-all shadow-lg active:scale-90 group cursor-pointer ${isFollowing
+                                ? 'bg-box border border-default text-muted hover:border-red-500/30 hover:text-red-500'
+                                : 'bg-primary text-white hover:bg-primary/90 shadow-primary/20'
+                                }`}
+                        >
+                            {isFollowing ? 'Unfollow' : 'Follow User'}
+                        </button>
+                    )}
                 </div>
             </div>
 
@@ -225,11 +267,11 @@ const ProfileHeader = () => {
                     <p className="text-[9px] uppercase tracking-widest font-black text-muted mt-1">Total Posts</p>
                 </div>
                 <div className="text-center border-x border-default group cursor-pointer px-4">
-                    <p className="text-2xl font-black group-hover:text-primary transition-colors">{userData?.followers?.length || 0}</p>
+                    <p className="text-2xl font-black group-hover:text-primary transition-colors">{followers?.length || 0}</p>
                     <p className="text-[9px] uppercase tracking-widest font-black text-muted mt-1">Followers</p>
                 </div>
                 <div className="text-center group cursor-pointer">
-                    <p className="text-2xl font-black group-hover:text-primary transition-colors">{userData?.following?.length || 0}</p>
+                    <p className="text-2xl font-black group-hover:text-primary transition-colors">{following?.length || 0}</p>
                     <p className="text-[9px] uppercase tracking-widest font-black text-muted mt-1">Following</p>
                 </div>
             </div>

@@ -1,23 +1,40 @@
 import React, { useState, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
-import { getUserProfileAction } from '../../redux/thunks/userThunk';
-import { getMyPostsAction } from '../../redux/thunks/postThunk';
+import { useDispatch, useSelector } from 'react-redux';
+import { useParams } from 'react-router-dom';
+import { getUserProfileAction, getUserByIdAction } from '../../redux/thunks/userThunk';
+import { getMyPostsAction, getAllPostsAction } from '../../redux/thunks/postThunk';
+import { getFollowersAction, getFollowingAction } from '../../redux/thunks/followThunk';
 import ProfileHeader from '../../components/profile/ProfileHeader';
 import ProfileTabs from '../../components/profile/ProfileTabs';
 import ProfilePosts from '../../components/profile/ProfilePosts';
 
 const Profile = () => {
+    const { id } = useParams();
     const [activeTab, setActiveTab] = useState('posted');
     const dispatch = useDispatch();
+    const { user: currentUser } = useSelector((state) => state.auth);
 
     useEffect(() => {
         const fetchUserData = async () => {
-            await dispatch(getUserProfileAction());
-            // Fetch posts after user data is ready
-            await dispatch(getMyPostsAction());
+            try {
+                if (id) {
+                    // Fetch someone else's profile
+                    await dispatch(getUserByIdAction(id));
+                    await dispatch(getAllPostsAction({ author: id }));
+                    await dispatch(getFollowersAction(id));
+                    await dispatch(getFollowingAction(id));
+                } else if (currentUser?._id) {
+                    // Fetch logged in user profile and stats
+                    await dispatch(getMyPostsAction());
+                    await dispatch(getFollowersAction(currentUser._id));
+                    await dispatch(getFollowingAction(currentUser._id));
+                }
+            } catch (error) {
+                console.error("Profile fetch error:", error);
+            }
         };
         fetchUserData();
-    }, [dispatch]);
+    }, [dispatch, id, currentUser?._id]);
 
     return (
         <div className="min-h-screen bg-background transition-colors duration-500">
