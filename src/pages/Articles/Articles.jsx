@@ -157,7 +157,7 @@ function Articles() {
       <main className="mx-auto flex w-full max-w-[1280px] grow items-start gap-8 px-4 py-8 md:px-10">
         {/* Left Sticky Interaction Bar (Desktop) */}
         <Suspense fallback={<div className="size-12 rounded-2xl bg-box/20 animate-pulse" />}>
-          <ArticleInteractionBar />
+          <ArticleInteractionBar post={post} />
         </Suspense>
 
         {/* Center Content Area */}

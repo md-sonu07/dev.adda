@@ -2,6 +2,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import { deletePostAction, updatePostAction } from '../../redux/thunks/postThunk';
+import { toggleBookmarkAction } from '../../redux/thunks/bookmarkThunk';
 import Modal from '../common/Modal';
 import {
     HiOutlineClock,
@@ -9,6 +10,7 @@ import {
     HiOutlineHeart,
     HiOutlineChatBubbleOvalLeftEllipsis,
     HiOutlineBookmark,
+    HiBookmark,
     HiOutlineCheckCircle,
     HiOutlineExclamationCircle,
     HiChevronDown,
@@ -21,15 +23,30 @@ import { useState } from 'react';
 import SkeletonImage from '../common/SkeletonImage';
 
 const ProfilePosts = ({ activeTab }) => {
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
     const { id } = useParams();
     const { user } = useSelector((state) => state.auth);
     const { posts, myPosts, loading } = useSelector((state) => state.post);
+    const { bookmarkedPosts } = useSelector((state) => state.bookmark);
 
     const isOwnProfile = !id || id === user?._id;
     const displayPosts = isOwnProfile ? myPosts : posts;
 
-    const dispatch = useDispatch();
-    const navigate = useNavigate();
+    const handleToggleBookmark = async (e, post) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (!user) {
+            toast.error("Please login to bookmark");
+            return navigate("/login");
+        }
+        try {
+            await dispatch(toggleBookmarkAction({ postId: post._id, post })).unwrap();
+        } catch (error) {
+            toast.error(error?.message || "Action failed");
+        }
+    };
+
     const [deleteModal, setDeleteModal] = useState({ isOpen: false, postId: null });
 
     const handleDeleteClick = (e, id) => {
@@ -243,8 +260,12 @@ const ProfilePosts = ({ activeTab }) => {
                                                 <HiOutlineChatBubbleOvalLeftEllipsis className="text-sm" />
                                                 <span className="text-[10px] font-black">{post.comments?.length || 0}</span>
                                             </button>
-                                            <button className="p-1.5 text-muted hover:text-primary transition-colors rounded-lg" title="Bookmark">
-                                                <HiOutlineBookmark className="text-sm" />
+                                            <button
+                                                onClick={(e) => handleToggleBookmark(e, post)}
+                                                className={`p-1.5 transition-colors rounded-lg ${bookmarkedPosts.some(p => p._id === post._id) ? 'text-primary' : 'text-muted hover:text-primary'}`}
+                                                title="Bookmark"
+                                            >
+                                                {bookmarkedPosts.some(p => p._id === post._id) ? <HiBookmark className="text-sm" /> : <HiOutlineBookmark className="text-sm" />}
                                             </button>
                                         </>
                                     )}

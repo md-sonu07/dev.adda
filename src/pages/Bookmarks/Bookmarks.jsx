@@ -1,11 +1,17 @@
-import React, { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { getMyBookmarksAction } from '../../redux/thunks/bookmarkThunk';
 import BookmarksHeader from '../../components/bookmarks/BookmarksHeader';
 import BookmarksFilters from '../../components/bookmarks/BookmarksFilters';
 import BookmarksList from '../../components/bookmarks/BookmarksList';
-import Footer from '../../components/layout/Footer';
 
 const Bookmarks = () => {
     const [activeFilter, setActiveFilter] = useState('all');
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        dispatch(getMyBookmarksAction());
+    }, [dispatch]);
 
     return (
         <div className="min-h-screen bg-background transition-colors duration-500">
@@ -27,8 +33,6 @@ const Bookmarks = () => {
                     <div className="h-20" />
                 </div>
             </main>
-
-            <Footer />
         </div>
     );
 };

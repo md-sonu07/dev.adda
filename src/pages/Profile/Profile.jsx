@@ -4,6 +4,7 @@ import { useParams } from 'react-router-dom';
 import { getUserProfileAction, getUserByIdAction } from '../../redux/thunks/userThunk';
 import { getMyPostsAction, getAllPostsAction } from '../../redux/thunks/postThunk';
 import { getFollowersAction, getFollowingAction } from '../../redux/thunks/followThunk';
+import { clearUserProfile } from '../../redux/slices/userSlice';
 import ProfileHeader from '../../components/profile/ProfileHeader';
 import ProfileTabs from '../../components/profile/ProfileTabs';
 import ProfilePosts from '../../components/profile/ProfilePosts';
@@ -25,6 +26,7 @@ const Profile = () => {
                     await dispatch(getFollowingAction(id));
                 } else if (currentUser?._id) {
                     // Fetch logged in user profile and stats
+                    await dispatch(getUserProfileAction());
                     await dispatch(getMyPostsAction());
                     await dispatch(getFollowersAction(currentUser._id));
                     await dispatch(getFollowingAction(currentUser._id));
@@ -34,6 +36,11 @@ const Profile = () => {
             }
         };
         fetchUserData();
+
+        // Cleanup function to clear profile when leaving or switching between profiles
+        return () => {
+            dispatch(clearUserProfile());
+        };
     }, [dispatch, id, currentUser?._id]);
 
     return (

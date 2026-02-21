@@ -124,7 +124,7 @@ const ArticleContent = ({ post }) => {
             </div>
 
 
-            <ArticleMobileActions />
+            <ArticleMobileActions post={post} />
         </section>
     );
 };

@@ -2,8 +2,6 @@ import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { HiArrowRight, HiClock, HiUser } from 'react-icons/hi2';
 
-import bgImage from '../../../public/bg/bgImage.webp';
-
 const HomeThumbnail = () => {
     const { user } = useSelector((state) => state.auth);
     return (
@@ -14,7 +12,7 @@ const HomeThumbnail = () => {
                     <img
                         alt="The Future of LLMs"
                         className="absolute inset-0 w-full h-full object-cover blur-[1px] brightness-70 scale-105"
-                        src={bgImage}
+                        src="/bg/bgImage.webp"
                         fetchPriority="high"
                         loading="eager"
                         decoding="async"

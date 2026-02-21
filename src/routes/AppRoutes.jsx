@@ -43,7 +43,7 @@ function AppRoutes() {
                 {/* Protected Routes */}
                 <Route path="/create-post" element={<ProtectedRoute><AddPost /></ProtectedRoute>} />
                 <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
-                <Route path="/profile/:id" element={<Profile />} />
+                <Route path="/profile/:id" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
                 <Route path="/bookmarks" element={<ProtectedRoute><SavePost /></ProtectedRoute>} />
                 <Route path="/notifications" element={<ProtectedRoute><ComingSoon featureName="Notifications Center" /></ProtectedRoute>} />
                 <Route path="*" element={<NotFound />} />

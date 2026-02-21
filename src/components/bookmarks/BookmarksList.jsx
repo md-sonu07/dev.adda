@@ -1,44 +1,50 @@
-import React from 'react';
 import {
     HiOutlineBookmark,
     HiOutlineTrash,
-    HiOutlineShare,
     HiOutlineArrowTopRightOnSquare,
     HiOutlineClock
 } from 'react-icons/hi2';
 
+import { useSelector, useDispatch } from 'react-redux';
+import { Link } from 'react-router-dom';
+import { toggleBookmarkAction } from '../../redux/thunks/bookmarkThunk';
+import toast from 'react-hot-toast';
+
 const BookmarksList = ({ filter }) => {
-    // Mock data for saved articles
-    const savedArticles = [
-        {
-            id: 1,
-            title: "Exploring the Future of Web Assembly in 2024",
-            category: "Web Dev",
-            savedAt: "Saved 2 hours ago",
-            image: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=600&auto=format&fit=crop",
-            readTime: "5 min read"
-        },
-        {
-            id: 2,
-            title: "Advanced CSS Grid: Mastery within a Week",
-            category: "Programming",
-            savedAt: "Saved yesterday",
-            image: "https://images.unsplash.com/photo-1507721999472-8ed4421c4af2?q=80&w=600&auto=format&fit=crop",
-            readTime: "12 min read"
-        },
-        {
-            id: 3,
-            title: "Cybersecurity Trends: Protecting Modern Infrastructure",
-            category: "Security",
-            savedAt: "Saved 3 days ago",
-            image: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=600&auto=format&fit=crop",
-            readTime: "15 min read"
+    const dispatch = useDispatch();
+    const { bookmarkedPosts, loading } = useSelector((state) => state.bookmark);
+
+    const handleDelete = async (postId) => {
+        try {
+            await dispatch(toggleBookmarkAction({ postId })).unwrap();
+            toast.success("Bookmark removed");
+        } catch (error) {
+            toast.error(error?.message || "Failed to remove bookmark");
         }
-    ];
+    };
+
+    const handleClearAll = async () => {
+        if (filteredArticles.length === 0) return;
+
+        toast.promise(
+            Promise.all(filteredArticles.map(article =>
+                dispatch(toggleBookmarkAction({ postId: article._id })).unwrap()
+            )),
+            {
+                loading: 'Clearing bookmarks...',
+                success: 'All bookmarks removed',
+                error: 'Failed to clear some bookmarks',
+            }
+        );
+    };
 
     const filteredArticles = filter === 'all'
-        ? savedArticles
-        : savedArticles.filter(art => art.category.toLowerCase() === filter || (filter === 'history' && art.savedAt.includes('ago')));
+        ? bookmarkedPosts
+        : bookmarkedPosts.filter(post => post.category?.categoryName?.toLowerCase() === filter.toLowerCase());
+
+    if (loading && bookmarkedPosts.length === 0) {
+        return <div className="py-20 text-center font-black uppercase tracking-widest text-xs animate-pulse">Loading saved posts...</div>;
+    }
 
     return (
         <div className="space-y-6">
@@ -46,41 +52,56 @@ const BookmarksList = ({ filter }) => {
                 <h2 className="text-xs font-black uppercase tracking-[0.3em] text-muted">
                     {filter === 'history' ? 'Recently Viewed' : `${filter.charAt(0).toUpperCase() + filter.slice(1)} Collections`}
                 </h2>
-                <button className="text-[10px] font-black uppercase tracking-widest text-primary hover:underline">
+                <button
+                    onClick={handleClearAll}
+                    className="text-[10px] font-black uppercase tracking-widest text-primary hover:underline"
+                >
                     Clear {filter === 'history' ? 'History' : 'All'}
                 </button>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {filteredArticles.map((article) => (
-                    <div key={article.id} className="group rounded-xl border border-default p-4 flex gap-4 hover:border-primary/40 transition-all duration-300">
-                        <div className="size-24 rounded-lg overflow-hidden shrink-0">
-                            <img src={article.image} alt={article.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
-                        </div>
+                    <div key={article._id} className="group rounded-xl border border-default p-4 flex gap-4 hover:border-primary/40 transition-all duration-300">
+                        <Link to={`/article/${article._id}`} className="size-24 rounded-lg overflow-hidden shrink-0">
+                            <img
+                                src={article.coverImage || `https://ui-avatars.com/api/?name=${encodeURIComponent(article.title)}&background=random&size=512&color=fff&bold=true`}
+                                alt={article.title}
+                                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                            />
+                        </Link>
 
                         <div className="flex flex-col justify-between flex-1 min-w-0">
                             <div className="space-y-1">
                                 <div className="flex items-center gap-2">
                                     <span className="text-[9px] font-black uppercase tracking-widest text-primary bg-primary/5 px-2 py-0.5 rounded-md">
-                                        {article.category}
+                                        {article.category?.categoryName || 'General'}
                                     </span>
                                     <span className="text-[9px] font-bold text-muted flex items-center gap-1">
                                         <HiOutlineClock className="text-xs" />
-                                        {article.readTime}
+                                        5 min read
                                     </span>
                                 </div>
-                                <h3 className="text-sm font-black line-clamp-2 leading-tight group-hover:text-primary transition-colors">
-                                    {article.title}
-                                </h3>
+                                <Link to={`/article/${article._id}`}>
+                                    <h3 className="text-sm font-black line-clamp-2 leading-tight group-hover:text-primary transition-colors">
+                                        {article.title}
+                                    </h3>
+                                </Link>
                             </div>
 
                             <div className="flex items-center justify-between mt-2">
-                                <span className="text-[9px] font-bold text-muted">{article.savedAt}</span>
+                                <span className="text-[9px] font-bold text-muted">
+                                    {new Date(article.createdAt).toLocaleDateString()}
+                                </span>
                                 <div className="flex items-center gap-1">
-                                    <button className="p-2 text-muted hover:text-primary hover:bg-primary/5 rounded-lg transition-colors" title="External Link">
+                                    <a href={article.projectLink} target="_blank" rel="noreferrer" className="p-2 text-muted hover:text-primary hover:bg-primary/5 rounded-lg transition-colors" title="External Link">
                                         <HiOutlineArrowTopRightOnSquare className="text-sm" />
-                                    </button>
-                                    <button className="p-2 text-muted hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-colors" title="Remove">
+                                    </a>
+                                    <button
+                                        onClick={() => handleDelete(article._id)}
+                                        className="p-2 text-muted hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-colors"
+                                        title="Remove"
+                                    >
                                         <HiOutlineTrash className="text-sm" />
                                     </button>
                                 </div>

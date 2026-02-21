@@ -1,21 +1,28 @@
-import React, { useState } from 'react';
+import { useSelector } from 'react-redux';
 import {
-    HiOutlineClock,
     HiOutlineSquares2X2,
-    HiOutlineFire,
-    HiOutlineCpuChip,
-    HiOutlineShieldCheck,
-    HiOutlineGlobeAlt
+    HiOutlineTag
 } from 'react-icons/hi2';
 
 const BookmarksFilters = ({ activeFilter, setActiveFilter }) => {
+    const { bookmarkedPosts } = useSelector((state) => state.bookmark);
+
+    // Get unique categories from bookmarked posts
+    const dynamicCategories = Array.from(
+        new Set(
+            bookmarkedPosts
+                .map(post => post.category?.categoryName)
+                .filter(Boolean)
+        )
+    ).map(catName => ({
+        id: catName.toLowerCase(),
+        label: catName,
+        icon: HiOutlineTag
+    }));
+
     const filters = [
         { id: 'all', label: 'All Saved', icon: HiOutlineSquares2X2 },
-        { id: 'history', label: 'History', icon: HiOutlineClock },
-        { id: 'programming', label: 'Programming', icon: HiOutlineFire },
-        { id: 'ai', label: 'AI & ML', icon: HiOutlineCpuChip },
-        { id: 'security', label: 'Security', icon: HiOutlineShieldCheck },
-        { id: 'web', label: 'Web Dev', icon: HiOutlineGlobeAlt },
+        ...dynamicCategories
     ];
 
     return (

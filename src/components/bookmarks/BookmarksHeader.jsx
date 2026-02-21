@@ -1,7 +1,16 @@
-import React from 'react';
-import { HiOutlineBookmark, HiOutlineClock, HiOutlineSquares2X2 } from 'react-icons/hi2';
+import { useSelector } from 'react-redux';
+import { HiOutlineBookmark } from 'react-icons/hi2';
 
 const BookmarksHeader = () => {
+    const { bookmarkedPosts } = useSelector((state) => state.bookmark);
+
+    // Calculate unique collection categories
+    const collectionsCount = new Set(
+        bookmarkedPosts
+            .map(post => post.category?.categoryName)
+            .filter(Boolean)
+    ).size;
+
     return (
         <div className="rounded-xl border border-default p-8 mb-8 shadow-sm animate-in fade-in slide-in-from-top-4 duration-700">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
@@ -19,11 +28,11 @@ const BookmarksHeader = () => {
 
                 <div className="flex items-center gap-4 p-2 rounded-2xl border border-default">
                     <div className="flex flex-col items-center px-4 py-2 text-center border-r border-default">
-                        <span className="text-2xl font-black">42</span>
+                        <span className="text-2xl font-black">{bookmarkedPosts.length}</span>
                         <span className="text-[9px] font-black uppercase tracking-widest text-muted">Saved</span>
                     </div>
                     <div className="flex flex-col items-center px-4 py-2 text-center">
-                        <span className="text-2xl font-black">12</span>
+                        <span className="text-2xl font-black">{collectionsCount}</span>
                         <span className="text-[9px] font-black uppercase tracking-widest text-muted">Collections</span>
                     </div>
                 </div>

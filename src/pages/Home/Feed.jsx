@@ -1,16 +1,19 @@
 import { useEffect, useRef, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getAllPostsAction } from '../../redux/thunks/postThunk';
+import { toggleBookmarkAction } from '../../redux/thunks/bookmarkThunk';
 import { resetPosts } from '../../redux/slices/postSlice';
 import {
     HiOutlineHandThumbUp,
     HiOutlineChatBubbleBottomCenterText,
     HiOutlineBookmark,
+    HiBookmark,
     HiOutlineShare,
     HiArrowUpRight,
     HiOutlineXMark,
     HiOutlineArrowPath
 } from 'react-icons/hi2';
+import toast from 'react-hot-toast';
 import advertisements from '../../assets/data/advertisment.js';
 import SkeletonImage from '../../components/common/SkeletonImage';
 
@@ -215,6 +218,26 @@ const SkeletonCard = () => {
 
 const ArticleCard = ({ article, formatTime, fetchPriority = "auto" }) => {
     const navigate = useNavigate();
+    const dispatch = useDispatch();
+    const { user } = useSelector((state) => state.auth);
+    const { bookmarkedPosts } = useSelector((state) => state.bookmark);
+
+    const isBookmarked = bookmarkedPosts.some(post => post._id === article?._id);
+
+    const handleToggleBookmark = async (e) => {
+        e.stopPropagation();
+        if (!user) {
+            toast.error("Please login to bookmark");
+            return navigate("/login");
+        }
+        try {
+            const result = await dispatch(toggleBookmarkAction({ postId: article?._id, post: article })).unwrap();
+            toast.success(result.isBookmarked ? "Post saved to bookmarks" : "Post removed from bookmarks");
+        } catch (error) {
+            toast.error(error?.message || "Action failed");
+        }
+    };
+
     // Generate some deterministic colors for tags since we don't have them in DB
     const tagColors = [
         "text-primary bg-primary/10",
@@ -300,14 +323,18 @@ const ArticleCard = ({ article, formatTime, fetchPriority = "auto" }) => {
                     )}
 
                     <button
-                        onClick={(e) => e.stopPropagation()}
-                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-box hover:bg-primary/10 transition-all text-[10px] font-bold ml-auto"
+                        onClick={handleToggleBookmark}
+                        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full transition-all text-[10px] font-bold ml-auto cursor-pointer ${isBookmarked ? 'bg-primary/40 text-white' : 'bg-box hover:bg-primary/10'}`}
                     >
-                        <HiOutlineBookmark className="text-base" />
+                        {isBookmarked ? <HiBookmark className="text-base" /> : <HiOutlineBookmark className="text-base" />}
                     </button>
 
                     <button
-                        onClick={(e) => e.stopPropagation()}
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            navigator.clipboard.writeText(`${window.location.origin}/article/${article._id}`);
+                            toast.success("Link copied");
+                        }}
                         className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-box hover:bg-primary/10 transition-all text-[10px] font-bold"
                     >
                         <HiOutlineShare className="text-base" />

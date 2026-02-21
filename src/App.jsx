@@ -6,6 +6,7 @@ import { Toaster } from 'react-hot-toast';
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { getUserProfileAction } from "./redux/thunks/userThunk";
+import { getMyBookmarksAction } from "./redux/thunks/bookmarkThunk";
 import { setLoading } from "./redux/slices/authSlice";
 import Footer from "./components/layout/Footer";
 
@@ -23,6 +24,7 @@ function App() {
   useEffect(() => {
     if (localStorage.getItem("isLoggedIn") === "true") {
       dispatch(getUserProfileAction());
+      dispatch(getMyBookmarksAction());
     } else {
       dispatch(setLoading(false));
     }
