@@ -6,6 +6,7 @@ import { Toaster } from 'react-hot-toast';
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { getUserProfileAction } from "./redux/thunks/userThunk";
+import { setLoading } from "./redux/slices/authSlice";
 import Footer from "./components/layout/Footer";
 
 const authRoutes = ["/login", "/signup"];
@@ -20,7 +21,11 @@ function App() {
   const shouldHideNav = isAuthPage || isAdminPage;
 
   useEffect(() => {
-    dispatch(getUserProfileAction());
+    if (localStorage.getItem("isLoggedIn") === "true") {
+      dispatch(getUserProfileAction());
+    } else {
+      dispatch(setLoading(false));
+    }
   }, [dispatch]);
 
   return (
@@ -48,7 +53,9 @@ function App() {
         }}
       />
       {!shouldHideNav && <Navbar />}
-      <AppRoutes />
+      <div className="flex-1 min-h-[80vh]">
+        <AppRoutes />
+      </div>
       {!shouldHideNav && <MobileActions />}
       {pathname !== "/create-post" && pathname !== "/profile" && !shouldHideNav && <Footer />}
     </div>

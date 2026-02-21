@@ -15,6 +15,9 @@ const authSlice = createSlice({
     reducers: {
         clearError: (state) => {
             state.error = null;
+        },
+        setLoading: (state, action) => {
+            state.loading = action.payload;
         }
     },
     extraReducers: (builder) => {
@@ -28,6 +31,7 @@ const authSlice = createSlice({
                 state.loading = false;
                 state.user = action.payload.User;
                 state.isAdmin = action.payload.isAdmin;
+                localStorage.setItem("isLoggedIn", "true");
             })
             .addCase(registerAction.rejected, (state, action) => {
                 state.loading = false;
@@ -44,6 +48,7 @@ const authSlice = createSlice({
                 state.loading = false;
                 state.user = action.payload.User;
                 state.isAdmin = action.payload.isAdmin;
+                localStorage.setItem("isLoggedIn", "true");
             })
             .addCase(loginAction.rejected, (state, action) => {
                 state.loading = false;
@@ -55,6 +60,7 @@ const authSlice = createSlice({
             .addCase(logoutAction.fulfilled, (state) => {
                 state.user = null;
                 state.isAdmin = false;
+                localStorage.removeItem("isLoggedIn");
             });
 
         // Profile (Session Check)
@@ -66,14 +72,16 @@ const authSlice = createSlice({
                 state.loading = false;
                 state.user = action.payload.UserProfile;
                 state.isAdmin = action.payload.isAdmin;
+                localStorage.setItem("isLoggedIn", "true");
             })
             .addCase(getUserProfileAction.rejected, (state) => {
                 state.loading = false;
                 state.user = null;
                 state.isAdmin = false;
+                localStorage.removeItem("isLoggedIn");
             });
     }
 });
 
-export const { clearError } = authSlice.actions;
+export const { clearError, setLoading } = authSlice.actions;
 export default authSlice.reducer;

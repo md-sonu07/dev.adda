@@ -9,8 +9,8 @@ const Logo = ({ collapsed = false, className = "", showMobile = false, to = "/",
             </div>
             {!iconOnly && (
                 <h2
-                    className={`text-xl uppercase font-black leading-tight tracking-tighter transition-all duration-500 ease-in-out overflow-hidden
-                    ${collapsed ? 'max-w-0 opacity-0 pointer-events-none mx-0' : 'max-w-[200px] opacity-100'}`}
+                    className={`text-xl uppercase font-black leading-tight tracking-tighter transition-[opacity,transform] duration-500 ease-in-out overflow-hidden
+                    ${collapsed ? 'max-w-0 opacity-0 pointer-events-none mx-0 scale-95' : 'max-w-[200px] opacity-100 scale-100'}`}
                 >
                     Dev<span className="text-primary">.</span><span className="text-muted/60 lowercase font-medium">adda</span>
                 </h2>

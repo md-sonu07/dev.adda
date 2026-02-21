@@ -13,12 +13,14 @@ const HomeThumbnail = () => {
                     <img
                         alt="The Future of LLMs"
                         className="absolute inset-0 w-full h-full object-cover blur-[1px] brightness-70 scale-105"
-                        src="https://images.unsplash.com/photo-1677442136019-21780ecad995?q=80&w=2000&auto=format&fit=crop"
+                        src="https://images.unsplash.com/photo-1677442136019-21780ecad995?q=75&w=1200&auto=format&fit=crop"
+                        fetchPriority="high"
+                        loading="eager"
+                        decoding="async"
                     />
-                    {/* Layered Masks for Depth */}
-                    <div className="absolute inset-0 bg-linear-to-t from-background via-background/20 to-transparent"></div>
-                    <div className="absolute inset-0 bg-linear-to-b from-black/20 via-transparent to-transparent"></div>
-                    <div className="absolute inset-0 bg-black/5"></div>
+                    {/* Optimized Composite Mask for Depth (Single Div) */}
+                    <div className="absolute inset-0 bg-linear-to-t from-background via-background/20 to-transparent mix-blend-multiply opacity-60"></div>
+                    <div className="absolute inset-0 bg-linear-to-b from-black/20 via-transparent to-black/40"></div>
                 </div>
             </div>
 

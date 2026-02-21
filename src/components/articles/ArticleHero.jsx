@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import SkeletonImage from '../common/SkeletonImage';
-import { HiHome, HiCalendar, HiClock, HiShare } from 'react-icons/hi';
+import { HiHome, HiCalendar, HiClock, HiShare } from 'react-icons/hi2';
 import { motion } from 'framer-motion';
 
 const ArticleHero = ({ post }) => {
@@ -46,6 +46,7 @@ const ArticleHero = ({ post }) => {
                                     <SkeletonImage
                                         src={post?.author?.avatar || `https://ui-avatars.com/api/?name=${post?.author?.fullName || 'A'}&background=random`}
                                         alt={post?.author?.fullName}
+                                        customWidth={100}
                                         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                                     />
                                 </div>
@@ -57,9 +58,9 @@ const ArticleHero = ({ post }) => {
 
                         <div className="flex flex-col gap-1 sm:gap-0.5">
                             <div className="flex items-center gap-2">
-                                <h4 className="text-text-heading font-black text-sm tracking-tight leading-none group-hover:text-primary transition-colors">
+                                <p className="text-text-heading font-black text-sm tracking-tight leading-none group-hover:text-primary transition-colors">
                                     {post?.author?.fullName}
-                                </h4>
+                                </p>
                                 <span className="text-[8px] font-black uppercase tracking-widest text-primary bg-primary/10 px-1.5 py-0.5 rounded-full">
                                     Pro
                                 </span>

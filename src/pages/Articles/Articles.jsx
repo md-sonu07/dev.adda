@@ -1,13 +1,14 @@
-import ArticleInteractionBar from '../../components/articles/ArticleInteractionBar'
 import ArticleHero from '../../components/articles/ArticleHero'
 import ArticleContent from '../../components/articles/ArticleContent'
-import ArticleComments from '../../components/articles/ArticleComments'
 import ArticleSidebar from '../../components/articles/ArticleSidebar'
 import ReadingProgressBar from '../../components/articles/ReadingProgressBar'
-import { useParams } from 'react-router-dom'
+import { useParams, useLocation } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { getPostByIdAction } from '../../redux/thunks/postThunk'
-import { useEffect, useLayoutEffect } from 'react'
+import { useEffect, useLayoutEffect, lazy, Suspense } from 'react'
+
+const ArticleComments = lazy(() => import('../../components/articles/ArticleComments'));
+const ArticleInteractionBar = lazy(() => import('../../components/articles/ArticleInteractionBar'));
 
 const ArticleSkeleton = () => {
   return (
@@ -98,8 +99,13 @@ const ArticleSkeleton = () => {
 
 function Articles() {
   const { id } = useParams();
+  const location = useLocation();
   const dispatch = useDispatch();
-  const { singlePost: post, loading } = useSelector((state) => state.post);
+  const { singlePost, posts, loading } = useSelector((state) => state.post);
+
+  // Instant discovery: if the post is already in our list, use it while fetching full details
+  const postFromList = posts.find(p => p._id === id);
+  const post = (singlePost?._id === id) ? singlePost : postFromList;
 
   useLayoutEffect(() => {
     window.scrollTo(0, 0);
@@ -116,15 +122,33 @@ function Articles() {
   useEffect(() => {
     if (post?.title) {
       document.title = `${post.title} | Dev Adda`;
+
+      // Update canonical link
+      let canonicalLink = document.querySelector('link[rel="canonical"]');
+      if (!canonicalLink) {
+        canonicalLink = document.createElement('link');
+        canonicalLink.setAttribute('rel', 'canonical');
+        document.head.appendChild(canonicalLink);
+      }
+      canonicalLink.setAttribute('href', `https://dev-adda-news.vercel.app/article/${id}`);
     }
     return () => {
       document.title = "Dev Adda | Tech News & Developer Updates";
+      // Reset canonical link
+      const canonicalLink = document.querySelector('link[rel="canonical"]');
+      if (canonicalLink) {
+        canonicalLink.setAttribute('href', 'https://dev-adda-news.vercel.app/');
+      }
     };
-  }, [post]);
+  }, [post, id]);
 
-  if (loading || !post) {
+  // Show skeleton only if we have NO data about the post (e.g. direct link visit)
+  if (!post && loading) {
     return <ArticleSkeleton />;
   }
+
+  // If we have no post data and are not loading, either 404 or just loading
+  if (!post) return <ArticleSkeleton />;
 
 
   return (
@@ -132,7 +156,9 @@ function Articles() {
       <ReadingProgressBar />
       <main className="mx-auto flex w-full max-w-[1280px] grow items-start gap-8 px-4 py-8 md:px-10">
         {/* Left Sticky Interaction Bar (Desktop) */}
-        <ArticleInteractionBar />
+        <Suspense fallback={<div className="size-12 rounded-2xl bg-box/20 animate-pulse" />}>
+          <ArticleInteractionBar />
+        </Suspense>
 
         {/* Center Content Area */}
         <article className="flex flex-1 flex-col max-w-[840px] overflow-hidden">
@@ -146,7 +172,9 @@ function Articles() {
             <div className="flex-1 h-px bg-linear-to-r from-transparent via-default to-transparent opacity-0" />
           </div>
 
-          <ArticleComments />
+          <Suspense fallback={<div className="h-64 bg-box/20 rounded-3xl animate-pulse" />}>
+            <ArticleComments />
+          </Suspense>
         </article>
 
         {/* Right Sidebar */}

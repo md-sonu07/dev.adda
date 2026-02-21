@@ -1,29 +1,80 @@
-import { useEffect } from 'react';
+import { useEffect, useRef, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getAllPostsAction } from '../../redux/thunks/postThunk';
+import { resetPosts } from '../../redux/slices/postSlice';
 import {
     HiOutlineHandThumbUp,
     HiOutlineChatBubbleBottomCenterText,
     HiOutlineBookmark,
     HiOutlineShare,
-    HiChevronDown,
     HiArrowUpRight,
-    HiOutlineXMark
+    HiOutlineXMark,
+    HiOutlineArrowPath
 } from 'react-icons/hi2';
 import advertisements from '../../assets/data/advertisment.js';
 import SkeletonImage from '../../components/common/SkeletonImage';
 
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
+const LIMIT = 10;
+
 function Feed() {
     const dispatch = useDispatch();
     const [searchParams] = useSearchParams();
     const q = searchParams.get('q');
-    const { posts, loading, selectedCategory } = useSelector((state) => state.post);
+    const { posts, loading, selectedCategory, pagination } = useSelector((state) => state.post);
 
+    // Use refs so the IntersectionObserver callback always has fresh values
+    // without needing to be recreated on every render.
+    const loadingRef = useRef(loading);
+    const paginationRef = useRef(pagination);
+    const isFetchingRef = useRef(false);
+
+    useEffect(() => { loadingRef.current = loading; }, [loading]);
+    useEffect(() => { paginationRef.current = pagination; }, [pagination]);
+
+    const observer = useRef();
+    const lastPostElementRef = useCallback(node => {
+        if (observer.current) observer.current.disconnect();
+        observer.current = new IntersectionObserver(entries => {
+            if (
+                entries[0].isIntersecting &&
+                paginationRef.current.hasMore &&
+                !loadingRef.current &&
+                !isFetchingRef.current
+            ) {
+                isFetchingRef.current = true;
+                const { currentPage, limit } = paginationRef.current;
+                dispatch(getAllPostsAction({
+                    q,
+                    page: currentPage + 1,
+                    limit,
+                    category: selectedCategory && !selectedCategory.startsWith('#') && selectedCategory !== 'Latest' && selectedCategory !== 'Trending'
+                        ? selectedCategory
+                        : undefined
+                })).finally(() => {
+                    isFetchingRef.current = false;
+                });
+            }
+        }, { threshold: 0.1 });
+        if (node) observer.current.observe(node);
+    }, [q, selectedCategory, dispatch]);
+
+    // Reset and fetch first page whenever the search query or category changes
     useEffect(() => {
-        dispatch(getAllPostsAction({ q }));
-    }, [dispatch, q]);
+        isFetchingRef.current = true;
+        dispatch(resetPosts());
+        const category =
+            selectedCategory &&
+                !selectedCategory.startsWith('#') &&
+                selectedCategory !== 'Latest' &&
+                selectedCategory !== 'Trending'
+                ? selectedCategory
+                : undefined;
+        dispatch(getAllPostsAction({ q, page: 1, limit: LIMIT, category })).finally(() => {
+            isFetchingRef.current = false;
+        });
+    }, [dispatch, q, selectedCategory]);
 
     const formatTime = (dateString) => {
         const date = new Date(dateString);
@@ -36,7 +87,8 @@ function Feed() {
         return `${Math.floor(diffInSeconds / 86400)}d ago`;
     };
 
-    // --- Dynamic Filtering Logic ---
+    // Note: In a real app, backend would handle category-based filtering perfectly.
+    // Keeping client-side logic for special categories like 'Trending' if data is already fetched.
     const getFilteredPosts = () => {
         let filtered = [...posts].filter(post => post.status === 'approved');
 
@@ -51,11 +103,7 @@ function Feed() {
             case 'Latest':
                 return filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
             case 'Trending':
-                // For trending, we could sort by likes or just show most recent
                 return filtered.sort((a, b) => (b.likes?.length || 0) - (a.likes?.length || 0));
-            case 'Following':
-                // Placeholder: currently shows all approved posts
-                return filtered;
             default:
                 return filtered;
         }
@@ -63,50 +111,66 @@ function Feed() {
 
     const filteredPosts = getFilteredPosts();
 
-    if (loading && posts.length === 0) {
-        return (
-            <div className="max-w-[1400px] py-4">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    {[1, 2, 3, 4].map((i) => (
-                        <SkeletonCard key={i} />
-                    ))}
-                </div>
-            </div>
-        );
-    }
-
     return (
         <div className="max-w-[1400px] py-4">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {filteredPosts.map((post) => (
-                    <ArticleCard key={post._id} article={post} formatTime={formatTime} />
-                ))}
-            </div>
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
-                {advertisements && advertisements.map((ad, idx) => (
-                    <ArticleCard
-                        key={`ad-${idx}`}
-                        article={{
-                            ...ad,
-                            summary: ad.description,
-                            coverImage: ad.image,
-                            likes: { length: ad.likes },
-                            author: { ...ad.author, fullName: ad.author.name },
-                            tags: ad.tags ? ad.tags.map(t => t.name || t) : []
-                        }}
-                        formatTime={() => ad.time}
-                    />
-                ))}
+                {filteredPosts.map((post, index) => {
+                    if (filteredPosts.length === index + 1) {
+                        return (
+                            <div ref={lastPostElementRef} key={post._id}>
+                                <ArticleCard
+                                    article={post}
+                                    formatTime={formatTime}
+                                    fetchPriority={index < 2 ? "high" : "auto"}
+                                />
+                            </div>
+                        );
+                    } else {
+                        return (
+                            <ArticleCard
+                                key={post._id}
+                                article={post}
+                                formatTime={formatTime}
+                                fetchPriority={index < 2 ? "high" : "auto"}
+                            />
+                        );
+                    }
+                })}
             </div>
 
-            {posts.length > 0 && (
-                <div className="flex justify-center mt-12 pb-10">
-                    <button
-                        className="px-8 py-3 bg-box border border-default rounded-xl text-sm font-bold text-body transition-all flex items-center gap-2 hover:bg-primary/10"
-                    >
-                        <HiChevronDown className="text-xl" />
-                        Load More Content
-                    </button>
+            {/* Advertisements section - appearing after posts if they exist */}
+            {posts.length > 0 && advertisements.length > 0 && (
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+                    {advertisements.map((ad, idx) => (
+                        <ArticleCard
+                            key={`ad-${idx}`}
+                            article={{
+                                ...ad,
+                                summary: ad.description,
+                                coverImage: ad.image,
+                                likes: { length: ad.likes },
+                                author: { ...ad.author, fullName: ad.author.name },
+                                tags: ad.tags ? ad.tags.map(t => t.name || t) : []
+                            }}
+                            formatTime={() => ad.time}
+                        />
+                    ))}
+                </div>
+            )}
+
+            {loading && (
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+                    {[1, 2].map((i) => (
+                        <SkeletonCard key={`extra-skeleton-${i}`} />
+                    ))}
+                </div>
+            )}
+
+            {!loading && posts.length > 0 && !pagination.hasMore && (
+                <div className="flex flex-col items-center justify-center mt-12 pb-10 gap-3 grayscale opacity-40">
+                    <div className="h-px w-20 bg-default"></div>
+                    <p className="text-[10px] font-black uppercase tracking-[0.3em]">Reached The End</p>
+                    <div className="h-px w-20 bg-default"></div>
                 </div>
             )}
 
@@ -149,7 +213,7 @@ const SkeletonCard = () => {
     );
 };
 
-const ArticleCard = ({ article, formatTime }) => {
+const ArticleCard = ({ article, formatTime, fetchPriority = "auto" }) => {
     const navigate = useNavigate();
     // Generate some deterministic colors for tags since we don't have them in DB
     const tagColors = [
@@ -258,6 +322,7 @@ const ArticleCard = ({ article, formatTime }) => {
                         src={article.coverImage || `https://ui-avatars.com/api/?name=${encodeURIComponent(article.title)}&background=random&size=512&color=fff&bold=true`}
                         alt={article.title}
                         className="w-full h-44 sm:h-full group-hover:scale-110 transition-transform duration-700"
+                        fetchPriority={fetchPriority}
                     />
 
                     {/* Hover Overlay */}

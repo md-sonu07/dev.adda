@@ -8,6 +8,13 @@ const initialState = {
     selectedCategory: 'Trending',
     loading: false,
     error: null,
+    pagination: {
+        totalPosts: 0,
+        totalPages: 0,
+        currentPage: 1,
+        limit: 10,
+        hasMore: false
+    }
 }
 
 const postSlice = createSlice({
@@ -22,6 +29,16 @@ const postSlice = createSlice({
         },
         setCategory: (state, action) => {
             state.selectedCategory = action.payload;
+        },
+        resetPosts: (state) => {
+            state.posts = [];
+            state.pagination = {
+                totalPosts: 0,
+                totalPages: 0,
+                currentPage: 1,
+                limit: state.pagination.limit,
+                hasMore: false
+            };
         }
     },
     extraReducers: (builder) => {
@@ -44,7 +61,21 @@ const postSlice = createSlice({
             })
             .addCase(getAllPostsAction.fulfilled, (state, action) => {
                 state.loading = false;
-                state.posts = action.payload.posts;
+                const { posts, pagination } = action.payload;
+
+                if (pagination.currentPage === 1) {
+                    state.posts = posts;
+                } else {
+                    // Avoid duplicates if any
+                    const existingIds = new Set(state.posts.map(p => p._id));
+                    const newPosts = posts.filter(p => !existingIds.has(p._id));
+                    state.posts = [...state.posts, ...newPosts];
+                }
+
+                state.pagination = {
+                    ...pagination,
+                    hasMore: pagination.currentPage < pagination.totalPages
+                };
             })
             .addCase(getAllPostsAction.rejected, (state, action) => {
                 state.loading = false;
@@ -127,5 +158,5 @@ const postSlice = createSlice({
     }
 });
 
-export const { clearPostError, clearSinglePost, setCategory } = postSlice.actions;
+export const { clearPostError, clearSinglePost, setCategory, resetPosts } = postSlice.actions;
 export default postSlice.reducer;

@@ -52,6 +52,7 @@ const ArticleSidebar = () => {
                                 initial={{ opacity: 0, x: 20 }}
                                 animate={{ opacity: 1, x: 0 }}
                                 transition={{ delay: 0.1 * idx }}
+                                className="will-change-transform"
                             >
                                 <Link to={`/article/${article._id}`} className="group flex gap-4 items-center">
                                     <div className="size-16 rounded-[14px] overflow-hidden shrink-0 border border-default/60 shadow-xs ring-4 ring-transparent group-hover:ring-primary/5 transition-all duration-500">
@@ -106,7 +107,10 @@ const ArticleSidebar = () => {
                     </p>
                     <div className="space-y-4">
                         <div className="relative">
+                            <label htmlFor="newsletter-email" className="sr-only">Email Address</label>
                             <input
+                                id="newsletter-email"
+                                name="email"
                                 className="w-full bg-background/50 backdrop-blur-md border border-default rounded-2xl p-4 text-[13px] focus:ring-2 focus:ring-primary/20 focus:border-primary outline-hidden transition-all font-bold placeholder:font-medium shadow-inner"
                                 placeholder="name@domain.com"
                                 type="email"

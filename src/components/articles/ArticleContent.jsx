@@ -19,6 +19,9 @@ const ArticleContent = ({ post }) => {
                     <SkeletonImage
                         src={post.coverImage}
                         alt={post.title}
+                        fetchPriority="high"
+                        loading="eager"
+                        customWidth={700}
                         className="w-full h-auto aspect-video object-cover transition-transform duration-1000 group-hover:scale-105"
                     />
 

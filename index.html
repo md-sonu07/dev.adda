@@ -40,7 +40,26 @@
   <!-- 🚀 Resource Hints -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Roboto:wght@300;400;500&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap" rel="stylesheet" />
+  <link rel="preconnect" href="https://ik.imagekit.io" />
+  <link rel="dns-prefetch" href="https://ik.imagekit.io" />
+  <link rel="preconnect" href="https://images.unsplash.com" />
+
+  <!-- 🖼️ Primary Home Hero Image Preload (LCP Optimization) -->
+  <link rel="preload" as="image"
+    href="https://images.unsplash.com/photo-1677442136019-21780ecad995?q=75&w=1200&auto=format&fit=crop"
+    fetchpriority="high" />
+
+  <!-- 🎨 Fonts (Non-blocking) -->
+  <link rel="preload" as="style"
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Roboto:wght@300;400;500&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Roboto:wght@300;400;500&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap"
+    rel="stylesheet" media="print" onload="this.media='all'" />
+  <noscript>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Roboto:wght@300;400;500&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap"
+      rel="stylesheet" />
+  </noscript>
   <link rel="canonical" href="https://dev-adda-news.vercel.app/" />
 
   <!-- 📊 Structured Data (Search & Presence) -->
@@ -60,7 +79,7 @@
   </script>
 </head>
 
-<body className="antialiased selection:bg-primary/20">
+<body class="antialiased selection:bg-primary/20">
   <div id="root"></div>
   <script type="module" src="/src/main.jsx"></script>
 </body>
