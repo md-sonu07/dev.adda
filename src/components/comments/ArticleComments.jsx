@@ -1,6 +1,29 @@
+import { useState, useRef, useEffect } from 'react';
 import { HiOutlineHandThumbUp, HiOutlineChatBubbleBottomCenterText, HiChevronDown } from 'react-icons/hi2';
 
 const ArticleComments = () => {
+    const [isSortOpen, setIsSortOpen] = useState(false);
+    const [sortBy, setSortBy] = useState("Newest first");
+    const dropdownRef = useRef(null);
+
+    // Close dropdown when clicking outside
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+                setIsSortOpen(false);
+            }
+        };
+
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, []);
+
+    const sortOptions = ["Newest first", "Oldest first", "Most liked"];
+
+    const handleSortSelect = (option) => {
+        setSortBy(option);
+        setIsSortOpen(false);
+    };
     return (
         <section className="mb-24 pt-10 border-t border-default/30" id="comments">
             <div className="flex items-center justify-between mb-8">
@@ -11,22 +34,26 @@ const ArticleComments = () => {
                     </span>
                 </div>
 
-                <div className="relative group">
-                    <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-box/40 border border-default/40 hover:border-primary/40 text-sm font-medium text-muted hover:text-text-heading transition-all duration-300 shadow-sm shadow-black/5">
-                        Newest first
-                        <HiChevronDown className="text-base text-muted group-hover:text-primary transition-colors" />
+                <div className="relative" ref={dropdownRef}>
+                    <button
+                        onClick={() => setIsSortOpen(!isSortOpen)}
+                        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-box/40 border transition-all duration-300 shadow-sm shadow-black/5 ${isSortOpen ? 'border-primary/40 text-text-heading' : 'border-default/40 hover:border-primary/40 text-sm font-medium text-muted hover:text-text-heading'}`}
+                    >
+                        {sortBy}
+                        <HiChevronDown className={`text-base transition-all duration-300 ${isSortOpen ? 'text-primary rotate-180' : 'text-muted'}`} />
                     </button>
-                    {/* Simulated dropdown menu for presentation */}
-                    <div className="absolute right-0 top-full mt-2 w-36 bg-surface border border-default/50 rounded-xl shadow-xl shadow-black/10 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform origin-top-right scale-95 group-hover:scale-100 z-10 flex flex-col overflow-hidden">
-                        <button className="text-left px-4 py-2.5 text-sm font-medium text-text-heading bg-primary/10 hover:bg-primary/15 transition-colors">
-                            Newest first
-                        </button>
-                        <button className="text-left px-4 py-2.5 text-sm font-medium text-muted hover:text-text-heading hover:bg-box/50 transition-colors">
-                            Oldest first
-                        </button>
-                        <button className="text-left px-4 py-2.5 text-sm font-medium text-muted hover:text-text-heading hover:bg-box/50 transition-colors">
-                            Most liked
-                        </button>
+
+                    {/* Dropdown menu */}
+                    <div className={`absolute right-0 top-full mt-2 w-36 bg-surface border border-default/50 rounded-xl shadow-xl shadow-black/10 transition-all duration-200 origin-top-right z-10 flex flex-col overflow-hidden ${isSortOpen ? 'opacity-100 visible scale-100' : 'opacity-0 invisible scale-95'}`}>
+                        {sortOptions.map((option) => (
+                            <button
+                                key={option}
+                                onClick={() => handleSortSelect(option)}
+                                className={`text-left px-4 py-2.5 text-sm font-medium transition-colors ${sortBy === option ? 'text-text-heading bg-primary/10 hover:bg-primary/15' : 'text-muted hover:text-text-heading hover:bg-box/50'}`}
+                            >
+                                {option}
+                            </button>
+                        ))}
                     </div>
                 </div>
             </div>
