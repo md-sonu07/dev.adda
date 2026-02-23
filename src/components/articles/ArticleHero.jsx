@@ -2,8 +2,18 @@ import { Link } from 'react-router-dom';
 import SkeletonImage from '../common/SkeletonImage';
 import { HiHome, HiCalendar, HiClock, HiShare } from 'react-icons/hi2';
 import { motion } from 'framer-motion';
+import { sharePost } from '../../utils/shareUtils';
 
 const ArticleHero = ({ post }) => {
+    const handleShare = (e) => {
+        e.preventDefault();
+        sharePost({
+            title: post?.title,
+            text: post?.summary,
+            url: window.location.href
+        });
+    };
+
     return (
         <header className="mb-12">
             {/* Simplified Breadcrumbs */}
@@ -82,7 +92,10 @@ const ArticleHero = ({ post }) => {
                     </div>
 
                     <div className="flex items-center gap-2 sm:gap-3">
-                        <button className="flex-1 sm:flex-none flex items-center justify-center gap-2 text-muted hover:text-primary font-black uppercase tracking-[0.2em] text-[10px] px-4 sm:px-5 py-2.5 rounded-[12px] border border-default/60 hover:border-primary/30 transition-all bg-background/50 backdrop-blur-sm group/share">
+                        <button
+                            onClick={handleShare}
+                            className="flex-1 sm:flex-none flex items-center justify-center gap-2 text-muted hover:text-primary font-black uppercase tracking-[0.2em] text-[10px] px-4 sm:px-5 py-2.5 rounded-[12px] border border-default/60 hover:border-primary/30 transition-all bg-background/50 backdrop-blur-sm group/share cursor-pointer"
+                        >
                             <HiShare className="text-sm transition-transform group-hover/share:-rotate-12" />
                             <span>Share</span>
                         </button>

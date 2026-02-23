@@ -157,6 +157,13 @@ const ProfileHeader = () => {
                                 className="w-full h-full"
                             />
                         </div>
+                        {/* Mobile Floating Share Icon */}
+                        <button
+                            onClick={handleShare}
+                            className="absolute -top-1 -right-1 size-9 flex sm:hidden items-center justify-center rounded-full bg-gray-400/40 hover:bg-gray-400/60 text-white border-4 border-background shadow-xl active:scale-90 transition-all z-20 cursor-pointer"
+                        >
+                            <HiOutlineShare className="text-base" />
+                        </button>
                         <div className="absolute -bottom-1 -right-1 bg-green-500 size-5 rounded-2xl border-4 border-background shadow-lg"></div>
                     </div>
 
@@ -195,7 +202,7 @@ const ProfileHeader = () => {
                             {/* Share Link */}
                             <button
                                 onClick={handleShare}
-                                className="p-2 flex rounded-xl border border-default hover:bg-primary/5 hover:border-primary/50 text-muted hover:text-primary transition-all shadow-sm cursor-pointer"
+                                className="p-2 hidden sm:flex rounded-xl border border-default hover:bg-primary/5 hover:border-primary/50 text-muted hover:text-primary transition-all shadow-sm cursor-pointer"
                                 title="Share Profile"
                             >
                                 <HiOutlineShare className="text-lg" />
