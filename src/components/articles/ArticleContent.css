@@ -73,7 +73,7 @@
 /* Sophisticated Blockquotes */
 .article-content-body blockquote {
     @apply relative border-l-4 border-primary bg-box/40 px-8 py-7 my-10 rounded-r-2xl italic font-semibold text-text-heading text-lg;
-    background-image: linear-gradient(to right, var(--color-primary-light/5), transparent);
+    background-image: linear-gradient(to right, color-mix(in srgb, var(--color-primary-light) 5%, transparent), transparent);
 }
 
 .article-content-body blockquote::before {

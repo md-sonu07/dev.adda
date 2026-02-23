@@ -176,7 +176,7 @@ const ProfileHeader = () => {
                             <p className="text-muted font-bold text-base">{userData.bio || "No bio yet"}</p>
                         </div>
 
-                        <div className="flex flex-wrap items-center justify-center sm:justify-start gap-x-5 gap-y-1 text-[13px] font-black tracking-widest text-muted">
+                        <div className="flex flex-wrap items-center justify-center sm:justify-start gap-x-5 gap-y-1 text-[13px] font-medium tracking-widest text-muted">
                             <span className="flex items-center gap-1 hover:text-primary transition-colors cursor-pointer">
                                 <HiAtSymbol className="text-base" />
                                 {userData.userName || "username"}

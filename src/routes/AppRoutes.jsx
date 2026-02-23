@@ -2,8 +2,8 @@ import { Routes, Route } from 'react-router-dom';
 import { lazy, Suspense } from 'react';
 import { ProtectedRoute, AdminRoute } from './ProtectedRoute';
 
-import Home from '../pages/Home/Home';
-import Articles from '../pages/Articles/Articles';
+const Home = lazy(() => import('../pages/Home/Home'));
+const Articles = lazy(() => import('../pages/Articles/Articles'));
 
 const AddPost = lazy(() => import('../pages/AddPost/AddPost'));
 const Profile = lazy(() => import('../pages/Profile/Profile'));
