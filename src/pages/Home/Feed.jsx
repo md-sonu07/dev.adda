@@ -3,8 +3,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getAllPostsAction } from '../../redux/thunks/postThunk';
 import { toggleBookmarkAction } from '../../redux/thunks/bookmarkThunk';
 import { resetPosts } from '../../redux/slices/postSlice';
+import { toggleLikeAction } from '../../redux/thunks/likeThunk';
 import {
     HiOutlineHandThumbUp,
+    HiHandThumbUp,
     HiOutlineChatBubbleBottomCenterText,
     HiOutlineBookmark,
     HiBookmark,
@@ -106,7 +108,7 @@ function Feed() {
             case 'Latest':
                 return filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
             case 'Trending':
-                return filtered.sort((a, b) => (b.likes?.length || 0) - (a.likes?.length || 0));
+                return filtered.sort((a, b) => (b.likesCount || 0) - (a.likesCount || 0));
             default:
                 return filtered;
         }
@@ -221,8 +223,10 @@ const ArticleCard = ({ article, formatTime, fetchPriority = "auto" }) => {
     const dispatch = useDispatch();
     const { user } = useSelector((state) => state.auth);
     const { bookmarkedPosts } = useSelector((state) => state.bookmark);
+    const { postLikes } = useSelector((state) => state.like);
 
     const isBookmarked = bookmarkedPosts.some(post => post._id === article?._id);
+    const likeInfo = postLikes[article?._id] || { count: article.likesCount || 0, isLiked: false };
 
     const handleToggleBookmark = async (e) => {
         e.stopPropagation();
@@ -237,6 +241,20 @@ const ArticleCard = ({ article, formatTime, fetchPriority = "auto" }) => {
             toast.error(error?.message || "Action failed");
         }
     };
+
+    const handleToggleLike = async (e) => {
+        e.stopPropagation();
+        if (!user) {
+            toast.error("Please login to like");
+            return navigate("/login");
+        }
+        try {
+            const result = await dispatch(toggleLikeAction(article?._id)).unwrap();
+            toast.success(result.isLiked ? "Post liked" : "Post unliked");
+        } catch (error) {
+            toast.error(error?.message || "Action failed");
+        }
+    }
 
     // Generate some deterministic colors for tags since we don't have them in DB
     const tagColors = [
@@ -293,27 +311,29 @@ const ArticleCard = ({ article, formatTime, fetchPriority = "auto" }) => {
                     </p>
                 </div>
 
-                <div className="flex items-center gap-1.5 font-display text-body">
+                <div className="flex items-center gap-2 font-display text-body">
                     <button
-                        onClick={(e) => e.stopPropagation()}
-                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-box hover:bg-primary/10 transition-all text-[10px] font-bold"
+                        onClick={handleToggleLike}
+                        className={`group/like flex items-center gap-1.5 px-3 py-1.5 rounded-full transition-all duration-300 text-[10px] font-bold ${likeInfo.isLiked
+                            ? 'text-blue-500 bg-blue-500/10 dark:bg-blue-500/20 shadow-sm border border-blue-500/20'
+                            : 'bg-box/50 border border-default/60 text-muted hover:border-blue-500/30 hover:bg-blue-50 dark:hover:bg-blue-500/10 hover:text-blue-500'}`}
                     >
-                        <HiOutlineHandThumbUp className="text-base" />
-                        {article.likes ? article.likes.length : 0}
+                        {likeInfo.isLiked ? <HiHandThumbUp className="text-base animate-pop" /> : <HiOutlineHandThumbUp className="text-base group-hover/like:scale-110 transition-transform" />}
+                        <span>{likeInfo.count}</span>
                     </button>
 
                     <button
                         onClick={(e) => e.stopPropagation()}
-                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-box hover:bg-primary/10 transition-all text-[10px] font-bold"
+                        className="group/comment flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-box/50 border border-default/60 text-muted hover:border-emerald-500/30 hover:bg-emerald-50 dark:hover:bg-emerald-500/10 hover:text-emerald-500 transition-all duration-300 text-[10px] font-bold"
                     >
-                        <HiOutlineChatBubbleBottomCenterText className="text-base" />
-                        0
+                        <HiOutlineChatBubbleBottomCenterText className="text-base group-hover/comment:scale-110 transition-transform" />
+                        <span>0</span>
                     </button>
+
                     {article.tags?.includes("ADD") && (
                         <button
                             onClick={(e) => {
                                 e.stopPropagation();
-                                // Add remove ad logic if needed
                             }}
                             className="flex items-center cursor-pointer gap-1.5 px-3 py-1.5 rounded-full bg-red-500/10 hover:bg-red-500/20 transition-all text-[10px] font-bold text-red-500 m-auto"
                         >
@@ -324,9 +344,11 @@ const ArticleCard = ({ article, formatTime, fetchPriority = "auto" }) => {
 
                     <button
                         onClick={handleToggleBookmark}
-                        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full transition-all text-[10px] font-bold ml-auto cursor-pointer ${isBookmarked ? 'bg-primary/40 text-white' : 'bg-box hover:bg-primary/10'}`}
+                        className={`group/bookmark flex items-center gap-1.5 px-3 py-1.5 rounded-full transition-all duration-300 text-[10px] font-bold ml-auto cursor-pointer ${isBookmarked
+                            ? 'text-amber-500 bg-amber-500/10 dark:bg-amber-500/20 shadow-sm border border-amber-500/20'
+                            : 'bg-box/50 border border-default/60 text-muted hover:border-amber-500/30 hover:bg-amber-50 dark:hover:bg-amber-500/10 hover:text-amber-500'}`}
                     >
-                        {isBookmarked ? <HiBookmark className="text-base" /> : <HiOutlineBookmark className="text-base" />}
+                        {isBookmarked ? <HiBookmark className="text-base animate-pop" /> : <HiOutlineBookmark className="text-base group-hover/bookmark:scale-110 transition-transform" />}
                     </button>
 
                     <button
@@ -335,9 +357,9 @@ const ArticleCard = ({ article, formatTime, fetchPriority = "auto" }) => {
                             navigator.clipboard.writeText(`${window.location.origin}/article/${article._id}`);
                             toast.success("Link copied");
                         }}
-                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-box hover:bg-primary/10 transition-all text-[10px] font-bold"
+                        className="group/share flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-box/50 border border-default/60 text-muted hover:border-indigo-500/30 hover:bg-indigo-50 dark:hover:bg-indigo-500/10 hover:text-indigo-500 transition-all duration-300 text-[10px] font-bold"
                     >
-                        <HiOutlineShare className="text-base" />
+                        <HiOutlineShare className="text-base group-hover/share:scale-110 transition-transform" />
                     </button>
                 </div>
             </div>

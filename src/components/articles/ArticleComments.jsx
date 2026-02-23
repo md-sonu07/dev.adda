@@ -81,13 +81,13 @@ const ArticleComments = () => {
                                 This is a fantastic deep dive into React architecture! The section on reconciliation patterns was particularly insightful.
                                 Have you considered how this might change with the upcoming compiler updates?
                             </p>
-                            <div className="flex items-center gap-6">
-                                <button className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-muted hover:text-primary transition-colors">
-                                    <HiOutlineHandThumbUp className="text-lg" />
+                            <div className="flex items-center gap-4">
+                                <button className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-muted hover:text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-500/10 px-3 py-1.5 rounded-full transition-all duration-300 group/likebtn">
+                                    <HiOutlineHandThumbUp className="text-lg group-hover/likebtn:scale-110 transition-transform" />
                                     <span>24 Likes</span>
                                 </button>
-                                <button className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-muted hover:text-green-500 transition-colors">
-                                    <HiOutlineChatBubbleBottomCenterText className="text-lg" />
+                                <button className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-muted hover:text-emerald-500 hover:bg-emerald-50 dark:hover:bg-emerald-500/10 px-3 py-1.5 rounded-full transition-all duration-300 group/replybtn">
+                                    <HiOutlineChatBubbleBottomCenterText className="text-lg group-hover/replybtn:scale-110 transition-transform" />
                                     <span>Reply</span>
                                 </button>
                             </div>
