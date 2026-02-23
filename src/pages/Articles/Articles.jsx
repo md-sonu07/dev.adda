@@ -8,7 +8,7 @@ import { getPostByIdAction } from '../../redux/thunks/postThunk'
 import { useEffect, useLayoutEffect, lazy, Suspense } from 'react'
 import { Helmet } from 'react-helmet-async'
 
-const ArticleComments = lazy(() => import('../../components/articles/ArticleComments'));
+const ArticleComments = lazy(() => import('../../components/comments/ArticleComments'));
 const ArticleInteractionBar = lazy(() => import('../../components/articles/ArticleInteractionBar'));
 
 const ArticleSkeleton = () => {
