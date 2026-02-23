@@ -3,6 +3,7 @@ import Feed from "./Feed.jsx";
 import HomeThumbnail from "./HomeThumbnail.jsx";
 import CategoryFilter from "../../components/home/CategoryFilter";
 import FeedHeader from "../../components/home/FeedHeader";
+import { Helmet } from "react-helmet-async";
 
 function Home() {
     const location = useLocation();
@@ -10,6 +11,11 @@ function Home() {
 
     return (
         <main className="min-h-screen w-full animate-in fade-in slide-in-from-bottom-4 duration-700">
+            <Helmet>
+                <title>Dev Adda | Curated Intelligence for the Modern Engineer</title>
+                <meta name="description" content="Dev Adda is a news blog for tech enthusiasts and developers. Stay updated with the latest in tech, engineering, and programming." />
+                <link rel="canonical" href="https://dev-adda-news.vercel.app/" />
+            </Helmet>
             {/* Floating Sticky Navigation Overlay */}
             <div className={`sticky inset-x-0 z-30 transition-all duration-500 ${isArticlesPage
                 ? "top-16 py-4"

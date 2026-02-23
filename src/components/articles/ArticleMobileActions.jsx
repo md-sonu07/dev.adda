@@ -13,6 +13,8 @@ import { toggleBookmarkAction } from '../../redux/thunks/bookmarkThunk';
 import { toggleLikeAction, getPostLikesAction } from '../../redux/thunks/likeThunk';
 import toast from 'react-hot-toast';
 
+import { sharePost } from '../../utils/shareUtils';
+
 const ArticleMobileActions = ({ post: initialPost }) => {
     const { id } = useParams();
     const dispatch = useDispatch();
@@ -60,8 +62,11 @@ const ArticleMobileActions = ({ post: initialPost }) => {
 
     const handleShare = (e) => {
         e.stopPropagation();
-        navigator.clipboard.writeText(window.location.href);
-        toast.success("Link copied to clipboard");
+        sharePost({
+            title: initialPost?.title,
+            text: initialPost?.summary,
+            url: window.location.href
+        });
     };
 
     return (

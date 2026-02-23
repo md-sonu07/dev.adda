@@ -9,6 +9,7 @@ import { getUserProfileAction } from "./redux/thunks/userThunk";
 import { getMyBookmarksAction } from "./redux/thunks/bookmarkThunk";
 import { setLoading } from "./redux/slices/authSlice";
 import Footer from "./components/layout/Footer";
+import ScrollToTop from "./utils/ScrollToTop";
 
 const authRoutes = ["/login", "/signup"];
 
@@ -32,6 +33,7 @@ function App() {
 
   return (
     <div className={`${isDark ? 'dark' : ''} min-h-screen bg-background text-body transition-colors duration-300`}>
+      <ScrollToTop />
       <Toaster
         position="top-center"
         reverseOrder={false}

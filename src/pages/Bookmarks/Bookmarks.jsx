@@ -4,6 +4,7 @@ import { getMyBookmarksAction } from '../../redux/thunks/bookmarkThunk';
 import BookmarksHeader from '../../components/bookmarks/BookmarksHeader';
 import BookmarksFilters from '../../components/bookmarks/BookmarksFilters';
 import BookmarksList from '../../components/bookmarks/BookmarksList';
+import { Helmet } from 'react-helmet-async';
 
 const Bookmarks = () => {
     const [activeFilter, setActiveFilter] = useState('all');
@@ -15,6 +16,10 @@ const Bookmarks = () => {
 
     return (
         <div className="min-h-screen bg-background transition-colors duration-500">
+            <Helmet>
+                <title>My Bookmarks | Dev Adda</title>
+                <meta name="description" content="Manage your saved technical articles, tutorials, and insights on Dev Adda." />
+            </Helmet>
             <main className="max-w-[1400px] mx-auto pt-10 px-6 sm:px-14">
                 <div className="max-w-6xl mx-auto">
                     {/* Header Section */}

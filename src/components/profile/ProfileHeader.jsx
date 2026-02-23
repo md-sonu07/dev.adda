@@ -23,6 +23,7 @@ import toast from 'react-hot-toast';
 
 import EditProfileModal from './EditProfileModal';
 import SkeletonImage from '../common/SkeletonImage';
+import { sharePost } from '../../utils/shareUtils';
 
 const ProfileHeader = () => {
     const { id } = useParams();
@@ -135,6 +136,15 @@ const ProfileHeader = () => {
 
     const userData = userProfile || {};
 
+    const handleShare = (e) => {
+        e.preventDefault();
+        sharePost({
+            title: `${userData.fullName || 'User'} Profile | Dev Adda`,
+            text: userData.bio || `Check out ${userData.fullName}'s professional profile on Dev Adda.`,
+            url: window.location.href
+        });
+    };
+
     return (
         <div className="rounded-xl border border-default p-5 mb-4 shadow-sm animate-in fade-in slide-in-from-top-4 duration-700">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
@@ -183,7 +193,11 @@ const ProfileHeader = () => {
                             </a>
 
                             {/* Share Link */}
-                            <button className="p-2 hidden sm:flex rounded-xl border border-default hover:bg-primary/5 hover:border-primary/50 text-muted hover:text-primary transition-all shadow-sm">
+                            <button
+                                onClick={handleShare}
+                                className="p-2 flex rounded-xl border border-default hover:bg-primary/5 hover:border-primary/50 text-muted hover:text-primary transition-all shadow-sm cursor-pointer"
+                                title="Share Profile"
+                            >
                                 <HiOutlineShare className="text-lg" />
                             </button>
 

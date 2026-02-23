@@ -14,6 +14,8 @@ import { toggleBookmarkAction } from '../../redux/thunks/bookmarkThunk';
 import { toggleLikeAction, getPostLikesAction } from '../../redux/thunks/likeThunk';
 import toast from 'react-hot-toast';
 
+import { sharePost } from '../../utils/shareUtils';
+
 const ArticleInteractionBar = ({ post }) => {
     const { id } = useParams();
     const navigate = useNavigate();
@@ -86,10 +88,11 @@ const ArticleInteractionBar = ({ post }) => {
             icon: HiOutlineShare,
             accessibilityLabel: 'Share article',
             color: 'hover:text-indigo-500 hover:bg-indigo-50 dark:hover:bg-indigo-500/10 hover:border-indigo-500/30',
-            onClick: () => {
-                navigator.clipboard.writeText(window.location.href);
-                toast.success("Link copied to clipboard");
-            }
+            onClick: () => sharePost({
+                title: post?.title,
+                text: post?.summary,
+                url: window.location.href
+            })
         },
     ];
 

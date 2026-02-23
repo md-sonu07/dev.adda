@@ -4,6 +4,7 @@ import { getAllPostsAction } from '../../redux/thunks/postThunk';
 import { toggleBookmarkAction } from '../../redux/thunks/bookmarkThunk';
 import { resetPosts } from '../../redux/slices/postSlice';
 import { toggleLikeAction } from '../../redux/thunks/likeThunk';
+import { sharePost } from '../../utils/shareUtils';
 import {
     HiOutlineHandThumbUp,
     HiHandThumbUp,
@@ -69,6 +70,10 @@ function Feed() {
     useEffect(() => {
         isFetchingRef.current = true;
         dispatch(resetPosts());
+
+        // Scroll to top when category or search changes
+        window.scrollTo({ top: 0, behavior: 'instant' });
+
         const category =
             selectedCategory &&
                 !selectedCategory.startsWith('#') &&
@@ -354,8 +359,11 @@ const ArticleCard = ({ article, formatTime, fetchPriority = "auto" }) => {
                     <button
                         onClick={(e) => {
                             e.stopPropagation();
-                            navigator.clipboard.writeText(`${window.location.origin}/article/${article._id}`);
-                            toast.success("Link copied");
+                            sharePost({
+                                title: article.title,
+                                text: article.summary,
+                                url: `${window.location.origin}/article/${article._id}`
+                            });
                         }}
                         className="group/share flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-box/50 border border-default/60 text-muted hover:border-indigo-500/30 hover:bg-indigo-50 dark:hover:bg-indigo-500/10 hover:text-indigo-500 transition-all duration-300 text-[10px] font-bold"
                     >

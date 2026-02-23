@@ -6,6 +6,7 @@ import { useParams, useLocation } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { getPostByIdAction } from '../../redux/thunks/postThunk'
 import { useEffect, useLayoutEffect, lazy, Suspense } from 'react'
+import { Helmet } from 'react-helmet-async'
 
 const ArticleComments = lazy(() => import('../../components/articles/ArticleComments'));
 const ArticleInteractionBar = lazy(() => import('../../components/articles/ArticleInteractionBar'));
@@ -119,29 +120,6 @@ function Articles() {
     fetchPost();
   }, [dispatch, id]);
 
-  useEffect(() => {
-    if (post?.title) {
-      document.title = `${post.title} | Dev Adda`;
-
-      // Update canonical link
-      let canonicalLink = document.querySelector('link[rel="canonical"]');
-      if (!canonicalLink) {
-        canonicalLink = document.createElement('link');
-        canonicalLink.setAttribute('rel', 'canonical');
-        document.head.appendChild(canonicalLink);
-      }
-      canonicalLink.setAttribute('href', `https://dev-adda-news.vercel.app/article/${id}`);
-    }
-    return () => {
-      document.title = "Dev Adda | Tech News & Developer Updates";
-      // Reset canonical link
-      const canonicalLink = document.querySelector('link[rel="canonical"]');
-      if (canonicalLink) {
-        canonicalLink.setAttribute('href', 'https://dev-adda-news.vercel.app/');
-      }
-    };
-  }, [post, id]);
-
   // Show skeleton only if we have NO data about the post (e.g. direct link visit)
   if (!post && loading) {
     return <ArticleSkeleton />;
@@ -150,9 +128,27 @@ function Articles() {
   // If we have no post data and are not loading, either 404 or just loading
   if (!post) return <ArticleSkeleton />;
 
-
   return (
     <div className="min-h-screen bg-background">
+      <Helmet>
+        <title>{post?.title ? `${post.title} | Dev Adda` : "Dev Adda article"}</title>
+        <meta name="description" content={post?.summary || "Read the latest tech insights on Dev Adda."} />
+        <meta name="author" content={post?.author?.fullName || "Dev Adda Team"} />
+        <link rel="canonical" href={`https://dev-adda-news.vercel.app/article/${id}`} />
+
+        {/* Open Graph Tags for Social Sharing */}
+        <meta property="og:title" content={post?.title} />
+        <meta property="og:description" content={post?.summary} />
+        <meta property="og:image" content={post?.coverImage} />
+        <meta property="og:type" content="article" />
+        <meta property="og:url" content={`https://dev-adda-news.vercel.app/article/${id}`} />
+
+        {/* Twitter Tags */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={post?.title} />
+        <meta name="twitter:description" content={post?.summary} />
+        <meta name="twitter:image" content={post?.coverImage} />
+      </Helmet>
       <ReadingProgressBar />
       <main className="mx-auto flex w-full max-w-[1280px] grow items-start gap-8 px-4 py-8 md:px-10">
         {/* Left Sticky Interaction Bar (Desktop) */}
