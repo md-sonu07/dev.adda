@@ -68,7 +68,7 @@ const ArticleMobileActions = ({ post: initialPost }) => {
         <div className="xl:hidden w-full bg-white/80 dark:bg-[#1a2233]/80 backdrop-blur-xl border-t border-slate-200 dark:border-[#232f48] flex items-center justify-around rounded-b-lg py-3 px-4 z-50">
             <button
                 onClick={handleToggleLike}
-                className={`flex flex-col items-center gap-1 font-bold group transition-all active:scale-125 ${likeInfo.isLiked
+                className={`flex items-center gap-2 font-bold group transition-all active:scale-125 ${likeInfo.isLiked
                     ? 'text-blue-500'
                     : 'text-muted hover:text-blue-500'}`}
             >
@@ -77,7 +77,7 @@ const ArticleMobileActions = ({ post: initialPost }) => {
             </button>
             <button
                 onClick={() => document.getElementById('comments')?.scrollIntoView({ behavior: 'smooth' })}
-                className="flex flex-col items-center gap-1 text-muted font-bold group hover:text-emerald-500 active:scale-125 transition-all"
+                className="flex items-center gap-2 text-muted font-bold group hover:text-emerald-500 active:scale-125 transition-all"
             >
                 <HiOutlineChatBubbleBottomCenterText className="text-xl" />
                 <span className="text-[10px] font-black">{initialPost?.comments?.length || 0}</span>
