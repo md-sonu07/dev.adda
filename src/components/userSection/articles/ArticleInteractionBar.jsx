@@ -12,6 +12,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { toggleBookmarkAction } from '../../../redux/thunks/bookmarkThunk';
 import { toggleLikeAction, getPostLikesAction } from '../../../redux/thunks/likeThunk';
+
 import toast from 'react-hot-toast';
 
 import { sharePost } from '../../../utils/shareUtils';
@@ -59,6 +60,7 @@ const ArticleInteractionBar = ({ post }) => {
         }
     };
 
+
     const actions = [
         {
             icon: likeInfo.isLiked ? HiHandThumbUp : HiOutlineHandThumbUp,
@@ -95,6 +97,8 @@ const ArticleInteractionBar = ({ post }) => {
             })
         },
     ];
+
+
 
     return (
         <aside className="hidden xl:flex flex-col items-center gap-8 sticky top-32 mt-24">

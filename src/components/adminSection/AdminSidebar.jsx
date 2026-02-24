@@ -88,7 +88,7 @@ const AdminSidebar = ({ isOpen, onClose }) => {
         { to: '/admin/dashboard', icon: HiOutlineSquares2X2, label: 'Dashboard' },
         { to: '/admin/users', icon: HiOutlineUsers, label: 'Users' },
         { to: '/admin/all-posts', icon: HiOutlineDocumentText, label: 'Posts' },
-        { to: '/admin/categories', icon: HiOutlineTag, label: 'Categories' },
+        { to: '/admin/categories', icon: HiOutlineTag, label: 'Taxonomy' },
         { to: '/admin/analytics', icon: HiOutlineChartBar, label: 'Analytics' },
     ];
 

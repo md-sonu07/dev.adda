@@ -1,39 +1,59 @@
-import { useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { setCategory } from '../../../redux/slices/postSlice';
+import { getAllCategoriesAction } from '../../../redux/thunks/categoryThunk';
 import { motion } from 'framer-motion';
+import { useEffect } from 'react';
 
 function CategoryFilter() {
     const dispatch = useDispatch();
+    const navigate = useNavigate();
     const location = useLocation();
-    const { selectedCategory } = useSelector((state) => state.post);
+    const { selectedCategory, posts } = useSelector((state) => state.post);
+
+    useEffect(() => {
+        dispatch(getAllCategoriesAction());
+    }, [dispatch]);
 
     const isArticlesPage = location.pathname === '/articles';
-    const categories = ['Latest', 'Trending', 'Following'];
-    const tags = ['AI', 'React', 'Rust'];
+
+    // 1. Standard Filters
+    const standardFilters = ['Latest', 'Trending', 'Following', 'Authors'];
+
+    // 2. Derived Tags
+    const derivedTags = Array.from(new Set(
+        posts.flatMap(post => post.tags || [])
+    )).slice(0, 5);
+    const tags = derivedTags.length > 0 ? derivedTags : ['AI', 'React', 'Tech'];
 
     const handleSelect = (category) => {
         dispatch(setCategory(category));
+
+        // If not 'Latest' and not already on /articles, navigate to /articles
+        if (category !== 'Latest' && location.pathname !== '/articles') {
+            navigate('/articles');
+        }
     };
 
     return (
-        <div className={`w-full transition-all duration-500 ${isArticlesPage ? 'pt-0 bg-background/80' : 'pt-8 sm:pt-12'}`}>
-            <div className={`inline-flex items-center gap-2 p-1.5 rounded-xl border transition-all duration-500 overflow-x-auto no-scrollbar scroll-smooth w-full sm:w-auto ${isArticlesPage
+        <div className={`w-full transition-all duration-500 overflow-hidden ${isArticlesPage ? 'pt-0' : 'pt-8 sm:pt-12'}`}>
+            <div className={`flex items-center gap-2 p-1.5 rounded-xl border transition-all duration-500 overflow-x-auto no-scrollbar scroll-smooth w-full sm:w-max max-w-full ${isArticlesPage
                 ? "bg-box border-default shadow-sm"
                 : "dark:bg-black/30 bg-black/30 backdrop-blur-3xl border-white/10 shadow-2xl"
                 }`}>
-                {categories.map((category) => {
-                    const isActive = selectedCategory === category;
+
+                {/* SECTION 1: Standard Filters */}
+                {standardFilters.map((filter) => {
+                    const isActive = selectedCategory === filter;
                     return (
                         <button
-                            key={category}
-                            onClick={() => handleSelect(category)}
-                            className={`relative px-6 py-2.5 rounded-xl text-[10px] md:text-[11px] font-black uppercase tracking-[0.2em] transition-colors duration-300 whitespace-nowrap cursor-pointer ${isActive
+                            key={filter}
+                            onClick={() => handleSelect(filter)}
+                            className={`relative px-4 py-2.5 rounded-xl text-[10px] md:text-[11px] font-black uppercase tracking-[0.2em] transition-colors duration-300 whitespace-nowrap cursor-pointer shrink-0 ${isActive
                                 ? 'text-white'
                                 : isArticlesPage ? 'text-muted hover:text-body' : 'text-white/70 hover:text-white'
                                 }`}
                         >
-                            {/* Magic Background Pill */}
                             {isActive && (
                                 <motion.div
                                     layoutId="magic-pill"
@@ -41,14 +61,15 @@ function CategoryFilter() {
                                     transition={{ type: "spring", bounce: 0.25, duration: 0.6 }}
                                 />
                             )}
-                            <span className="relative z-10">{category}</span>
+                            <span className="relative z-10">{filter}</span>
                         </button>
                     );
                 })}
 
-                {/* Refined Divider */}
+                {/* Divider */}
                 <div className={`h-4 w-px mx-3 shrink-0 ${isArticlesPage ? 'bg-default' : 'bg-white/10'}`}></div>
 
+                {/* SECTION 2: Tags */}
                 {tags.map((tag) => {
                     const tagWithHash = `#${tag}`;
                     const isActive = selectedCategory === tagWithHash;
@@ -56,12 +77,11 @@ function CategoryFilter() {
                         <button
                             key={tag}
                             onClick={() => handleSelect(tagWithHash)}
-                            className={`relative px-5 py-2.5 rounded-xl text-[10px] md:text-[11px] font-black uppercase tracking-[0.2em] transition-colors duration-300 whitespace-nowrap cursor-pointer ${isActive
+                            className={`relative px-5 py-2.5 rounded-xl text-[10px] md:text-[11px] font-black uppercase tracking-[0.2em] transition-colors duration-300 whitespace-nowrap cursor-pointer shrink-0 ${isActive
                                 ? 'text-primary'
                                 : isArticlesPage ? 'text-muted/60 hover:text-body' : 'text-white/40 hover:text-white'
                                 }`}
                         >
-                            {/* Tag Active Indicator */}
                             {isActive && (
                                 <motion.div
                                     layoutId="tag-pill"
@@ -80,3 +100,4 @@ function CategoryFilter() {
 }
 
 export default CategoryFilter;
+

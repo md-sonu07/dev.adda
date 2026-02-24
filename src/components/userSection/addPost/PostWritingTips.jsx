@@ -7,6 +7,7 @@ import {
 } from 'react-icons/hi2';
 
 import { motion } from 'framer-motion';
+import toast from 'react-hot-toast';
 
 const PostWritingTips = ({ postData = {}, updatePostData }) => {
     const { title = '', description = '', tags = [], coverImage = null, visibility = 'public' } = postData;
@@ -42,7 +43,10 @@ const PostWritingTips = ({ postData = {}, updatePostData }) => {
 
                 <div className="flex p-1 bg-card/50 border border-default rounded-2xl relative overflow-hidden">
                     <button
-                        onClick={() => updatePostData?.({ visibility: 'public' })}
+                        onClick={() => {
+                            updatePostData?.({ visibility: 'public' });
+                            toast.success("Visibility updated to Public");
+                        }}
                         className={`relative flex-1 flex items-center justify-center gap-2 py-3.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-colors duration-500 ${visibility === 'public' ? 'text-white' : 'text-muted'}`}
                     >
                         {visibility === 'public' && (
@@ -57,7 +61,10 @@ const PostWritingTips = ({ postData = {}, updatePostData }) => {
                     </button>
 
                     <button
-                        onClick={() => updatePostData?.({ visibility: 'private' })}
+                        onClick={() => {
+                            updatePostData?.({ visibility: 'private' });
+                            toast.success("Visibility updated to Followers Only");
+                        }}
                         className={`relative flex-1 flex items-center justify-center gap-2 py-3.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-colors duration-500 ${visibility === 'private' ? 'text-white' : 'text-muted'}`}
                     >
                         {visibility === 'private' && (
@@ -68,7 +75,7 @@ const PostWritingTips = ({ postData = {}, updatePostData }) => {
                             />
                         )}
                         <HiOutlineLockClosed className="text-sm relative z-10" />
-                        <span className="relative z-10">Private</span>
+                        <span className="relative z-10">Followers</span>
                     </button>
                 </div>
             </div>

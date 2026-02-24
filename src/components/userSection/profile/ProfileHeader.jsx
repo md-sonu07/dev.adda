@@ -28,8 +28,8 @@ import { sharePost } from '../../../utils/shareUtils';
 const ProfileHeader = () => {
     const { id } = useParams();
     const isDark = useSelector((state) => state.theme.isDark);
-    const { userProfile, loading } = useSelector((state) => state.user);
-    const { myPosts } = useSelector((state) => state.post);
+    const { userProfile, postsCount, loading } = useSelector((state) => state.user);
+    const { posts } = useSelector((state) => state.post);
     const { followers, following } = useSelector((state) => state.follow);
     const { isAdmin, user } = useSelector((state) => state.auth);
 
@@ -284,7 +284,7 @@ const ProfileHeader = () => {
             {/* Profile Stats Bar (Condensed) */}
             <div className="grid grid-cols-3 gap-4 mt-6 pt-6 border-t border-default">
                 <div className="text-center group cursor-pointer">
-                    <p className="text-2xl font-black group-hover:text-primary transition-colors">{myPosts?.length || 0}</p>
+                    <p className="text-2xl font-black group-hover:text-primary transition-colors">{postsCount || 0}</p>
                     <p className="text-[9px] uppercase tracking-widest font-black text-muted mt-1">Total Posts</p>
                 </div>
                 <div className="text-center border-x border-default group cursor-pointer px-4">

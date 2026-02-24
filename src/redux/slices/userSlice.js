@@ -3,6 +3,7 @@ import { getUserProfileAction, getAllUsersAction, updateProfileAction, updateUse
 
 const initialState = {
     userProfile: null,
+    postsCount: 0,
     users: [],
     totalUsers: 0,
     loading: false,
@@ -18,6 +19,7 @@ const userSlice = createSlice({
         },
         clearUserProfile: (state) => {
             state.userProfile = null;
+            state.postsCount = 0;
         }
     },
     extraReducers: (builder) => {
@@ -29,6 +31,7 @@ const userSlice = createSlice({
             .addCase(getUserProfileAction.fulfilled, (state, action) => {
                 state.loading = false;
                 state.userProfile = action.payload.UserProfile;
+                state.postsCount = action.payload.postsCount || 0;
             })
             .addCase(getUserProfileAction.rejected, (state, action) => {
                 state.loading = false;
@@ -98,6 +101,7 @@ const userSlice = createSlice({
             .addCase(getUserByIdAction.fulfilled, (state, action) => {
                 state.loading = false;
                 state.userProfile = action.payload.UserProfile;
+                state.postsCount = action.payload.postsCount || 0;
                 state.error = null;
             })
             .addCase(getUserByIdAction.rejected, (state, action) => {

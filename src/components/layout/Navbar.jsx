@@ -19,6 +19,7 @@ function Navbar() {
     const [searchQuery, setSearchQuery] = useState(searchParams.get('q') || '');
     const [searchResults, setSearchResults] = useState([]);
     const [isSearching, setIsSearching] = useState(false);
+    const [isSearchFocused, setIsSearchFocused] = useState(false);
     const { isDark } = useSelector((state) => state.theme);
     const { isAdmin, user, loading } = useSelector((state) => state.auth);
     const dispatch = useDispatch();
@@ -43,20 +44,20 @@ function Navbar() {
 
     // Live Feed Search: Update URL automatically as user types
     useEffect(() => {
-        // Only trigger this logic if we are on the home page
-        const isHomePage = location.pathname === '/';
-        if (!isHomePage) return;
-
         const hasSearchQuery = searchParams.get('q');
+
+        // Don't auto-navigate if the input matches current URL query to avoid infinite loops
+        if (searchQuery.trim() === hasSearchQuery) return;
 
         const timeoutId = setTimeout(() => {
             if (searchQuery.trim()) {
-                navigate(`/?q=${encodeURIComponent(searchQuery.trim())}`);
+                // Always navigate to /articles when searching
+                navigate(`/articles?q=${encodeURIComponent(searchQuery.trim())}`);
             } else if (hasSearchQuery) {
-                // If input is empty but URL still has 'q', reset to home
-                navigate('/');
+                // If input is empty but URL still has 'q', reset to home or current page
+                navigate(location.pathname === '/articles' ? '/articles' : '/');
             }
-        }, 300);
+        }, 500); // Slightly longer debounce for better UX
         return () => clearTimeout(timeoutId);
     }, [searchQuery, navigate, searchParams, location.pathname]);
 
@@ -84,7 +85,7 @@ function Navbar() {
 
     const handleSearch = (e) => {
         if (e.key === 'Enter' && searchQuery.trim()) {
-            navigate(`/?q=${encodeURIComponent(searchQuery.trim())}`);
+            navigate(`/articles?q=${encodeURIComponent(searchQuery.trim())}`);
             setSearchResults([]);
             searchInputRef.current?.blur();
         }
@@ -97,7 +98,7 @@ function Navbar() {
     const clearSearch = () => {
         setSearchQuery('');
         setSearchResults([]);
-        navigate('/');
+        navigate(location.pathname === '/articles' ? '/articles' : '/');
     };
 
     const handleThemeToggle = () => {
@@ -113,119 +114,123 @@ function Navbar() {
             <div className="max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12 h-16 flex items-center justify-between gap-4 md:gap-8">
 
                 {/* LEFT: LOGO */}
-                <Logo collapsed={searchQuery.length > 0} />
+                <Logo isSearchActive={isSearchFocused || searchQuery.length > 0} />
 
                 {/* CENTER: SEARCH */}
-                <div className="flex-1 max-w-xl ">
-                    <div className="relative group flex items-center">
-                        <div className={`absolute left-4 z-10 text-muted/40 transition-all duration-300 ${searchQuery ? 'opacity-0 pointer-events-none' : 'group-focus-within:opacity-0 group-focus-within:pointer-events-none'}`}>
-                            <IoSearch className="text-lg" />
-                        </div>
+                {location.pathname !== '/create-post' && (
+                    <div className="flex-1 max-w-xl ">
+                        <div className="relative group flex items-center">
+                            <div className={`absolute left-4 z-10 text-muted/40 transition-all duration-300 ${searchQuery ? 'opacity-0 pointer-events-none' : 'group-focus-within:opacity-0 group-focus-within:pointer-events-none'}`}>
+                                <IoSearch className="text-lg" />
+                            </div>
 
-                        <input
-                            ref={searchInputRef}
-                            id="search-input"
-                            name="q"
-                            className={`w-full bg-box/30 hover:bg-box/50 text-body border border-default rounded-lg py-2.5 sm:pr-14 pr-2 text-sm transition-all outline-none duration-300 focus:bg-card focus:border-primary/50 focus:ring-4 focus:ring-primary/10 placeholder:text-muted/40 ${searchQuery ? 'pl-4' : 'pl-11 focus:pl-4'}`}
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                            onKeyDown={handleSearch}
-                            placeholder="Search articles..."
-                            type="text"
-                        />
+                            <input
+                                ref={searchInputRef}
+                                id="search-input"
+                                name="q"
+                                className={`w-full bg-box/30 hover:bg-box/50 text-body border border-default rounded-lg py-2.5 sm:pr-14 pr-2 text-sm transition-all outline-none duration-300 focus:bg-card focus:border-primary/50 focus:ring-4 focus:ring-primary/10 placeholder:text-muted/40 ${searchQuery ? 'pl-4' : 'pl-11 focus:pl-4'}`}
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                onFocus={() => setIsSearchFocused(true)}
+                                onBlur={() => setIsSearchFocused(false)}
+                                onKeyDown={handleSearch}
+                                placeholder="Search articles..."
+                                type="text"
+                            />
 
-                        <div className="absolute right-3 hidden md:flex items-center gap-1">
-                            {searchQuery && (
-                                <>
+                            <div className="absolute right-3 hidden md:flex items-center gap-1">
+                                {searchQuery && (
+                                    <>
+                                        <button
+                                            onClick={clearSearch}
+                                            type="button"
+                                            className="p-1.5 hover:bg-box rounded-md transition-colors text-muted hover:text-primary cursor-pointer active:scale-90"
+                                            title="Clear search"
+                                        >
+                                            <IoCloseOutline className="text-md" />
+                                        </button>
+                                        <div className="w-[2px] h-4 bg-default mx-1"></div>
+                                    </>
+                                )}
+
+                                {!searchQuery && (
+                                    <kbd className="hidden md:flex items-center gap-1  px-1 bg-box border border-default rounded text-[10px] font-bold text-muted/60 shadow-sm uppercase">
+                                        <span className="text-sm">⌘</span>
+                                        <span>K</span>
+                                    </kbd>
+                                )}
+
+                                {searchQuery && (
                                     <button
-                                        onClick={clearSearch}
-                                        type="button"
-                                        className="p-1.5 hover:bg-box rounded-md transition-colors text-muted hover:text-primary cursor-pointer active:scale-90"
-                                        title="Clear search"
+                                        onClick={() => {
+                                            navigate(`/articles?q=${searchQuery}`);
+                                            setSearchResults([]);
+                                        }}
+                                        className="flex items-center p-1.5 bg-primary/10 text-primary rounded-md hover:bg-primary hover:text-white transition-all duration-300 cursor-pointer"
                                     >
-                                        <IoCloseOutline className="text-md" />
+                                        <IoSearch className="text-sm" />
                                     </button>
-                                    <div className="w-[2px] h-4 bg-default mx-1"></div>
-                                </>
-                            )}
+                                )}
+                            </div>
 
-                            {!searchQuery && (
-                                <kbd className="hidden md:flex items-center gap-1  px-1 bg-box border border-default rounded text-[10px] font-bold text-muted/60 shadow-sm uppercase">
-                                    <span className="text-sm">⌘</span>
-                                    <span>K</span>
-                                </kbd>
-                            )}
+                            {/* Search Results Dropdown */}
+                            {searchQuery.length >= 2 && (isSearching || searchResults.length > 0) ? (
+                                <>
+                                    {/* Click-away overlay */}
+                                    <div
+                                        className="fixed inset-0 z-90"
+                                        onClick={() => setSearchResults([])}
+                                    />
+                                    <div className="max-sm:fixed max-sm:inset-x-4 max-sm:top-20 sm:absolute sm:top-[calc(100%+8px)] sm:inset-x-0 bg-card/90 dark:bg-black/80 border border-default rounded-2xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-300 z-100 backdrop-blur-2xl">
+                                        <div className="p-2 sm:p-4">
+                                            {isSearching ? (
+                                                <div className="flex items-center justify-center py-12 gap-3">
+                                                    <div className="size-5 border-2 border-primary/20 border-t-primary rounded-full animate-spin" />
+                                                    <span className="text-xs font-bold text-muted uppercase tracking-widest">Searching...</span>
+                                                </div>
+                                            ) : (
+                                                <div className="space-y-1 sm:space-y-2">
+                                                    {searchResults.map((post) => (
+                                                        <Link
+                                                            key={post._id}
+                                                            to={`/article/${post._id}`}
+                                                            onClick={() => {
+                                                                setSearchResults([]);
+                                                            }}
+                                                            className="flex items-center gap-4 p-3 sm:p-4 rounded-xl hover:bg-box/50 transition-all group/item"
+                                                        >
+                                                            <div className="size-16 sm:size-12 rounded-lg overflow-hidden border border-default shrink-0">
+                                                                <SkeletonImage src={post.coverImage} alt={post.title} className="w-full h-full" />
+                                                            </div>
+                                                            <div className="flex-1 min-w-0">
+                                                                <h4 className="text-base sm:text-sm font-bold text-body truncate group-hover/item:text-primary transition-colors">{post.title}</h4>
+                                                                <p className="text-[11px] sm:text-[10px] text-muted font-black uppercase tracking-tight mt-1 truncate">
+                                                                    {post.author?.fullName} • {post.category?.categoryName}
+                                                                </p>
+                                                            </div>
+                                                            <HiOutlineArrowRight className="opacity-0 sm:group-hover/item:opacity-100 sm:group-hover/item:text-primary transition-all pr-1" />
+                                                        </Link>
+                                                    ))}
 
-                            {searchQuery && (
-                                <button
-                                    onClick={() => {
-                                        navigate(`/?q=${searchQuery}`);
-                                        setSearchResults([]);
-                                    }}
-                                    className="flex items-center p-1.5 bg-primary/10 text-primary rounded-md hover:bg-primary hover:text-white transition-all duration-300 cursor-pointer"
-                                >
-                                    <IoSearch className="text-sm" />
-                                </button>
-                            )}
-                        </div>
-
-                        {/* Search Results Dropdown */}
-                        {searchQuery.length >= 2 && (isSearching || searchResults.length > 0) ? (
-                            <>
-                                {/* Click-away overlay */}
-                                <div
-                                    className="fixed inset-0 z-90"
-                                    onClick={() => setSearchResults([])}
-                                />
-                                <div className="max-sm:fixed max-sm:inset-x-4 max-sm:top-20 sm:absolute sm:top-[calc(100%+8px)] sm:inset-x-0 bg-card/90 dark:bg-black/80 border border-default rounded-2xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-300 z-100 backdrop-blur-2xl">
-                                    <div className="p-2 sm:p-4">
-                                        {isSearching ? (
-                                            <div className="flex items-center justify-center py-12 gap-3">
-                                                <div className="size-5 border-2 border-primary/20 border-t-primary rounded-full animate-spin" />
-                                                <span className="text-xs font-bold text-muted uppercase tracking-widest">Searching...</span>
-                                            </div>
-                                        ) : (
-                                            <div className="space-y-1 sm:space-y-2">
-                                                {searchResults.map((post) => (
-                                                    <Link
-                                                        key={post._id}
-                                                        to={`/article/${post._id}`}
+                                                    <button
                                                         onClick={() => {
+                                                            navigate(`/articles?q=${searchQuery}`);
                                                             setSearchResults([]);
                                                         }}
-                                                        className="flex items-center gap-4 p-3 sm:p-4 rounded-xl hover:bg-box/50 transition-all group/item"
+                                                        className="w-full mt-2 py-4 sm:py-3 bg-primary hover:bg-primary/80 dark:bg-primary/20 dark:hover:bg-primary/70  text-white dark:text-white text-[11px] sm:text-[10px] font-black uppercase tracking-widest transition-all rounded-xl flex items-center justify-center gap-2 cursor-pointer"
                                                     >
-                                                        <div className="size-16 sm:size-12 rounded-lg overflow-hidden border border-default shrink-0">
-                                                            <SkeletonImage src={post.coverImage} alt={post.title} className="w-full h-full" />
-                                                        </div>
-                                                        <div className="flex-1 min-w-0">
-                                                            <h4 className="text-base sm:text-sm font-bold text-body truncate group-hover/item:text-primary transition-colors">{post.title}</h4>
-                                                            <p className="text-[11px] sm:text-[10px] text-muted font-black uppercase tracking-tight mt-1 truncate">
-                                                                {post.author?.fullName} • {post.category?.categoryName}
-                                                            </p>
-                                                        </div>
-                                                        <HiOutlineArrowRight className="opacity-0 sm:group-hover/item:opacity-100 sm:group-hover/item:text-primary transition-all pr-1" />
-                                                    </Link>
-                                                ))}
-
-                                                <button
-                                                    onClick={() => {
-                                                        navigate(`/?q=${searchQuery}`);
-                                                        setSearchResults([]);
-                                                    }}
-                                                    className="w-full mt-2 py-4 sm:py-3 bg-primary hover:bg-primary/80 dark:bg-primary/20 dark:hover:bg-primary/70  text-white dark:text-white text-[11px] sm:text-[10px] font-black uppercase tracking-widest transition-all rounded-xl flex items-center justify-center gap-2 cursor-pointer"
-                                                >
-                                                    See all results for "{searchQuery}"
-                                                    <HiOutlineArrowRight />
-                                                </button>
-                                            </div>
-                                        )}
+                                                        See all results for "{searchQuery}"
+                                                        <HiOutlineArrowRight />
+                                                    </button>
+                                                </div>
+                                            )}
+                                        </div>
                                     </div>
-                                </div>
-                            </>
-                        ) : null}
+                                </>
+                            ) : null}
+                        </div>
                     </div>
-                </div>
+                )}
 
                 {/* RIGHT: ACTIONS */}
                 <div className="flex items-center gap-2 sm:gap-4 shrink-0">

@@ -8,6 +8,7 @@ import followReducer from '../slices/followSlice';
 import bookmarkReducer from '../slices/bookmarkSlice';
 import likeReducer from '../slices/likeSlice';
 import commentReducer from '../slices/commentSlice';
+import tagReducer from '../slices/tagSlice';
 
 const store = configureStore({
     reducer: {
@@ -20,6 +21,7 @@ const store = configureStore({
         bookmark: bookmarkReducer,
         like: likeReducer,
         comment: commentReducer,
+        tag: tagReducer,
     },
 });
 

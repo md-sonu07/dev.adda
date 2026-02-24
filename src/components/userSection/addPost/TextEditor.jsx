@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect, useRef } from "react"
+import { useState, useCallback, useEffect, useRef } from "react"
 import { useEditor, EditorContent } from "@tiptap/react"
 import StarterKit from "@tiptap/starter-kit"
 import TextAlign from "@tiptap/extension-text-align"
@@ -32,6 +32,27 @@ import InputModal from "../../common/InputModal"
 
 import "./TextEditor.css"
 
+// Moving extensions outside the component ensures they are static 
+// and created only once, which prevents the "Duplicate extension" warning.
+const extensions = [
+    StarterKit.configure({
+        heading: { levels: [1, 2, 3, 4] },
+        link: false,
+    }),
+    TextAlign.configure({
+        types: ["heading", "paragraph"],
+    }),
+    Link.extend({
+        name: 'customLink',
+    }).configure({
+        openOnClick: false,
+        HTMLAttributes: { class: "editor-link" },
+    }),
+    Image.configure({
+        HTMLAttributes: { class: "editor-image" },
+    }),
+];
+
 function TextEditor({ content, updatePostData }) {
     const [headingOpen, setHeadingOpen] = useState(false)
     const [showPreview, setShowPreview] = useState(false)
@@ -39,27 +60,20 @@ function TextEditor({ content, updatePostData }) {
     const [imageModal, setImageModal] = useState({ isOpen: false })
     const headingRef = useRef(null)
 
+    // useEditor handles its own lifecycle. 
+    // Passing an empty dependency array ensures it only initializes once.
+    // Forcing re-render on every transaction to ensure the toolbar reflects active states immediately
+    const [, forceUpdate] = useState({});
+
     const editor = useEditor({
-        extensions: [
-            StarterKit.configure({
-                heading: { levels: [1, 2, 3, 4] },
-            }),
-            TextAlign.configure({
-                types: ["heading", "paragraph"],
-            }),
-            Link.configure({
-                openOnClick: false,
-                HTMLAttributes: { class: "editor-link" },
-            }),
-            Image.configure({
-                HTMLAttributes: { class: "editor-image" },
-            }),
-        ],
+        extensions,
         content: content || "",
         onUpdate: ({ editor }) => {
             updatePostData({ content: editor.getHTML() })
         },
-    })
+        onSelectionUpdate: () => forceUpdate({}),
+        onTransaction: () => forceUpdate({}),
+    }, [])
 
     // Close heading dropdown on outside click
     useEffect(() => {
@@ -74,16 +88,16 @@ function TextEditor({ content, updatePostData }) {
 
     const handleSetLink = useCallback(() => {
         if (!editor) return
-        const previousUrl = editor.getAttributes("link").href
+        const previousUrl = editor.getAttributes("customLink").href
         setLinkModal({ isOpen: true, initialValue: previousUrl || "" })
     }, [editor])
 
     const onLinkConfirm = (url) => {
         if (!editor) return
         if (url === "") {
-            editor.chain().focus().extendMarkRange("link").unsetLink().run()
+            editor.chain().focus().extendMarkRange("customLink").unsetLink().run()
         } else {
-            editor.chain().focus().extendMarkRange("link").setLink({ href: url }).run()
+            editor.chain().focus().extendMarkRange("customLink").setLink({ href: url }).run()
         }
         setLinkModal({ isOpen: false, initialValue: "" })
     }
@@ -302,7 +316,7 @@ function TextEditor({ content, updatePostData }) {
                     {/* Insert */}
                     <div className="te-toolbar-group">
                         <button
-                            className={`te-btn ${editor.isActive("link") ? "te-btn-active" : ""}`}
+                            className={`te-btn ${editor.isActive("customLink") ? "te-btn-active" : ""}`}
                             onClick={handleSetLink}
                             title="Insert Link (Ctrl+K)"
                         >

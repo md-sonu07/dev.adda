@@ -8,11 +8,14 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 import { useDispatch, useSelector } from 'react-redux';
 import { createPostAction } from '../../../redux/thunks/postThunk';
+import { getAllCategoriesAction } from '../../../redux/thunks/categoryThunk';
+import { getAllTagsAction } from '../../../redux/thunks/tagThunk';
 
 const PostEditor = ({ postData, updatePostData, handlePublish, handleSaveDraft, loading, isSavingDraft }) => {
 
     const dispatch = useDispatch();
     const { categories } = useSelector((state) => state.category);
+    const { tags: availableTags } = useSelector((state) => state.tag);
 
     const [isJsonModalOpen, setIsJsonModalOpen] = useState(false);
     const [jsonInput, setJsonInput] = useState('');
@@ -27,8 +30,14 @@ const PostEditor = ({ postData, updatePostData, handlePublish, handleSaveDraft, 
     const [isImageModalOpen, setIsImageModalOpen] = useState(false);
     const [imagePreview, setImagePreview] = useState('');
     const [isCategoryDropdownOpen, setIsCategoryDropdownOpen] = useState(false);
+    const [isTagDropdownOpen, setIsTagDropdownOpen] = useState(false);
 
     const { title, description, content, category, projectLink, tags, coverImage } = postData;
+
+    useEffect(() => {
+        dispatch(getAllCategoriesAction());
+        dispatch(getAllTagsAction());
+    }, [dispatch]);
 
     useEffect(() => {
         if (coverImage instanceof File) {
@@ -107,6 +116,14 @@ const hello = "world";
             setNewTagInput('');
             setIsAddingTag(false);
         }
+    };
+
+    const handleSelectTag = (tagName) => {
+        const val = tagName.trim().toLowerCase();
+        if (val && !tags.includes(val)) {
+            updatePostData({ tags: [...tags, val] });
+        }
+        setIsTagDropdownOpen(false);
     };
 
     const handlePasteJson = () => {
@@ -223,7 +240,7 @@ const hello = "world";
                         <textarea
                             value={title}
                             onChange={(e) => updatePostData({ title: e.target.value })}
-                            className="peer w-full resize-none border-none bg-transparent p-0 text-4xl md:text-6xl font-black tracking-tight placeholder:text-muted/40 text-muted focus:ring-0 focus:outline-none transition-all leading-[1.1]"
+                            className="peer w-full no-scrollbar resize-none border-none bg-transparent p-0 text-4xl md:text-6xl font-black tracking-tight placeholder:text-muted/40 text-muted focus:ring-0 focus:outline-none transition-all leading-[1.1]"
                             onInput={(e) => { e.target.style.height = ""; e.target.style.height = e.target.scrollHeight + "px" }}
                             placeholder="Article Title..." rows="1"></textarea>
                         <div className="h-0.5 w-full bg-border relative overflow-hidden">
@@ -286,8 +303,8 @@ const hello = "world";
                                                         setIsCategoryDropdownOpen(false);
                                                     }}
                                                     className={`w-full text-left px-4 py-3 mb-1 rounded-xl text-xs font-bold transition-all ${category === cat._id
-                                                            ? 'bg-primary text-white shadow-lg shadow-primary/20'
-                                                            : 'hover:bg-box text-muted hover:text-body'
+                                                        ? 'bg-primary text-white shadow-lg shadow-primary/20'
+                                                        : 'hover:bg-box text-muted hover:text-body'
                                                         }`}
                                                 >
                                                     {cat.categoryName}
@@ -319,7 +336,7 @@ const hello = "world";
                 {/* Tags Integration */}
                 <div className="flex flex-col gap-3 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300">
                     <label className="block text-[10px] font-black uppercase tracking-[0.2em] text-muted ml-1">Article Tags</label>
-                    <div className="flex flex-wrap items-center gap-2 p-5 rounded-xl border border-default shadow-sm focus-within:border-primary/50 transition-all">
+                    <div className="flex flex-wrap items-center gap-2 p-5 rounded-xl border border-default shadow-sm focus-within:border-primary/50 transition-all relative">
                         <div className="flex flex-wrap gap-2">
                             {tags.map((tag) => (
                                 <span key={tag} className="flex items-center gap-1.5 bg-primary/5 text-body px-3.5 py-2 rounded-xl text-xs font-black border border-primary/10 group hover:bg-primary/10 transition-colors cursor-default">
@@ -333,29 +350,81 @@ const hello = "world";
                                 </span>
                             ))}
                         </div>
-                        {isAddingTag ? (
-                            <div className="flex items-center gap-1.5 bg-primary/5 px-3.5 py-2 rounded-xl border border-primary/20 animate-in zoom-in duration-200">
-                                <span className="text-xs font-black text-primary/60">#</span>
-                                <input
-                                    autoFocus
-                                    type="text"
-                                    value={newTagInput}
-                                    onChange={(e) => setNewTagInput(e.target.value)}
-                                    onKeyDown={handleAddTag}
-                                    onBlur={handleAddTag}
-                                    className="min-w-[100px] outline-none text-body bg-transparent border-none focus:ring-0 text-xs font-black p-0"
-                                    placeholder="new-tag..."
-                                />
-                            </div>
-                        ) : (
-                            <button
-                                onClick={() => setIsAddingTag(true)}
-                                className="group flex items-center gap-2 px-4 py-2 rounded-xl text-muted hover:text-primary border border-default hover:border-primary/30 transition-all duration-300 active:scale-95"
-                            >
-                                <HiPlus className="text-sm group-hover:rotate-90 transition-transform duration-300" />
-                                <span className="text-[10px] font-black uppercase tracking-wider">Add Tag</span>
-                            </button>
-                        )}
+
+                        <div className="flex items-center gap-2">
+                            {isAddingTag ? (
+                                <div className="flex items-center gap-1.5 bg-primary/5 px-3.5 py-2 rounded-xl border border-primary/20 animate-in zoom-in duration-200">
+                                    <span className="text-xs font-black text-primary/60">#</span>
+                                    <input
+                                        autoFocus
+                                        type="text"
+                                        value={newTagInput}
+                                        onChange={(e) => setNewTagInput(e.target.value)}
+                                        onKeyDown={handleAddTag}
+                                        onBlur={handleAddTag}
+                                        className="min-w-[100px] outline-none text-body bg-transparent border-none focus:ring-0 text-xs font-black p-0"
+                                        placeholder="new-tag..."
+                                    />
+                                </div>
+                            ) : (
+                                <div className="flex items-center gap-2">
+                                    <button
+                                        onClick={() => setIsAddingTag(true)}
+                                        className="group flex items-center gap-2 px-4 py-2 rounded-xl text-muted hover:text-primary border border-default hover:border-primary/30 transition-all duration-300 active:scale-95"
+                                    >
+                                        <HiPlus className="text-sm group-hover:rotate-90 transition-transform duration-300" />
+                                        <span className="text-[10px] font-black uppercase tracking-wider">Custom</span>
+                                    </button>
+
+                                    <div className="relative">
+                                        <button
+                                            onClick={() => setIsTagDropdownOpen(!isTagDropdownOpen)}
+                                            className="group flex items-center gap-2 px-4 py-2 rounded-xl text-muted hover:text-primary border border-default hover:border-primary/30 transition-all duration-300 active:scale-95"
+                                        >
+                                            <HiChevronDown className={`text-sm transition-transform duration-300 ${isTagDropdownOpen ? 'rotate-180' : ''}`} />
+                                            <span className="text-[10px] font-black uppercase tracking-wider">Select Tags</span>
+                                        </button>
+
+                                        <AnimatePresence>
+                                            {isTagDropdownOpen && (
+                                                <>
+                                                    <div className="fixed inset-0 z-40" onClick={() => setIsTagDropdownOpen(false)} />
+                                                    <motion.div
+                                                        initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                                                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                                                        exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                                                        className="absolute right-0 bottom-full mb-3 w-64 bg-card border border-default rounded-xl shadow-2xl overflow-hidden z-50 p-1.5"
+                                                    >
+                                                        <div className="px-3 py-2 text-[10px] font-black uppercase tracking-widest text-muted border-b border-default mb-1.5">Available Hashtags</div>
+                                                        <div className="max-h-60 overflow-y-auto no-scrollbar">
+                                                            {availableTags && availableTags.length > 0 ? (
+                                                                availableTags.map((tag) => (
+                                                                    <button
+                                                                        key={tag._id}
+                                                                        type="button"
+                                                                        onClick={() => handleSelectTag(tag.tagName)}
+                                                                        className={`w-full text-left px-4 py-2.5 mb-1 rounded-lg text-xs font-bold transition-all flex items-center gap-2 ${tags.includes(tag.tagName.toLowerCase())
+                                                                            ? 'bg-primary/10 text-primary opacity-50 cursor-not-allowed'
+                                                                            : 'hover:bg-box text-muted hover:text-body'
+                                                                            }`}
+                                                                        disabled={tags.includes(tag.tagName.toLowerCase())}
+                                                                    >
+                                                                        <span className="opacity-40">#</span>
+                                                                        {tag.tagName}
+                                                                    </button>
+                                                                ))
+                                                            ) : (
+                                                                <div className="px-4 py-6 text-center text-[10px] font-bold text-muted uppercase tracking-widest italic opacity-40">No tags found</div>
+                                                            )}
+                                                        </div>
+                                                    </motion.div>
+                                                </>
+                                            )}
+                                        </AnimatePresence>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
                     </div>
                 </div>
 

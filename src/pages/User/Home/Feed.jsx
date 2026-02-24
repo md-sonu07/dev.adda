@@ -2,7 +2,7 @@ import { useEffect, useRef, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getAllPostsAction } from '../../../redux/thunks/postThunk';
 import { toggleBookmarkAction } from '../../../redux/thunks/bookmarkThunk';
-import { resetPosts } from '../../../redux/slices/postSlice';
+import { resetPosts, setCategory } from '../../../redux/slices/postSlice';
 import { toggleLikeAction } from '../../../redux/thunks/likeThunk';
 import { sharePost } from '../../../utils/shareUtils';
 import {
@@ -14,7 +14,8 @@ import {
     HiOutlineShare,
     HiArrowUpRight,
     HiOutlineXMark,
-    HiOutlineEye
+    HiOutlineEye,
+    HiOutlineEyeSlash
 } from 'react-icons/hi2';
 import toast from 'react-hot-toast';
 import advertisements from '../../../assets/data/advertisment.js';
@@ -55,7 +56,9 @@ function Feed() {
                     q,
                     page: currentPage + 1,
                     limit,
-                    category: selectedCategory && !selectedCategory.startsWith('#') && selectedCategory !== 'Latest' && selectedCategory !== 'Trending'
+                    category: selectedCategory &&
+                        !selectedCategory.startsWith('#') &&
+                        !['Latest', 'Trending', 'Following', 'Authors'].includes(selectedCategory)
                         ? selectedCategory
                         : undefined
                 })).finally(() => {
@@ -77,8 +80,7 @@ function Feed() {
         const category =
             selectedCategory &&
                 !selectedCategory.startsWith('#') &&
-                selectedCategory !== 'Latest' &&
-                selectedCategory !== 'Trending'
+                !['Latest', 'Trending', 'Following', 'Authors'].includes(selectedCategory)
                 ? selectedCategory
                 : undefined;
         dispatch(getAllPostsAction({ q, page: 1, limit: LIMIT, category })).finally(() => {
@@ -113,7 +115,12 @@ function Feed() {
             case 'Latest':
                 return filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
             case 'Trending':
-                return filtered.sort((a, b) => (b.likesCount || 0) - (a.likesCount || 0));
+                return filtered.sort((a, b) => (b.views || 0) - (a.views || 0));
+            case 'Following':
+                // For now, if no backend implementation, show all approved
+                return filtered;
+            case 'Authors':
+                return filtered;
             default:
                 return filtered;
         }
@@ -184,9 +191,21 @@ function Feed() {
                 </div>
             )}
 
-            {!loading && posts.length === 0 && (
-                <div className="text-center mt-10 shadow-xl py-20 bg-card rounded-2xl border border-default border-dashed">
-                    <p className="text-muted font-medium">No articles found in the feed.</p>
+            {!loading && filteredPosts.length === 0 && (
+                <div className="flex flex-col items-center justify-center py-24 px-6 mt-6 bg-card/30 rounded-3xl border border-default border-dashed animate-in fade-in zoom-in duration-500">
+                    <div className="w-16 h-16 mb-6 rounded-2xl bg-primary/5 flex items-center justify-center border border-primary/10">
+                        <HiOutlineEyeSlash className="text-3xl text-primary/40" />
+                    </div>
+                    <h3 className="text-lg font-bold text-body mb-2">No articles found</h3>
+                    <p className="text-muted text-sm max-w-[280px] text-center leading-relaxed">
+                        We couldn't find any articles in the <span className="text-primary font-semibold">{selectedCategory}</span> feed. Try checking back later or exploring other categories.
+                    </p>
+                    <button
+                        onClick={() => dispatch(setCategory('Latest'))}
+                        className="mt-8 px-6 py-2.5 rounded-xl bg-primary text-white text-[10px] font-black uppercase tracking-widest hover:shadow-lg hover:shadow-primary/20 transition-all"
+                    >
+                        Back to Latest
+                    </button>
                 </div>
             )}
         </div>
@@ -282,10 +301,11 @@ const ArticleCard = ({ article, formatTime, fetchPriority = "auto" }) => {
         const charCodeSum = name.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
         return authorColors[charCodeSum % authorColors.length];
     };
-
     const handleCardClick = () => {
         navigate(`/article/${article?._id}`);
     };
+
+
 
     return (
         <div

@@ -125,7 +125,10 @@ function AddPost() {
                     <span className="text-[9px] font-black uppercase tracking-[0.2em] text-muted">Visibility</span>
                     <div className="flex items-center gap-2">
                         <button
-                            onClick={() => updatePostData({ visibility: 'public' })}
+                            onClick={() => {
+                                updatePostData({ visibility: 'public' });
+                                toast.success("Visibility updated to Public");
+                            }}
                             className={`flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all border ${postData.visibility === 'public'
                                 ? 'bg-primary text-white border-primary'
                                 : 'text-muted border-default hover:border-primary/30'
@@ -135,14 +138,17 @@ function AddPost() {
                             Public
                         </button>
                         <button
-                            onClick={() => updatePostData({ visibility: 'private' })}
+                            onClick={() => {
+                                updatePostData({ visibility: 'private' });
+                                toast.success("Visibility updated to Followers Only");
+                            }}
                             className={`flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all border ${postData.visibility === 'private'
                                 ? 'bg-primary text-white border-primary'
                                 : 'text-muted border-default hover:border-primary/30'
                                 }`}
                         >
                             <HiOutlineLockClosed className="text-sm" />
-                            Private
+                            Followers
                         </button>
                     </div>
                 </div>
