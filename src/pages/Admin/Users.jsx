@@ -1,7 +1,7 @@
 import React from 'react';
-import UsersHeader from '../../components/admin/users/UsersHeader';
-import UserFilters from '../../components/admin/users/UserFilters';
-import UsersTable from '../../components/admin/users/UsersTable';
+import UsersHeader from '../../components/adminSection/users/UsersHeader';
+import UserFilters from '../../components/adminSection/users/UserFilters';
+import UsersTable from '../../components/adminSection/users/UsersTable';
 
 const Users = () => {
     return (

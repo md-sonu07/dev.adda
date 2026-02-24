@@ -1,9 +1,9 @@
-import WelcomeHeader from '../../components/admin/dashboard/WelcomeHeader';
-import StatCards from '../../components/admin/dashboard/StatCards';
-import RecentPosts from '../../components/admin/dashboard/RecentPosts';
-import TopAuthors from '../../components/admin/dashboard/TopAuthors';
-import SystemOverview from '../../components/admin/dashboard/SystemOverview';
-import PostAnalytics from '../../components/admin/dashboard/PostAnalytics';
+import WelcomeHeader from '../../components/adminSection/dashboard/WelcomeHeader';
+import StatCards from '../../components/adminSection/dashboard/StatCards';
+import RecentPosts from '../../components/adminSection/dashboard/RecentPosts';
+import TopAuthors from '../../components/adminSection/dashboard/TopAuthors';
+import SystemOverview from '../../components/adminSection/dashboard/SystemOverview';
+import PostAnalytics from '../../components/adminSection/dashboard/PostAnalytics';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
 import { getUserProfileAction, getAllUsersAction } from '../../redux/thunks/userThunk';

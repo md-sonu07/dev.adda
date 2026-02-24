@@ -84,3 +84,15 @@ export const updatePostStatusAction = createAsyncThunk(
         }
     }
 );
+
+export const incrementViewsAction = createAsyncThunk(
+    'post/incrementViews',
+    async (id, { rejectWithValue }) => {
+        try {
+            const response = await postApi.incrementViews(id);
+            return { id, views: response.data.views };
+        } catch (error) {
+            return rejectWithValue(error.response?.data || error.message);
+        }
+    }
+);

@@ -1,11 +1,12 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { createPostAction, getAllPostsAction, getMyPostsAction, getPostByIdAction, updatePostAction, deletePostAction, updatePostStatusAction } from "../thunks/postThunk";
+import { createPostAction, getAllPostsAction, getMyPostsAction, getPostByIdAction, updatePostAction, deletePostAction, updatePostStatusAction, incrementViewsAction } from "../thunks/postThunk";
+import { createCommentAction, deleteCommentAction } from "../thunks/commentThunk";
 
 const initialState = {
     posts: [],
     myPosts: [],
     singlePost: null,
-    selectedCategory: 'Trending',
+    selectedCategory: 'Latest',
     loading: false,
     error: null,
     pagination: {
@@ -101,6 +102,11 @@ const postSlice = createSlice({
             .addCase(getPostByIdAction.fulfilled, (state, action) => {
                 state.loading = false;
                 state.singlePost = action.payload.post;
+                // Sync with posts list to update view count globally
+                const index = state.posts.findIndex(p => p._id === action.payload.post._id);
+                if (index !== -1) {
+                    state.posts[index] = { ...state.posts[index], ...action.payload.post };
+                }
             })
             .addCase(getPostByIdAction.rejected, (state, action) => {
                 state.loading = false;
@@ -154,6 +160,44 @@ const postSlice = createSlice({
             .addCase(updatePostStatusAction.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload;
+            })
+            // Comment Actions Integration
+            .addCase(createCommentAction.fulfilled, (state, action) => {
+                const postId = action.meta.arg.postId;
+                // Update in singlePost
+                if (state.singlePost && state.singlePost._id === postId) {
+                    state.singlePost.commentCount = (state.singlePost.commentCount || 0) + 1;
+                }
+                // Update in posts list
+                const postIndex = state.posts.findIndex(p => p._id === postId);
+                if (postIndex !== -1) {
+                    state.posts[postIndex].commentCount = (state.posts[postIndex].commentCount || 0) + 1;
+                }
+            })
+            .addCase(deleteCommentAction.fulfilled, (state, action) => {
+                const postId = action.payload.postId;
+                // Update in singlePost
+                if (state.singlePost && state.singlePost._id === postId) {
+                    state.singlePost.commentCount = Math.max(0, (state.singlePost.commentCount || 0) - 1);
+                }
+                // Update in posts list
+                const postIndex = state.posts.findIndex(p => p._id === postId);
+                if (postIndex !== -1) {
+                    state.posts[postIndex].commentCount = Math.max(0, (state.posts[postIndex].commentCount || 0) - 1);
+                }
+            })
+            // Increment Views
+            .addCase(incrementViewsAction.fulfilled, (state, action) => {
+                const { id, views } = action.payload;
+                // Update in singlePost
+                if (state.singlePost && state.singlePost._id === id) {
+                    state.singlePost.views = views;
+                }
+                // Update in posts list
+                const index = state.posts.findIndex(p => p._id === id);
+                if (index !== -1) {
+                    state.posts[index].views = views;
+                }
             });
     }
 });

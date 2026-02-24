@@ -27,3 +27,7 @@ export const deletePost = (id) => {
 export const updatePostStatus = (id, status) => {
     return api.put(`/posts/articles/${id}/status`, { status });
 }
+
+export const incrementViews = (id) => {
+    return api.patch(`/posts/articles/${id}/view`);
+}

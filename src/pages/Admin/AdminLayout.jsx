@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import AdminSidebar from '../../components/admin/AdminSidebar';
-import AdminHeader from '../../components/admin/AdminHeader';
+import AdminSidebar from '../../components/adminSection/AdminSidebar';
+import AdminHeader from '../../components/adminSection/AdminHeader';
 import { useLocation } from 'react-router-dom';
 
 const AdminLayout = ({ children }) => {

@@ -1,10 +1,10 @@
 import React from 'react';
-import SettingsHeader from '../../components/admin/settings/SettingsHeader';
-import GeneralSettings from '../../components/admin/settings/GeneralSettings';
-import SecuritySettings from '../../components/admin/settings/SecuritySettings';
-import NotificationSettings from '../../components/admin/settings/NotificationSettings';
-import SystemHealth from '../../components/admin/settings/SystemHealth';
-import BackupSettings from '../../components/admin/settings/BackupSettings';
+import SettingsHeader from '../../components/adminSection/settings/SettingsHeader';
+import GeneralSettings from '../../components/adminSection/settings/GeneralSettings';
+import SecuritySettings from '../../components/adminSection/settings/SecuritySettings';
+import NotificationSettings from '../../components/adminSection/settings/NotificationSettings';
+import SystemHealth from '../../components/adminSection/settings/SystemHealth';
+import BackupSettings from '../../components/adminSection/settings/BackupSettings';
 
 const Settings = () => {
     return (

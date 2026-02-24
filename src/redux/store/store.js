@@ -7,6 +7,7 @@ import categoryReducer from '../slices/categorySlice';
 import followReducer from '../slices/followSlice';
 import bookmarkReducer from '../slices/bookmarkSlice';
 import likeReducer from '../slices/likeSlice';
+import commentReducer from '../slices/commentSlice';
 
 const store = configureStore({
     reducer: {
@@ -18,6 +19,7 @@ const store = configureStore({
         follow: followReducer,
         bookmark: bookmarkReducer,
         like: likeReducer,
+        comment: commentReducer,
     },
 });
 

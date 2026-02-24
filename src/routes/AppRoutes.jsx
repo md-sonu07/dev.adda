@@ -2,16 +2,16 @@ import { Routes, Route } from 'react-router-dom';
 import { lazy, Suspense } from 'react';
 import { ProtectedRoute, AdminRoute } from './ProtectedRoute';
 
-const Home = lazy(() => import('../pages/Home/Home'));
-const Articles = lazy(() => import('../pages/Articles/Articles'));
+const Home = lazy(() => import('../pages/User/Home/Home'));
+const Articles = lazy(() => import('../pages/User/Articles/Articles'));
 
-const AddPost = lazy(() => import('../pages/AddPost/AddPost'));
-const Profile = lazy(() => import('../pages/Profile/Profile'));
-const SavePost = lazy(() => import('../pages/Bookmarks/Bookmarks'));
+const AddPost = lazy(() => import('../pages/User/AddPost/AddPost'));
+const Profile = lazy(() => import('../pages/User/Profile/Profile'));
+const SavePost = lazy(() => import('../pages/User/Bookmarks/Bookmarks'));
 const Login = lazy(() => import('../pages/Auth/Login'));
 const Signup = lazy(() => import('../pages/Auth/Signup'));
-const NotFound = lazy(() => import('../pages/NotFound/NotFound'));
-const ComingSoon = lazy(() => import('../pages/ComingSoon/ComingSoon'));
+const NotFound = lazy(() => import('../pages/User/NotFound/NotFound'));
+const ComingSoon = lazy(() => import('../pages/User/ComingSoon/ComingSoon'));
 const AdminRoutes = lazy(() => import('./AdminRoutes'));
 
 const PageLoader = () => (

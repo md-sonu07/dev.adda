@@ -1,7 +1,7 @@
 import React from 'react';
-import BreakingHeader from '../../components/admin/breaking/BreakingHeader';
-import ActiveBroadcasts from '../../components/admin/breaking/ActiveBroadcasts';
-import BroadcastForm from '../../components/admin/breaking/BroadcastForm';
+import BreakingHeader from '../../components/adminSection/breaking/BreakingHeader';
+import ActiveBroadcasts from '../../components/adminSection/breaking/ActiveBroadcasts';
+import BroadcastForm from '../../components/adminSection/breaking/BroadcastForm';
 
 const BreakingNews = () => {
     return (

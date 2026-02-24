@@ -1,7 +1,7 @@
 import React from 'react';
-import PostsHeader from '../../components/admin/posts/PostsHeader';
-import PostFilters from '../../components/admin/posts/PostFilters';
-import PostsTable from '../../components/admin/posts/PostsTable';
+import PostsHeader from '../../components/adminSection/posts/PostsHeader';
+import PostFilters from '../../components/adminSection/posts/PostFilters';
+import PostsTable from '../../components/adminSection/posts/PostsTable';
 
 const Posts = () => {
     return (

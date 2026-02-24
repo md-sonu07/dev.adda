@@ -1,8 +1,8 @@
 import React from 'react';
-import AnalyticsStats from '../../components/admin/analytics/AnalyticsStats';
-import AnalyticsChart from '../../components/admin/analytics/AnalyticsChart';
-import TrafficSources from '../../components/admin/analytics/TrafficSources';
-import TrendingContent from '../../components/admin/analytics/TrendingContent';
+import AnalyticsStats from '../../components/adminSection/analytics/AnalyticsStats';
+import AnalyticsChart from '../../components/adminSection/analytics/AnalyticsChart';
+import TrafficSources from '../../components/adminSection/analytics/TrafficSources';
+import TrendingContent from '../../components/adminSection/analytics/TrendingContent';
 
 const Analytics = () => {
     return (

@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { getAllCategoriesAction } from '../../redux/thunks/categoryThunk';
-import CategoriesTable from '../../components/admin/categories/CategoriesTable';
+import CategoriesTable from '../../components/adminSection/categories/CategoriesTable';
 
 const AdminCategories = () => {
     const dispatch = useDispatch();

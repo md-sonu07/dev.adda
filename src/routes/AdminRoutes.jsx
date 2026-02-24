@@ -7,6 +7,7 @@ import Analytics from '../pages/Admin/Analytics';
 import Drafts from '../pages/Admin/Drafts';
 import BreakingNews from '../pages/Admin/BreakingNews';
 import AdminCategories from '../pages/Admin/AdminCategories';
+import AdminComments from '../pages/Admin/AdminComments';
 import AdminLayout from '../pages/Admin/AdminLayout';
 
 function AdminRoutes() {
@@ -17,6 +18,7 @@ function AdminRoutes() {
                 <Route path="dashboard" element={<Dashboard />} />
                 <Route path="users" element={<Users />} />
                 <Route path="all-posts" element={<Posts />} />
+                <Route path="comments" element={<AdminComments />} />
                 <Route path="categories" element={<AdminCategories />} />
                 <Route path="analytics" element={<Analytics />} />
                 <Route path="drafts" element={<Drafts />} />

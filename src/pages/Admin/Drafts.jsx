@@ -1,6 +1,6 @@
 import React from 'react';
-import DraftsHeader from '../../components/admin/drafts/DraftsHeader';
-import DraftCard from '../../components/admin/drafts/DraftCard';
+import DraftsHeader from '../../components/adminSection/drafts/DraftsHeader';
+import DraftCard from '../../components/adminSection/drafts/DraftCard';
 
 const Drafts = () => {
     const drafts = [
