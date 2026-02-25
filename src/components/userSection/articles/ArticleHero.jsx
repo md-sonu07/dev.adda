@@ -54,7 +54,7 @@ const ArticleHero = ({ post }) => {
                             <div className="size-11 sm:size-12 rounded-full p-0.5 bg-linear-to-tr from-primary/20 to-transparent ring-1 ring-primary/10 group-hover:ring-primary/40 transition-all duration-500 shadow-md">
                                 <div className="relative w-full h-full rounded-full overflow-hidden">
                                     <SkeletonImage
-                                        src={post?.author?.avatar || `https://ui-avatars.com/api/?name=${post?.author?.fullName || 'A'}&background=random`}
+                                        src={post?.author?.avatar}
                                         alt={post?.author?.fullName}
                                         customWidth={100}
                                         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"

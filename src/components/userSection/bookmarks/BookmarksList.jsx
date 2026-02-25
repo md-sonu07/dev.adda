@@ -65,7 +65,7 @@ const BookmarksList = ({ filter }) => {
                     <div key={article._id} className="group rounded-xl border border-default p-4 flex gap-4 hover:border-primary/40 transition-all duration-300">
                         <Link to={`/article/${article._id}`} className="size-24 rounded-lg overflow-hidden shrink-0">
                             <img
-                                src={article.coverImage || `https://ui-avatars.com/api/?name=${encodeURIComponent(article.title)}&background=random&size=512&color=fff&bold=true`}
+                                src={article.coverImage}
                                 alt={article.title}
                                 className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                             />

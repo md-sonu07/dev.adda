@@ -52,7 +52,7 @@ const CommentItem = ({
             <div key={comment._id} className="flex gap-4 group/comment">
                 <div className="size-10 rounded-full overflow-hidden shrink-0 mt-1 ring-2 ring-default/20">
                     <img
-                        src={comment.userId?.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(comment.userId?.fullName || comment.userId?.userName || 'U')}&background=random`}
+                        src={comment.userId?.avatar}
                         alt={comment.userId?.userName}
                         className="w-full h-full object-cover"
                     />
@@ -400,7 +400,7 @@ const ArticleComments = ({ postId, postAuthorId }) => {
             <div className="flex gap-4 mb-12">
                 <div className="size-10 rounded-full overflow-hidden shrink-0 mt-1 ring-2 ring-primary/20">
                     <img
-                        src={user?.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.fullName || user?.userName || 'A')}&background=random`}
+                        src={user?.avatar}
                         alt="Current User"
                         className="w-full h-full object-cover"
                     />

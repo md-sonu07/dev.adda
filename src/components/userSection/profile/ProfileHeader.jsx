@@ -152,7 +152,7 @@ const ProfileHeader = () => {
                     <div className="relative group">
                         <div className="size-40 sm:size-34 rounded-[32px] border-4 border-background overflow-hidden shadow-xl transition-transform duration-500 group-hover:scale-105">
                             <SkeletonImage
-                                src={userData.avatar || `https://ui-avatars.com/api/?name=${userData.fullName || 'User'}&background=random`}
+                                src={userData.avatar}
                                 alt={userData.fullName || "User Profile"}
                                 className="w-full h-full"
                             />

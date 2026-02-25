@@ -75,8 +75,8 @@ const RecentPosts = ({ posts: propsPosts }) => {
                                         <div className="flex items-center gap-2.5">
                                             <SkeletonImage
                                                 className="size-6 rounded-lg border border-default"
-                                                src={post.author?.avatar || `https://ui-avatars.com/api/?name=${post.author?.fullName}&background=random`}
-                                                alt=""
+                                                src={post.author?.avatar}
+                                                alt={post.author?.fullName || 'Author'}
                                             />
                                             <span className="text-[11px] font-medium uppercase text-body tracking-tighter">{post.author?.fullName || 'No Author'}</span>
                                         </div>

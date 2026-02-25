@@ -16,7 +16,7 @@ const TopAuthors = () => {
             if (!authorMap[authorId]) {
                 authorMap[authorId] = {
                     name: post.author.fullName,
-                    img: post.author.avatar || `https://ui-avatars.com/api/?name=${post.author.fullName}&background=random`,
+                    img: post.author.avatar,
                     articles: 0,
                     reads: 0,
                 };

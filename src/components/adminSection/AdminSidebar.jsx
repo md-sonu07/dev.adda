@@ -2,7 +2,6 @@ import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-    HiOutlineCommandLine,
     HiXMark,
     HiOutlineSquares2X2,
     HiOutlineUsers,
@@ -194,8 +193,8 @@ const AdminSidebar = ({ isOpen, onClose }) => {
                 <div className="p-4 border-t border-default">
                     <div className="flex items-center p-3 rounded-xl bg-box border border-default">
                         <SkeletonImage
-                            src={user?.avatar || `https://ui-avatars.com/api/?name=${user?.fullName || 'Admin'}&background=random`}
-                            alt="Admin Profile"
+                            src={user?.avatar}
+                            alt={user?.fullName || 'Admin'}
                             className="w-8 h-8 rounded-lg border border-default"
                         />
                         <div className="ml-3 overflow-hidden">

@@ -56,14 +56,14 @@ const Profile = () => {
                 {/* Open Graph Tags */}
                 <meta property="og:title" content={`${targetUser?.fullName || 'User'} Profile | Dev Adda`} />
                 <meta property="og:description" content={`Check out ${targetUser?.fullName || 'this user'}'s professional profile and articles on Dev Adda.`} />
-                <meta property="og:image" content={targetUser?.avatar || `https://ui-avatars.com/api/?name=${targetUser?.fullName || 'User'}&background=135bec&color=fff&size=512`} />
+                <meta property="og:image" content={targetUser?.avatar} />
                 <meta property="og:type" content="profile" />
 
                 {/* Twitter Tags */}
                 <meta name="twitter:card" content="summary" />
                 <meta name="twitter:title" content={`${targetUser?.fullName || 'User'} Profile | Dev Adda`} />
                 <meta name="twitter:description" content={`View ${targetUser?.fullName}'s technical profile.`} />
-                <meta name="twitter:image" content={targetUser?.avatar || `https://ui-avatars.com/api/?name=${targetUser?.fullName || 'User'}&background=135bec&color=fff&size=512`} />
+                <meta name="twitter:image" content={targetUser?.avatar} />
             </Helmet>
             {/* Profile Main Content */}
             <main className="max-w-[1400px] mx-auto pt-10 px-6 sm:px-14">

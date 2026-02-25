@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { HiOutlineMegaphone, HiChevronDown } from 'react-icons/hi2';
-import { motion, AnimatePresence } from 'framer-motion';
 
 const BroadcastForm = () => {
     const [isOpen, setIsOpen] = useState(false);
@@ -30,36 +29,29 @@ const BroadcastForm = () => {
                             <HiChevronDown className={`text-sm transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
                         </button>
 
-                        <AnimatePresence>
-                            {isOpen && (
-                                <>
-                                    <div className="fixed inset-0 z-40" onClick={() => setIsOpen(false)} />
-                                    <motion.div
-                                        initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                                        exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                                        className="absolute left-0 top-full mt-2 w-full bg-card border border-default rounded-2xl shadow-2xl overflow-hidden z-50 p-1.5"
-                                    >
-                                        {types.map((type) => (
-                                            <button
-                                                key={type}
-                                                type="button"
-                                                onClick={() => {
-                                                    setSelectedType(type);
-                                                    setIsOpen(false);
-                                                }}
-                                                className={`w-full text-left px-3 py-2.5 mb-1 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${selectedType === type
-                                                    ? 'bg-primary text-white shadow-lg shadow-primary/20'
-                                                    : 'hover:bg-box text-muted hover:text-body'
-                                                    }`}
-                                            >
-                                                {type}
-                                            </button>
-                                        ))}
-                                    </motion.div>
-                                </>
-                            )}
-                        </AnimatePresence>
+                        {isOpen && (
+                            <>
+                                <div className="fixed inset-0 z-40" onClick={() => setIsOpen(false)} />
+                                <div className="absolute left-0 top-full mt-2 w-full dark:bg-gray-900 bg-card/95 backdrop-blur-md border border-default rounded-xl shadow-2xl overflow-hidden z-50 p-1.5 transform transition-all">
+                                    {types.map((type) => (
+                                        <button
+                                            key={type}
+                                            type="button"
+                                            onClick={() => {
+                                                setSelectedType(type);
+                                                setIsOpen(false);
+                                            }}
+                                            className={`w-full text-nowrap text-left px-3 py-2.5 mb-1 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${selectedType === type
+                                                ? 'bg-primary text-white shadow-lg shadow-primary/20'
+                                                : 'hover:bg-box text-muted hover:text-body'
+                                                }`}
+                                        >
+                                            {type}
+                                        </button>
+                                    ))}
+                                </div>
+                            </>
+                        )}
                     </div>
                 </div>
                 <div>

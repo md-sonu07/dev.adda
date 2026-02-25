@@ -1,10 +1,8 @@
 import React, { useState } from 'react';
 import { HiOutlineMagnifyingGlass, HiOutlineFunnel, HiChevronDown } from 'react-icons/hi2';
-import { motion, AnimatePresence } from 'framer-motion';
 
-const UserFilters = () => {
+const UserFilters = ({ searchTerm, setSearchTerm, selectedRole, setSelectedRole }) => {
     const [isOpen, setIsOpen] = useState(false);
-    const [selectedRole, setSelectedRole] = useState('All Roles');
 
     const roles = ['All Roles', 'Admin', 'User'];
 
@@ -15,14 +13,12 @@ const UserFilters = () => {
                 <input
                     type="text"
                     placeholder="Search by name, email or role..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
                     className="w-full pl-12 pr-4 py-3 bg-card border border-default rounded-xl text-sm font-bold focus:ring-2 focus:ring-primary/20 transition-all outline-none"
                 />
             </div>
             <div className="flex gap-2 relative">
-                <button className="flex items-center gap-2 px-4 py-3 bg-card border border-default rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-box transition-all">
-                    <HiOutlineFunnel className="text-lg" />
-                    Filters
-                </button>
 
                 {/* Custom Role Dropdown */}
                 <div className="relative">
@@ -34,35 +30,28 @@ const UserFilters = () => {
                         <HiChevronDown className={`text-base transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
                     </button>
 
-                    <AnimatePresence>
-                        {isOpen && (
-                            <>
-                                <div className="fixed inset-0 z-40" onClick={() => setIsOpen(false)} />
-                                <motion.div
-                                    initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                                    exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                                    className="absolute right-0 top-full mt-2 w-full min-w-[160px] bg-card border border-default rounded-2xl shadow-2xl overflow-hidden z-50 p-1.5"
-                                >
-                                    {roles.map((role) => (
-                                        <button
-                                            key={role}
-                                            onClick={() => {
-                                                setSelectedRole(role);
-                                                setIsOpen(false);
-                                            }}
-                                            className={`w-full text-left px-3 py-2.5 mb-1 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${selectedRole === role
-                                                    ? 'bg-primary text-white shadow-lg shadow-primary/20'
-                                                    : 'hover:bg-box text-muted hover:text-body'
-                                                }`}
-                                        >
-                                            {role}
-                                        </button>
-                                    ))}
-                                </motion.div>
-                            </>
-                        )}
-                    </AnimatePresence>
+                    {isOpen && (
+                        <>
+                            <div className="fixed inset-0 z-40" onClick={() => setIsOpen(false)} />
+                            <div className="absolute right-0 top-full mt-2 w-full min-w-[160px] dark:bg-gray-900 bg-card/95 backdrop-blur-md border border-default rounded-xl shadow-2xl overflow-hidden z-50 p-1.5 transform transition-all">
+                                {roles.map((role) => (
+                                    <button
+                                        key={role}
+                                        onClick={() => {
+                                            setSelectedRole(role);
+                                            setIsOpen(false);
+                                        }}
+                                        className={`w-full text-nowrap text-left px-3 py-2.5 mb-1 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${selectedRole === role
+                                            ? 'bg-primary text-white shadow-lg shadow-primary/20'
+                                            : 'hover:bg-box text-muted hover:text-body'
+                                            }`}
+                                    >
+                                        {role}
+                                    </button>
+                                ))}
+                            </div>
+                        </>
+                    )}
                 </div>
             </div>
         </div>

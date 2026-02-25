@@ -181,7 +181,7 @@ function Navbar() {
                                         className="fixed inset-0 z-90"
                                         onClick={() => setSearchResults([])}
                                     />
-                                    <div className="max-sm:fixed max-sm:inset-x-4 max-sm:top-20 sm:absolute sm:top-[calc(100%+8px)] sm:inset-x-0 bg-card/90 dark:bg-black/80 border border-default rounded-2xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-300 z-100 backdrop-blur-2xl">
+                                    <div className="max-sm:fixed max-sm:inset-x-4 max-sm:top-20 sm:absolute sm:top-[calc(100%+8px)] sm:inset-x-0 bg-card/90 dark:bg-gray-900 border border-default rounded-2xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-300 z-100 backdrop-blur-2xl">
                                         <div className="p-2 sm:p-4">
                                             {isSearching ? (
                                                 <div className="flex items-center justify-center py-12 gap-3">
@@ -304,8 +304,8 @@ function Navbar() {
                             >
                                 <div className="h-10 w-10 rounded-xl overflow-hidden border-2 border-default group-hover:border-primary/60 group-hover:scale-105 transition-all duration-500 shadow-sm">
                                     <SkeletonImage
-                                        src={user?.avatar || `https://ui-avatars.com/api/?name=${user?.fullName || 'User'}&background=random`}
-                                        alt="Profile"
+                                        src={user?.avatar}
+                                        alt={user?.fullName || user?.userName || 'User'}
                                         className="w-full h-full"
                                     />
                                 </div>

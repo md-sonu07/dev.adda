@@ -194,7 +194,7 @@ const ProfilePosts = ({ activeTab }) => {
                     >
                         <div className="size-24 rounded-lg overflow-hidden shrink-0 relative">
                             <SkeletonImage
-                                src={post.coverImage || `https://ui-avatars.com/api/?name=${encodeURIComponent(post.title)}&background=random&size=512&color=fff&bold=true`}
+                                src={post.coverImage}
                                 alt={post.title}
                                 className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                             />

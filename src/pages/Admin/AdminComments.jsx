@@ -5,6 +5,7 @@ import { HiTrash, HiChatBubbleLeftRight, HiChevronLeft, HiChevronRight, HiEye } 
 import { Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import Modal from '../../components/common/Modal';
+import SkeletonImage from '../../components/common/SkeletonImage';
 
 const AdminComments = () => {
     const dispatch = useDispatch();
@@ -88,9 +89,9 @@ const AdminComments = () => {
                                         <td className="px-6 py-4">
                                             <div className="flex items-center gap-3">
                                                 <div className="size-8 rounded-full overflow-hidden bg-box shrink-0">
-                                                    <img
-                                                        src={comment.userId?.avatar || `https://ui-avatars.com/api/?name=${comment.userId?.fullName || comment.userId?.userName || 'U'}&background=random`}
-                                                        alt=""
+                                                    <SkeletonImage
+                                                        src={comment.userId?.avatar}
+                                                        alt={comment.userId?.fullName || comment.userId?.userName || 'User'}
                                                         className="w-full h-full object-cover"
                                                     />
                                                 </div>

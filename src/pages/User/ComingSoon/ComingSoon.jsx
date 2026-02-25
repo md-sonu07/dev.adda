@@ -34,7 +34,7 @@ const ComingSoon = ({ featureName = "This Feature" }) => {
 
                     <Link to="/" className="text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-primary transition-colors flex items-center gap-2">
                         <HiOutlineCommandLine className="text-lg" />
-                        Back to Terminal
+                        Back to Home
                     </Link>
                 </div>
             </div>

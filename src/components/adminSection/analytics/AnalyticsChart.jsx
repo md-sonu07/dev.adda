@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { HiChevronDown } from 'react-icons/hi2';
-import { motion, AnimatePresence } from 'framer-motion';
 
 const AnalyticsChart = () => {
     const [isOpen, setIsOpen] = useState(false);
@@ -19,35 +18,28 @@ const AnalyticsChart = () => {
                         <HiChevronDown className={`text-xs transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
                     </button>
 
-                    <AnimatePresence>
-                        {isOpen && (
-                            <>
-                                <div className="fixed inset-0 z-40" onClick={() => setIsOpen(false)} />
-                                <motion.div
-                                    initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                                    exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                                    className="absolute right-0 top-full mt-2 w-full min-w-[120px] bg-card border border-default rounded-2xl shadow-2xl overflow-hidden z-50 p-1.5"
-                                >
-                                    {ranges.map((range) => (
-                                        <button
-                                            key={range}
-                                            onClick={() => {
-                                                setSelectedRange(range);
-                                                setIsOpen(false);
-                                            }}
-                                            className={`w-full text-left px-3 py-2.5 mb-1 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${selectedRange === range
-                                                ? 'bg-primary text-white shadow-lg shadow-primary/20'
-                                                : 'hover:bg-box text-muted hover:text-body'
-                                                }`}
-                                        >
-                                            {range}
-                                        </button>
-                                    ))}
-                                </motion.div>
-                            </>
-                        )}
-                    </AnimatePresence>
+                    {isOpen && (
+                        <>
+                            <div className="fixed inset-0 z-40" onClick={() => setIsOpen(false)} />
+                            <div className="absolute right-0 top-full mt-2 w-full min-w-[120px] dark:bg-gray-900 bg-card/95 backdrop-blur-md border border-default rounded-xl shadow-2xl overflow-hidden z-50 p-1.5 transform transition-all">
+                                {ranges.map((range) => (
+                                    <button
+                                        key={range}
+                                        onClick={() => {
+                                            setSelectedRange(range);
+                                            setIsOpen(false);
+                                        }}
+                                        className={`w-full text-nowrap text-left px-3 py-2.5 mb-1 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${selectedRange === range
+                                            ? 'bg-primary text-white shadow-lg shadow-primary/20'
+                                            : 'hover:bg-box text-muted hover:text-body'
+                                            }`}
+                                    >
+                                        {range}
+                                    </button>
+                                ))}
+                            </div>
+                        </>
+                    )}
                 </div>
             </div>
             <div className="h-64 flex items-end justify-between gap-px sm:gap-4 group">

@@ -115,7 +115,7 @@ const EditProfileModal = ({ isOpen, onClose, user }) => {
                                     <div className="relative group shrink-0 mt-6">
                                         <div className="size-30 rounded-[28px]  border border-default overflow-hidden bg-box transition-transform duration-300 group-hover:scale-105">
                                             <SkeletonImage
-                                                src={previewUrl || 'https://ui-avatars.com/api/?name=User&background=random'}
+                                                src={previewUrl}
                                                 alt="Avatar"
                                                 className="w-full h-full object-cover"
                                             />

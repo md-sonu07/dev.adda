@@ -7,7 +7,6 @@ import SkeletonImage from '../../common/SkeletonImage';
 import { motion, AnimatePresence } from 'framer-motion';
 
 import { useDispatch, useSelector } from 'react-redux';
-import { createPostAction } from '../../../redux/thunks/postThunk';
 import { getAllCategoriesAction } from '../../../redux/thunks/categoryThunk';
 import { getAllTagsAction } from '../../../redux/thunks/tagThunk';
 
@@ -292,7 +291,7 @@ const hello = "world";
                                             initial={{ opacity: 0, y: 10, scale: 0.95 }}
                                             animate={{ opacity: 1, y: 0, scale: 1 }}
                                             exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                                            className="absolute left-0 top-full mt-2 w-full bg-card border border-default rounded-xl shadow-2xl overflow-hidden z-50 p-1.5"
+                                            className="absolute left-0 top-full mt-2 w-full dark:bg-gray-900 bg-card/80 border border-default rounded-xl shadow-2xl overflow-hidden z-50 p-1.5"
                                         >
                                             {categories && categories.map((cat) => (
                                                 <button
@@ -393,7 +392,7 @@ const hello = "world";
                                                         initial={{ opacity: 0, y: 10, scale: 0.95 }}
                                                         animate={{ opacity: 1, y: 0, scale: 1 }}
                                                         exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                                                        className="absolute right-0 bottom-full mb-3 w-64 bg-card border border-default rounded-xl shadow-2xl overflow-hidden z-50 p-1.5"
+                                                        className="absolute right-0 top-full mt-2 w-64 dark:bg-gray-900 bg-card/80 border border-default rounded-xl shadow-2xl overflow-hidden z-50 p-1.5"
                                                     >
                                                         <div className="px-3 py-2 text-[10px] font-black uppercase tracking-widest text-muted border-b border-default mb-1.5">Available Hashtags</div>
                                                         <div className="max-h-60 overflow-y-auto no-scrollbar">

@@ -6,14 +6,18 @@ import { deleteUserAction } from '../../../redux/thunks/userThunk';
 import Modal from '../../common/Modal';
 import toast from 'react-hot-toast';
 import SkeletonImage from '../../common/SkeletonImage';
+import Pagination from '../../common/Pagination';
 
-const PostsTable = () => {
+const PostsTable = ({ searchTerm, selectedStatus }) => {
     const dispatch = useDispatch();
     const { posts, loading } = useSelector(state => state.post);
     const [activeMenu, setActiveMenu] = useState(null);
     const [deleteModal, setDeleteModal] = useState({ isOpen: false, postId: null });
     const [deleteUserModal, setDeleteUserModal] = useState({ isOpen: false, userId: null });
     const menuRef = useRef(null);
+
+    const [currentPage, setCurrentPage] = useState(1);
+    const postsPerPage = 10;
 
     useEffect(() => {
         dispatch(getAllPostsAction({ status: 'all' }));
@@ -28,6 +32,19 @@ const PostsTable = () => {
         document.addEventListener('mousedown', handleClickOutside);
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
+
+    const filteredPosts = posts?.filter(post => {
+        const matchesSearch = post.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            post.author?.fullName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            post.category?.name?.toLowerCase().includes(searchTerm.toLowerCase());
+        const matchesStatus = selectedStatus === 'All Status' || post.status?.toLowerCase() === selectedStatus.toLowerCase();
+        return matchesSearch && matchesStatus;
+    }) || [];
+
+    const indexOfLastPost = currentPage * postsPerPage;
+    const indexOfFirstPost = indexOfLastPost - postsPerPage;
+    const currentPosts = filteredPosts.slice(indexOfFirstPost, indexOfLastPost);
+    const totalPages = Math.ceil(filteredPosts.length / postsPerPage);
 
     const handleUpdateStatus = (id, status) => {
         dispatch(updatePostStatusAction({ id, status }));
@@ -52,7 +69,6 @@ const PostsTable = () => {
         try {
             await dispatch(deleteUserAction(deleteUserModal.userId)).unwrap();
             toast.success('Author deleted successfully');
-            // Refresh posts as some might have been removed if cascaded (though backend doesn't show cascade yet)
             dispatch(getAllPostsAction({ status: 'all' }));
         } catch (error) {
             toast.error(error?.message || 'Failed to delete author');
@@ -78,7 +94,7 @@ const PostsTable = () => {
 
     return (
         <div className="bg-card rounded-xl border border-default overflow-hidden shadow-sm">
-            <div className="overflow-x-auto h-82 no-scrollbar">
+            <div className="overflow-x-auto min-h-[500px] no-scrollbar">
                 <table className="w-full text-left border-collapse">
                     <thead>
                         <tr className=" border-b border-default">
@@ -91,8 +107,8 @@ const PostsTable = () => {
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-box">
-                        {posts && posts.length > 0 ? (
-                            posts.map((post) => (
+                        {currentPosts.length > 0 ? (
+                            currentPosts.map((post) => (
                                 <tr key={post._id} className="hover:bg-box/30 transition-colors group">
                                     <td className="px-6 py-4 min-w-[300px]">
                                         <div className="flex items-center gap-3">
@@ -115,8 +131,8 @@ const PostsTable = () => {
                                         <div className="flex items-center gap-2">
                                             <SkeletonImage
                                                 className="w-6 h-6 rounded-lg border border-default"
-                                                src={post.author?.avatar || `https://ui-avatars.com/api/?name=${post.author?.fullName}&background=random`}
-                                                alt="Author Profile"
+                                                src={post.author?.avatar}
+                                                alt={post.author?.fullName || 'Author'}
                                             />
                                             <p className="text-xs font-black text-body">{post.author?.fullName || 'Unknown'}</p>
                                         </div>
@@ -168,7 +184,7 @@ const PostsTable = () => {
                                             {activeMenu === post._id && (
                                                 <div
                                                     ref={menuRef}
-                                                    className="absolute right-0 mt-2 w-48 bg-white/80 dark:bg-gray-800 [&_button]:cursor-pointer border border-default rounded-xl shadow-2xl z-50 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200"
+                                                    className="absolute right-0 mt-2 w-48 dark:bg-gray-900 bg-card/95 backdrop-blur-md [&_button]:cursor-pointer border border-default rounded-xl shadow-2xl z-50 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200"
                                                 >
                                                     <div className="p-2 space-y-1">
                                                         <button
@@ -256,13 +272,14 @@ const PostsTable = () => {
                     </tbody>
                 </table>
             </div>
-            <div className="p-4 bg-box/30 border-t border-default flex items-center justify-between">
-                <p className="text-[10px] font-black uppercase tracking-widest text-muted">Showing {posts?.length || 0} articles total</p>
-                <div className="flex gap-2">
-                    <button className="px-4 py-2 bg-card border border-default rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-box transition-all">Prev</button>
-                    <button className="px-4 py-2 bg-card border border-default rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-box transition-all">Next</button>
-                </div>
-            </div>
+
+            <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={setCurrentPage}
+                totalItems={filteredPosts.length}
+                itemsPerPage={postsPerPage}
+            />
             {/* Post Confirmation Modal */}
             <Modal
                 isOpen={deleteModal.isOpen}

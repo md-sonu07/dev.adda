@@ -13,7 +13,6 @@ import {
 import { useSelector } from 'react-redux';
 import { useMemo, useState } from 'react';
 import { HiChevronDown } from 'react-icons/hi2';
-import { motion, AnimatePresence } from 'framer-motion';
 
 const PostAnalytics = () => {
     const [isOpen, setIsOpen] = useState(false);
@@ -142,35 +141,28 @@ const PostAnalytics = () => {
                             <HiChevronDown className={`text-xs transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
                         </button>
 
-                        <AnimatePresence>
-                            {isOpen && (
-                                <>
-                                    <div className="fixed inset-0 z-40" onClick={() => setIsOpen(false)} />
-                                    <motion.div
-                                        initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                                        exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                                        className="absolute right-0 top-full mt-2 w-full min-w-[120px] bg-card border border-default rounded-2xl shadow-2xl overflow-hidden z-50 p-1.5"
-                                    >
-                                        {periods.map((period) => (
-                                            <button
-                                                key={period}
-                                                onClick={() => {
-                                                    setSelectedPeriod(period);
-                                                    setIsOpen(false);
-                                                }}
-                                                className={`w-full text-left px-3 py-2.5 mb-1 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${selectedPeriod === period
-                                                    ? 'bg-primary text-white shadow-lg shadow-primary/20'
-                                                    : 'hover:bg-box text-muted hover:text-body'
-                                                    }`}
-                                            >
-                                                {period}
-                                            </button>
-                                        ))}
-                                    </motion.div>
-                                </>
-                            )}
-                        </AnimatePresence>
+                        {isOpen && (
+                            <>
+                                <div className="fixed inset-0 z-40" onClick={() => setIsOpen(false)} />
+                                <div className="absolute right-0 top-full mt-2 w-full min-w-[120px] dark:bg-gray-900 bg-card/95 backdrop-blur-md border border-default rounded-xl shadow-2xl overflow-hidden z-50 p-1.5 transform transition-all">
+                                    {periods.map((period) => (
+                                        <button
+                                            key={period}
+                                            onClick={() => {
+                                                setSelectedPeriod(period);
+                                                setIsOpen(false);
+                                            }}
+                                            className={`w-full text-nowrap text-left px-3 py-2.5 mb-1 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${selectedPeriod === period
+                                                ? 'bg-primary text-white shadow-lg shadow-primary/20'
+                                                : 'hover:bg-box text-muted hover:text-body'
+                                                }`}
+                                        >
+                                            {period}
+                                        </button>
+                                    ))}
+                                </div>
+                            </>
+                        )}
                     </div>
                 </div>
 

@@ -4,16 +4,20 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useDispatch, useSelector } from 'react-redux';
 import { getAllUsersAction, updateUserRoleAction, deleteUserAction } from '../../../redux/thunks/userThunk';
 import SkeletonImage from '../../common/SkeletonImage';
+import Pagination from '../../common/Pagination';
 import { toast } from 'react-hot-toast';
 import Modal from '../../common/Modal';
 
-const UsersTable = () => {
+const UsersTable = ({ searchTerm, selectedRole }) => {
     const dispatch = useDispatch();
     const { users, loading } = useSelector(state => state.user);
     const [openMenuId, setOpenMenuId] = useState(null);
     const [deleteModal, setDeleteModal] = useState({ isOpen: false, userId: null });
     const [viewUser, setViewUser] = useState(null);
     const menuRef = useRef(null);
+
+    const [currentPage, setCurrentPage] = useState(1);
+    const usersPerPage = 10;
 
     useEffect(() => {
         dispatch(getAllUsersAction());
@@ -29,6 +33,18 @@ const UsersTable = () => {
         document.addEventListener('mousedown', handleClickOutside);
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
+
+    const filteredUsers = users?.filter(user => {
+        const matchesSearch = user.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            user.email.toLowerCase().includes(searchTerm.toLowerCase());
+        const matchesRole = selectedRole === 'All Roles' || user.role.toLowerCase() === selectedRole.toLowerCase();
+        return matchesSearch && matchesRole;
+    }) || [];
+
+    const indexOfLastUser = currentPage * usersPerPage;
+    const indexOfFirstUser = indexOfLastUser - usersPerPage;
+    const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
+    const totalPages = Math.ceil(filteredUsers.length / usersPerPage);
 
     const handleRoleChange = async (userId, newRole) => {
         try {
@@ -62,7 +78,7 @@ const UsersTable = () => {
 
     return (
         <div className="bg-card rounded-xl border border-default overflow-hidden shadow-sm">
-            <div className="overflow-x-auto no-scrollbar min-h-[400px]">
+            <div className="overflow-x-auto min-h-[500px] no-scrollbar">
                 <table className="w-full text-left border-collapse">
                     <thead>
                         <tr className="bg-box/50 border-b border-default">
@@ -74,14 +90,14 @@ const UsersTable = () => {
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-default">
-                        {users && users.length > 0 ? (
-                            users.map((user) => (
+                        {currentUsers.length > 0 ? (
+                            currentUsers.map((user) => (
                                 <tr key={user._id} className="hover:bg-box/30 transition-colors group">
                                     <td className="px-6 py-4">
                                         <div className="flex items-center gap-3">
                                             <div className="size-10 rounded-xl bg-box overflow-hidden border border-default">
                                                 <SkeletonImage
-                                                    src={user.avatar || `https://ui-avatars.com/api/?name=${user.fullName}&background=random`}
+                                                    src={user.avatar}
                                                     alt={user.fullName}
                                                     className="w-full h-full"
                                                 />
@@ -122,7 +138,7 @@ const UsersTable = () => {
                                         {openMenuId === user._id && (
                                             <div
                                                 ref={menuRef}
-                                                className="absolute right-6 top-14 w-48 bg-white dark:bg-gray-800 border border-default rounded-xl shadow-2xl z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-200"
+                                                className="absolute right-6 top-14 w-48 dark:bg-gray-900 bg-card/95 backdrop-blur-md border border-default rounded-xl shadow-2xl z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-200"
                                             >
                                                 <div className="p-1.5 space-y-1">
                                                     <p className="px-3 py-2 text-[9px] font-black uppercase tracking-widest text-muted border-b border-default/50 mb-1">Actions</p>
@@ -179,13 +195,14 @@ const UsersTable = () => {
                     </tbody>
                 </table>
             </div>
-            <div className="p-4 bg-box/30 border-t border-default flex items-center justify-between">
-                <p className="text-[10px] font-black uppercase tracking-widest text-muted">Showing {users?.length || 0} users total</p>
-                <div className="flex gap-2">
-                    <button className="px-4 py-2 bg-card border border-default rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-box transition-all disabled:opacity-50">Prev</button>
-                    <button className="px-4 py-2 bg-card border border-default rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-box transition-all">Next</button>
-                </div>
-            </div>
+
+            <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={setCurrentPage}
+                totalItems={filteredUsers.length}
+                itemsPerPage={usersPerPage}
+            />
 
             {/* View User Details Modal */}
             <AnimatePresence>
@@ -217,7 +234,7 @@ const UsersTable = () => {
                             <div className="p-6 flex flex-col items-center">
                                 <div className="size-20 rounded-3xl overflow-hidden border-4 border-background shadow-lg mb-3 bg-box">
                                     <SkeletonImage
-                                        src={viewUser.avatar || `https://ui-avatars.com/api/?name=${viewUser.fullName}&background=random`}
+                                        src={viewUser.avatar}
                                         alt={viewUser.fullName}
                                         className="w-full h-full object-cover"
                                     />
@@ -295,7 +312,7 @@ const UsersTable = () => {
             >
                 Are you sure you want to permanently delete this user? All their associated data might be affected. This action is irreversible.
             </Modal>
-        </div>
+        </div >
     );
 };
 
