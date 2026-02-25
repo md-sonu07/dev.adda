@@ -89,7 +89,7 @@ const MobileActions = () => {
                 }}
                 title="Discard Post?"
                 type="danger"
-                confirmText="Discard"
+                confirmText="Go Back"
                 cancelText="Keep Editing"
             >
                 Are you sure you want to go back? Any unsaved changes will be lost.
