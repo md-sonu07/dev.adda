@@ -1,5 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { getUserProfileAction, getAllUsersAction, updateProfileAction, updateUserRoleAction, deleteUserAction, getUserByIdAction } from "../thunks/userThunk";
+import { deletePostAction, deleteAllMyPostsAction, createPostAction } from "../thunks/postThunk";
 
 const initialState = {
     userProfile: null,
@@ -107,6 +108,16 @@ const userSlice = createSlice({
             .addCase(getUserByIdAction.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload;
+            })
+            // Post Deletion Sync
+            .addCase(deletePostAction.fulfilled, (state) => {
+                state.postsCount = Math.max(0, state.postsCount - 1);
+            })
+            .addCase(deleteAllMyPostsAction.fulfilled, (state) => {
+                state.postsCount = 0;
+            })
+            .addCase(createPostAction.fulfilled, (state) => {
+                state.postsCount += 1;
             });
     }
 });

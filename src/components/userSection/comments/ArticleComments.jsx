@@ -6,6 +6,7 @@ import { resetComments } from '../../../redux/slices/commentSlice';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import Modal from '../../common/Modal';
+import SkeletonImage from '../../common/SkeletonImage';
 
 const formatTime = (dateString) => {
     const date = new Date(dateString);
@@ -51,10 +52,10 @@ const CommentItem = ({
         <div className={`space-y-4 ${isReply ? 'ml-6 border-l-2 border-default/20 pl-4 mt-4' : 'mt-8'}`}>
             <div key={comment._id} className="flex gap-4 group/comment">
                 <div className="size-10 rounded-full overflow-hidden shrink-0 mt-1 ring-2 ring-default/20">
-                    <img
+                    <SkeletonImage
                         src={comment.userId?.avatar}
-                        alt={comment.userId?.userName}
-                        className="w-full h-full object-cover"
+                        alt={comment.userId?.fullName || comment.userId?.userName}
+                        className="w-full h-full"
                     />
                 </div>
                 <div className="flex-1">
@@ -399,10 +400,10 @@ const ArticleComments = ({ postId, postAuthorId }) => {
             {/* Premium Simple Input */}
             <div className="flex gap-4 mb-12">
                 <div className="size-10 rounded-full overflow-hidden shrink-0 mt-1 ring-2 ring-primary/20">
-                    <img
+                    <SkeletonImage
                         src={user?.avatar}
-                        alt="Current User"
-                        className="w-full h-full object-cover"
+                        alt={user?.fullName || user?.userName || "Current User"}
+                        className="w-full h-full"
                     />
                 </div>
                 <div className="flex-1 bg-box/30 rounded-xl p-4 border border-default/40 focus-within:border-primary/50 focus-within:ring-4 focus-within:ring-primary/10 transition-all duration-300">

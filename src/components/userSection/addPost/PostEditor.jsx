@@ -9,17 +9,22 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useDispatch, useSelector } from 'react-redux';
 import { getAllCategoriesAction } from '../../../redux/thunks/categoryThunk';
 import { getAllTagsAction } from '../../../redux/thunks/tagThunk';
+import { createQuickPostAction } from '../../../redux/thunks/quickPostThunk';
+import { resetQuickPostState } from '../../../redux/slices/quickPostSlice';
+import { toast } from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
 
 const PostEditor = ({ postData, updatePostData, handlePublish, handleSaveDraft, loading, isSavingDraft }) => {
 
     const dispatch = useDispatch();
+    const navigate = useNavigate();
     const { categories } = useSelector((state) => state.category);
     const { tags: availableTags } = useSelector((state) => state.tag);
+    const { loading: quickPostLoading, error: quickPostError, success: quickPostSuccess } = useSelector((state) => state.quickPost);
 
-    const [isJsonModalOpen, setIsJsonModalOpen] = useState(false);
-    const [jsonInput, setJsonInput] = useState('');
-    const [isMarkdownModalOpen, setIsMarkdownModalOpen] = useState(false);
-    const [markdownInput, setMarkdownInput] = useState('');
+    const [isImportModalOpen, setIsImportModalOpen] = useState(false);
+    const [importInput, setImportInput] = useState('');
+    const importFileRef = useRef(null);
     const [readingTime, setReadingTime] = useState(1);
     const [isAddingTag, setIsAddingTag] = useState(false);
     const [newTagInput, setNewTagInput] = useState('');
@@ -55,13 +60,26 @@ const PostEditor = ({ postData, updatePostData, handlePublish, handleSaveDraft, 
         setReadingTime(Math.max(1, Math.ceil(words / 200)));
     }, [content]);
 
+    useEffect(() => {
+        if (quickPostSuccess) {
+            toast.success("Post submitted successfully!");
+            setIsImportModalOpen(false);
+            dispatch(resetQuickPostState());
+            navigate('/profile');
+        }
+        if (quickPostError) {
+            toast.error(quickPostError);
+            dispatch(resetQuickPostState());
+        }
+    }, [quickPostSuccess, quickPostError, dispatch, navigate]);
+
     const jsonFormatTemplate = `{
   "title": "Your Article Title",
   "description": "A short summary of the article.",
   "content": "Full markdown content goes here...",
-  "category": "Programming",
+  "category": "Technology",
   "projectLink": "https://github.com/...",
-  "tags": ["tag1", "tag2"],
+  "tags": ["React", "JavaScript"],
   "coverImage": "https://images.unsplash.com/..."
 }`;
 
@@ -99,10 +117,10 @@ const hello = "world";
 
     const prettifyJson = () => {
         try {
-            const obj = JSON.parse(jsonInput);
-            setJsonInput(JSON.stringify(obj, null, 4));
+            const obj = JSON.parse(importInput);
+            setImportInput(JSON.stringify(obj, null, 4));
         } catch (e) {
-            alert("Cannot prettify: Invalid JSON");
+            toast.error("Cannot prettify: Not a valid JSON");
         }
     };
 
@@ -125,31 +143,39 @@ const hello = "world";
         setIsTagDropdownOpen(false);
     };
 
-    const handlePasteJson = () => {
-        try {
-            const data = JSON.parse(jsonInput);
-            const updates = {};
-            if (data.title) updates.title = data.title;
-            if (data.description) updates.description = data.description;
-            if (data.content) updates.content = data.content;
-            if (data.category) updates.category = data.category;
-            if (data.projectLink) updates.projectLink = data.projectLink;
-            if (data.tags && Array.isArray(data.tags)) updates.tags = data.tags;
-            if (data.coverImage) updates.coverImage = data.coverImage;
+    const handleImportFileChange = (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
 
-            updatePostData(updates);
-            setIsJsonModalOpen(false);
-            setJsonInput('');
-        } catch (error) {
-            alert("Invalid JSON format. Please check your input.");
-        }
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            setImportInput(event.target.result);
+            toast.success(`${file.name} loaded successfully`);
+        };
+        reader.onerror = () => {
+            toast.error("Failed to read file");
+        };
+        reader.readAsText(file);
     };
 
-    const handlePasteMarkdown = () => {
-        if (markdownInput.trim()) {
-            updatePostData({ content: markdownInput });
-            setIsMarkdownModalOpen(false);
-            setMarkdownInput('');
+    const handleQuickImport = () => {
+        if (!importInput.trim()) return;
+
+        try {
+            // Try to parse as JSON first
+            const data = JSON.parse(importInput);
+            dispatch(createQuickPostAction({
+                title: data.title || "Untitled Post",
+                contentType: 'json',
+                rawContent: data
+            }));
+        } catch (error) {
+            // If JSON fails, treat as Markdown
+            dispatch(createQuickPostAction({
+                title: "Markdown Import",
+                contentType: 'markdown',
+                rawContent: importInput
+            }));
         }
     };
 
@@ -434,27 +460,15 @@ const hello = "world";
                         {/* Action Cards Grid — horizontal row on mobile, vertical cards on sm+ */}
                         <div className="grid grid-cols-3 sm:grid-cols-3 gap-px">
                             <button
-                                onClick={() => setIsJsonModalOpen(true)}
-                                className="group flex flex-row sm:flex-col items-center gap-2 sm:gap-3 p-3 sm:p-5 hover:bg-primary/5 transition-all active:scale-[0.98]"
+                                onClick={() => setIsImportModalOpen(true)}
+                                className="group flex flex-row sm:flex-col items-center gap-2 sm:gap-3 p-3 sm:p-5 hover:bg-primary/5 transition-all active:scale-[0.98] col-span-2"
                             >
                                 <div className="p-2 sm:p-3 rounded-lg sm:rounded-xl bg-primary/10 text-primary group-hover:bg-primary/20 group-hover:scale-110 transition-all duration-300">
-                                    <HiOutlineCommandLine className="text-base sm:text-2xl" />
+                                    <HiOutlineSparkles className="text-base sm:text-2xl" />
                                 </div>
                                 <div className="text-left sm:text-center">
-                                    <p className="text-[9px] sm:text-[11px] font-black text-body uppercase tracking-widest">JSON</p>
-                                    <p className="text-[9px] font-medium text-muted mt-0.5 hidden sm:block">Import from JSON data</p>
-                                </div>
-                            </button>
-                            <button
-                                onClick={() => setIsMarkdownModalOpen(true)}
-                                className="group flex flex-row sm:flex-col items-center gap-2 sm:gap-3 p-3 sm:p-5 hover:bg-primary/5 transition-all active:scale-[0.98]"
-                            >
-                                <div className="p-2 sm:p-3 rounded-lg sm:rounded-xl bg-primary/10 text-primary group-hover:bg-primary/20 group-hover:scale-110 transition-all duration-300">
-                                    <HiOutlineDocumentText className="text-base sm:text-2xl" />
-                                </div>
-                                <div className="text-left sm:text-center">
-                                    <p className="text-[9px] sm:text-[11px] font-black text-body uppercase tracking-widest">Markdown</p>
-                                    <p className="text-[9px] font-medium text-muted mt-0.5 hidden sm:block">Import markdown content</p>
+                                    <p className="text-[9px] sm:text-[11px] font-black text-body uppercase tracking-widest">Smart Import</p>
+                                    <p className="text-[9px] font-medium text-muted mt-0.5 hidden sm:block">JSON or Markdown auto-detect</p>
                                 </div>
                             </button>
                             <button
@@ -523,74 +537,62 @@ const hello = "world";
                 </div>
             </div>
 
-            {/* JSON Modal */}
-            {isJsonModalOpen && (
+            {/* Consolidated Quick Import Modal */}
+            {isImportModalOpen && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-                    <div className="absolute inset-0 bg-background/60 backdrop-blur-md transition-all duration-300" onClick={() => setIsJsonModalOpen(false)}></div>
+                    <div className="absolute inset-0 bg-background/60 backdrop-blur-md transition-all duration-300" onClick={() => setIsImportModalOpen(false)}></div>
                     <div className="relative w-full max-w-2xl max-h-[90vh] bg-background rounded-xl shadow-2xl border border-default overflow-hidden flex flex-col animate-in fade-in zoom-in duration-300">
                         <div className="p-6 border-b border-default flex items-center justify-between bg-background z-10">
                             <div className="flex items-center gap-4">
-                                <div className="p-2.5 rounded-lg bg-primary/10 text-primary"><HiOutlineCommandLine className="text-xl" /></div>
+                                <div className="p-2.5 rounded-lg bg-primary/10 text-primary"><HiOutlineSparkles className="text-xl" /></div>
                                 <div>
-                                    <h3 className="text-lg font-black leading-none">Import Article Data</h3>
-                                    <p className="text-[10px] text-muted font-black uppercase tracking-[0.15em] mt-1.5">Populate editor from JSON</p>
+                                    <h3 className="text-lg font-black leading-none">Smart Quick Import</h3>
+                                    <p className="text-[10px] text-muted font-black uppercase tracking-[0.15em] mt-1.5">Paste JSON or Markdown content</p>
                                 </div>
                             </div>
-                            <button onClick={() => setIsJsonModalOpen(false)} className="p-2 hover:bg-primary/5 rounded-full transition-colors"><HiXMark className="text-xl text-muted" /></button>
+                            <button onClick={() => setIsImportModalOpen(false)} className="p-2 hover:bg-primary/5 rounded-full transition-colors"><HiXMark className="text-xl text-muted" /></button>
                         </div>
                         <div className="flex-1 overflow-y-auto p-6 no-scrollbar">
                             <div className="mb-6 flex items-center justify-between">
                                 <div className="flex items-center gap-2 text-amber-500">
                                     <HiOutlineInformationCircle className="text-lg" />
-                                    <span className="text-[11px] font-bold uppercase tracking-wider">Format: Full Article Instance</span>
+                                    <span className="text-[11px] font-bold uppercase tracking-wider">Auto-detecting format...</span>
                                 </div>
                                 <div className="flex gap-2">
-                                    <button onClick={() => setJsonInput('')} className="px-3 py-1.5 text-[10px] font-black uppercase tracking-widest text-muted hover:text-red-500 transition-colors">Clear</button>
-                                    <button onClick={prettifyJson} className="px-3 py-1.5 text-[10px] font-black uppercase tracking-widest text-primary bg-primary/5 hover:bg-primary/10 rounded-lg transition-all border border-primary/10">Prettify</button>
+                                    <input
+                                        type="file"
+                                        ref={importFileRef}
+                                        onChange={handleImportFileChange}
+                                        accept=".md,.markdown,.json,.txt"
+                                        className="hidden"
+                                    />
+                                    <button 
+                                        onClick={() => importFileRef.current?.click()}
+                                        className="px-3 py-1.5 text-[10px] font-black uppercase tracking-widest text-primary bg-primary/5 hover:bg-primary/10 rounded-lg transition-all border border-primary/10 flex items-center gap-2"
+                                    >
+                                        <HiOutlineDocumentText className="text-sm" />
+                                        Upload File
+                                    </button>
+                                    <button onClick={() => setImportInput('')} className="px-3 py-1.5 text-[10px] font-black uppercase tracking-widest text-muted hover:text-red-500 transition-colors">Clear</button>
+                                    <button onClick={prettifyJson} className="px-3 py-1.5 text-[10px] font-black uppercase tracking-widest text-primary bg-primary/5 hover:bg-primary/10 rounded-lg transition-all border border-primary/10">Prettify (if JSON)</button>
                                 </div>
-                            </div>
-                            <textarea value={jsonInput} onChange={(e) => setJsonInput(e.target.value)} className="w-full h-80 outline-none font-mono text-[13px] leading-relaxed p-6 rounded-xl border-2 border-default focus:border-primary/30 focus:ring-0 transition-all resize-none shadow-inner no-scrollbar text-body" placeholder={`{\n  "title": "Mastering Rust Memory Management: A Deep Dive",\n  "description": "Exploration of Rust memory safety and ownership model.",\n  "content": "Memory management is often the most challenging hurdle for developers...",\n  "category": "Programming",\n  "projectLink": "https://github.com/rust-lang/rust",\n  "tags": ["rust", "programming", "performance"],\n  "coverImage": "https://images.unsplash.com/photo-1550751827-4bd374c3f58b"\n}`}></textarea>
-                            <div className="mt-8 flex gap-4 sticky bottom-0 bg-background pt-4 pb-2">
-                                <button onClick={() => setIsJsonModalOpen(false)} className="flex-1 py-3 text-xs font-black uppercase tracking-[0.2em] text-muted hover:bg-primary/5 rounded-lg transition-all border border-transparent">Cancel</button>
-                                <button onClick={handlePasteJson} className="flex-2 py-3 bg-primary text-white text-xs font-black uppercase tracking-[0.2em] rounded-lg shadow-xl shadow-primary/20 hover:shadow-primary/40 hover:-translate-y-0.5 active:translate-y-0 transition-all flex items-center justify-center gap-2"><HiOutlineSparkles className="text-lg" />Publish Your Story</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            )}
-
-            {/* Markdown Modal */}
-            {isMarkdownModalOpen && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-                    <div className="absolute inset-0 bg-background/60 backdrop-blur-md transition-all duration-300" onClick={() => setIsMarkdownModalOpen(false)}></div>
-                    <div className="relative w-full max-w-2xl max-h-[90vh] bg-background rounded-xl shadow-2xl border border-default overflow-hidden flex flex-col animate-in fade-in zoom-in duration-300">
-                        <div className="p-6 border-b border-default flex items-center justify-between bg-background z-10">
-                            <div className="flex items-center gap-4">
-                                <div className="p-2.5 rounded-lg bg-primary/10 text-primary"><HiOutlineDocumentText className="text-xl" /></div>
-                                <div>
-                                    <h3 className="text-lg font-black leading-none">Import Markdown</h3>
-                                    <p className="text-[10px] text-muted font-black uppercase tracking-[0.15em] mt-1.5">Paste markdown content into the editor</p>
-                                </div>
-                            </div>
-                            <button onClick={() => setIsMarkdownModalOpen(false)} className="p-2 hover:bg-primary/5 rounded-full transition-colors"><HiXMark className="text-xl text-muted" /></button>
-                        </div>
-                        <div className="flex-1 overflow-y-auto p-6 no-scrollbar">
-                            <div className="mb-6 flex items-center justify-between">
-                                <div className="flex items-center gap-2 text-amber-500">
-                                    <HiOutlineInformationCircle className="text-lg" />
-                                    <span className="text-[11px] font-bold uppercase tracking-wider">Format: Markdown Content</span>
-                                </div>
-                                <button onClick={() => setMarkdownInput('')} className="px-3 py-1.5 text-[10px] font-black uppercase tracking-widest text-muted hover:text-red-500 transition-colors">Clear</button>
                             </div>
                             <textarea
-                                value={markdownInput}
-                                onChange={(e) => setMarkdownInput(e.target.value)}
+                                value={importInput}
+                                onChange={(e) => setImportInput(e.target.value)}
                                 className="w-full h-80 outline-none font-mono text-[13px] leading-relaxed p-6 rounded-xl border-2 border-default focus:border-primary/30 focus:ring-0 transition-all resize-none shadow-inner no-scrollbar text-body"
-                                placeholder={`# Your Article Title\n\nStart writing your markdown content here...\n\n## Section Heading\n\nYour content with **bold**, *italic*, and \`code\` formatting.\n\n- List item 1\n- List item 2\n\n> A meaningful quote`}
+                                placeholder={`Paste either:\n1. A JSON object with fields like title, content, etc.\n2. Raw Markdown content starting with an # H1 Title`}
                             ></textarea>
                             <div className="mt-8 flex gap-4 sticky bottom-0 bg-background pt-4 pb-2">
-                                <button onClick={() => setIsMarkdownModalOpen(false)} className="flex-1 py-3 text-xs font-black uppercase tracking-[0.2em] text-muted hover:bg-primary/5 rounded-lg transition-all border border-transparent">Cancel</button>
-                                <button onClick={handlePasteMarkdown} className="flex-2 py-3 bg-primary text-white text-xs font-black uppercase tracking-[0.2em] rounded-lg shadow-xl shadow-primary/20 hover:shadow-primary/40 hover:-translate-y-0.5 active:translate-y-0 transition-all flex items-center justify-center gap-2"><HiOutlineSparkles className="text-lg" />Publish Markdown</button>
+                                <button onClick={() => setIsImportModalOpen(false)} className="flex-1 py-3 text-xs font-black uppercase tracking-[0.2em] text-muted hover:bg-primary/5 rounded-lg transition-all border border-transparent">Cancel</button>
+                                <button
+                                    onClick={handleQuickImport}
+                                    disabled={quickPostLoading}
+                                    className="flex-2 py-3 bg-primary text-white text-xs font-black uppercase tracking-[0.2em] rounded-lg shadow-xl shadow-primary/20 hover:shadow-primary/40 hover:-translate-y-0.5 active:translate-y-0 transition-all flex items-center justify-center gap-2 px-8"
+                                >
+                                    {quickPostLoading ? <div className="size-4 border-2 border-white/20 border-t-white rounded-full animate-spin" /> : <HiOutlineSparkles className="text-lg" />}
+                                    {quickPostLoading ? 'Importing...' : 'Magic Import & Publish'}
+                                </button>
                             </div>
                         </div>
                     </div>

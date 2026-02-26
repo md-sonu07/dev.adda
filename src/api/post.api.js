@@ -31,3 +31,7 @@ export const updatePostStatus = (id, status) => {
 export const incrementViews = (id) => {
     return api.patch(`/posts/articles/${id}/view`);
 }
+
+export const deleteAllMyPosts = () => {
+    return api.delete("/posts/my-articles");
+}

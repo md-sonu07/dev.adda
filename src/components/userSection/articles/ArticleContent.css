@@ -17,6 +17,11 @@
     @apply text-3xl sm:text-5xl font-black mt-16 mb-8 text-text-heading tracking-tight relative;
 }
 
+/* Hide the first H1 if it's at the start of the content (usually a duplicate title) */
+.article-content-body h1:first-child {
+    @apply hidden;
+}
+
 .article-content-body h2 {
     @apply text-2xl sm:text-3xl font-black mt-14 mb-6 text-text-heading tracking-tight flex items-center gap-3;
 }
@@ -143,4 +148,26 @@
 
 .article-content-body tr:hover td {
     @apply bg-primary/2;
+}
+
+/* Markdown Specifics */
+.article-content-body hr {
+    @apply border-0 h-px bg-linear-to-r from-transparent via-default to-transparent my-16;
+}
+
+.article-content-body del {
+    @apply opacity-60 line-through;
+}
+
+.article-content-body sup,
+.article-content-body sub {
+    @apply text-[0.7em] leading-none;
+}
+
+.article-content-body sup {
+    @apply align-super;
+}
+
+.article-content-body sub {
+    @apply align-sub;
 }

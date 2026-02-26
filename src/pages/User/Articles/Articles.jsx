@@ -8,6 +8,8 @@ import { getPostByIdAction, incrementViewsAction } from '../../../redux/thunks/p
 import { useEffect, useLayoutEffect, lazy, Suspense, useRef } from 'react'
 import { Helmet } from 'react-helmet-async'
 
+import { addToHistory } from '../../../redux/slices/historySlice';
+
 const ArticleComments = lazy(() => import('../../../components/userSection/comments/ArticleComments'));
 const ArticleInteractionBar = lazy(() => import('../../../components/userSection/articles/ArticleInteractionBar'));
 
@@ -131,6 +133,12 @@ function Articles() {
     }
     fetchPost();
   }, [dispatch, id]);
+
+  useEffect(() => {
+    if (post && post._id === id) {
+      dispatch(addToHistory(post));
+    }
+  }, [dispatch, post, id]);
 
   // Show skeleton only if we have NO data about the post (e.g. direct link visit)
   if (!post && loading) {

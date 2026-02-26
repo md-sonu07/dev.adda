@@ -1,7 +1,7 @@
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
-import { deletePostAction, updatePostAction } from '../../../redux/thunks/postThunk';
+import { deletePostAction, updatePostAction, deleteAllMyPostsAction } from '../../../redux/thunks/postThunk';
 import { toggleBookmarkAction } from '../../../redux/thunks/bookmarkThunk';
 import Modal from '../../common/Modal';
 import {
@@ -31,9 +31,22 @@ const ProfilePosts = ({ activeTab }) => {
     const { user } = useSelector((state) => state.auth);
     const { posts, myPosts, loading } = useSelector((state) => state.post);
     const { bookmarkedPosts } = useSelector((state) => state.bookmark);
+    const { historyPosts } = useSelector((state) => state.history);
 
     const isOwnProfile = !id || id === user?._id;
-    const displayPosts = isOwnProfile ? myPosts : posts;
+
+    // Determine which posts to display based on tab
+    let displayPosts = [];
+    if (activeTab === 'posted') {
+        displayPosts = isOwnProfile ? myPosts : posts;
+    } else if (activeTab === 'saved') {
+        displayPosts = bookmarkedPosts;
+    } else if (activeTab === 'history') {
+        displayPosts = historyPosts;
+    } else if (activeTab === 'liked') {
+        // Liked posts logic (if implemented)
+        displayPosts = [];
+    }
 
     const handleToggleBookmark = async (e, post) => {
         e.preventDefault();
@@ -50,6 +63,7 @@ const ProfilePosts = ({ activeTab }) => {
     };
 
     const [deleteModal, setDeleteModal] = useState({ isOpen: false, postId: null });
+    const [isClearAllModalOpen, setIsClearAllModalOpen] = useState(false);
 
     const handleDeleteClick = (e, id) => {
         e.stopPropagation();
@@ -66,6 +80,16 @@ const ProfilePosts = ({ activeTab }) => {
             toast.error(error?.message || 'Failed to delete article');
         } finally {
             setDeleteModal({ isOpen: false, postId: null });
+        }
+    };
+
+    const handleClearAll = async () => {
+        try {
+            await dispatch(deleteAllMyPostsAction()).unwrap();
+            toast.success('All posts cleared successfully');
+            setIsClearAllModalOpen(false);
+        } catch (error) {
+            toast.error(error?.message || 'Failed to clear posts');
         }
     };
 
@@ -105,27 +129,7 @@ const ProfilePosts = ({ activeTab }) => {
         navigate(`/article/${id}`);
     };
 
-    // For other tabs (saved, history, liked), we might still need mock data if not implemented in backend
-    const mockPosts = [
-        {
-            _id: 'm1',
-            tab: 'saved',
-            category: { categoryName: 'AI & ML' },
-            title: 'Transformer Architecture Explained Simply',
-            readTime: '20 min read',
-            createdAt: new Date().toISOString(),
-            likes: [],
-            comments: [],
-            status: 'approved',
-            coverImage: ''
-        },
-        // Add more mocks if needed
-    ];
-
-    // Filter posts based on the active tab
-    const filteredPosts = activeTab === 'posted'
-        ? displayPosts
-        : mockPosts.filter(post => post.tab === activeTab);
+    const filteredPosts = displayPosts;
 
     const tabLabels = {
         posted: isOwnProfile ? 'Your Articles' : 'Articles',
@@ -180,9 +184,23 @@ const ProfilePosts = ({ activeTab }) => {
                 <h2 className="text-xs font-black uppercase tracking-[0.3em] text-muted">
                     {tabLabels[activeTab]}
                 </h2>
-                <span className="text-[10px] font-black uppercase tracking-widest text-muted">
-                    {filteredPosts.length} {filteredPosts.length === 1 ? 'article' : 'articles'}
-                </span>
+                <div className="flex items-center gap-2 sm:gap-3">
+                    {isOwnProfile && activeTab === 'posted' && (
+                        <>
+                            {filteredPosts.length > 0 && (
+                                <button
+                                    onClick={() => setIsClearAllModalOpen(true)}
+                                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-red-500/5 hover:bg-red-500/10 border border-red-500/20 hover:border-red-500/40 text-red-500 transition-all active:scale-95 group"
+                                    title="Delete All Articles"
+                                >
+                                    <HiOutlineTrash className="text-sm group-hover:scale-110 transition-transform" />
+                                    <span className="text-[10px] font-black uppercase tracking-widest hidden sm:inline">Clear All</span>
+                                </button>
+                            )}
+                        </>
+                    )}
+
+                </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -342,6 +360,32 @@ const ProfilePosts = ({ activeTab }) => {
                 confirmText="Terminate Article"
             >
                 Are you sure you want to permanently delete this article? This action is irreversible and all associated data will be lost from our servers.
+            </Modal>
+
+            {/* Clear All Confirmation Modal */}
+            <Modal
+                isOpen={isClearAllModalOpen}
+                onClose={() => setIsClearAllModalOpen(false)}
+                onConfirm={handleClearAll}
+                title="Clear All Repository"
+                type="danger"
+                confirmText="Purge All Articles"
+                cancelText="Keep My Work"
+            >
+                <div className="space-y-4">
+                    <p className="text-body font-black uppercase tracking-widest text-[11px] flex items-center gap-2">
+                        <HiOutlineTrash className="text-red-500 text-lg" />
+                        Irreversible Action Detected
+                    </p>
+                    <p className="text-muted text-[13px] leading-relaxed">
+                        You are about to permanently delete <span className="text-red-500 font-black">EVERY</span> article in your repository. This includes all assets, student interactions, and SEO data.
+                    </p>
+                    <div className="bg-red-500/5 border border-red-500/10 p-4 rounded-xl">
+                        <p className="text-red-500 text-[11px] font-bold italic leading-tight">
+                            "By confirming, you acknowledge that this data cannot be recovered by any means."
+                        </p>
+                    </div>
+                </div>
             </Modal>
         </div>
     );

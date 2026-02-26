@@ -96,3 +96,15 @@ export const incrementViewsAction = createAsyncThunk(
         }
     }
 );
+
+export const deleteAllMyPostsAction = createAsyncThunk(
+    'post/deleteAllMyPosts',
+    async (_, { rejectWithValue }) => {
+        try {
+            const response = await postApi.deleteAllMyPosts();
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(error.response?.data || error.message);
+        }
+    }
+);

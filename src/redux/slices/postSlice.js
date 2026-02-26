@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { createPostAction, getAllPostsAction, getMyPostsAction, getPostByIdAction, updatePostAction, deletePostAction, updatePostStatusAction, incrementViewsAction } from "../thunks/postThunk";
+import { createPostAction, getAllPostsAction, getMyPostsAction, getPostByIdAction, updatePostAction, deletePostAction, updatePostStatusAction, incrementViewsAction, deleteAllMyPostsAction } from "../thunks/postThunk";
 import { createCommentAction, deleteCommentAction } from "../thunks/commentThunk";
 
 const initialState = {
@@ -198,6 +198,26 @@ const postSlice = createSlice({
                 if (index !== -1) {
                     state.posts[index].views = views;
                 }
+            })
+            // Delete All My Posts
+            .addCase(deleteAllMyPostsAction.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(deleteAllMyPostsAction.fulfilled, (state) => {
+                state.loading = false;
+                state.myPosts = [];
+                state.posts = [];
+                state.pagination = {
+                    ...state.pagination,
+                    totalPosts: 0,
+                    totalPages: 0,
+                    currentPage: 1,
+                    hasMore: false
+                };
+            })
+            .addCase(deleteAllMyPostsAction.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
             });
     }
 });

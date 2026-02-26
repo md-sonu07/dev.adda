@@ -13,6 +13,7 @@ const Signup = lazy(() => import('../pages/Auth/Signup'));
 const NotFound = lazy(() => import('../pages/User/NotFound/NotFound'));
 const ComingSoon = lazy(() => import('../pages/User/ComingSoon/ComingSoon'));
 const AdminRoutes = lazy(() => import('./AdminRoutes'));
+const Payment = lazy(() => import('../pages/User/Payment/Payment'));
 
 const PageLoader = () => (
     <div className="min-h-[60vh] flex items-center justify-center">
@@ -45,6 +46,7 @@ function AppRoutes() {
                 <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
                 <Route path="/profile/:id" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
                 <Route path="/bookmarks" element={<ProtectedRoute><SavePost /></ProtectedRoute>} />
+                <Route path="/payment" element={<Payment />} />
                 <Route path="/notifications" element={<ProtectedRoute><ComingSoon featureName="Notifications Center" /></ProtectedRoute>} />
                 <Route path="*" element={<NotFound />} />
             </Routes>

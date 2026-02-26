@@ -87,23 +87,16 @@ const ProfileHeader = () => {
             <div className="rounded-xl border border-default p-6 mb-6 shadow-sm animate-pulse">
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                     <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6">
-                        {/* Avatar Skeleton */}
                         <div className="size-40 sm:size-34 rounded-[32px] bg-box/60 border-4 border-background overflow-hidden" />
-
                         <div className="text-center sm:text-left space-y-3 flex-1">
                             <div className="space-y-2">
-                                {/* Name & Bio Skeleton */}
                                 <div className="h-8 w-48 bg-box/60 rounded-lg mx-auto sm:mx-0" />
                                 <div className="h-4 w-full max-w-[250px] bg-box/40 rounded mx-auto sm:mx-0" />
                             </div>
-
-                            {/* Meta Info Skeleton */}
                             <div className="flex flex-wrap items-center justify-center sm:justify-start gap-5 pt-1">
                                 <div className="h-3 w-24 bg-box/40 rounded" />
                                 <div className="h-3 w-24 bg-box/40 rounded" />
                             </div>
-
-                            {/* Social Icons Skeleton */}
                             <div className="flex items-center justify-center sm:justify-start gap-3 pt-1">
                                 <div className="size-9 bg-box/40 rounded-xl" />
                                 <div className="size-9 bg-box/40 rounded-xl" />
@@ -111,15 +104,11 @@ const ProfileHeader = () => {
                             </div>
                         </div>
                     </div>
-
-                    {/* Action Buttons Skeleton */}
                     <div className="flex flex-col sm:flex-row md:flex-col gap-2 w-full md:w-auto">
                         <div className="h-11 w-full md:w-40 bg-box/60 rounded-xl" />
                         <div className="h-11 w-full md:w-40 bg-box/40 rounded-xl" />
                     </div>
                 </div>
-
-                {/* Stats Bar Skeleton */}
                 <div className="grid grid-cols-3 gap-4 mt-6 pt-6 border-t border-default">
                     {[1, 2, 3].map(i => (
                         <div key={i} className="flex flex-col items-center gap-2">
@@ -157,7 +146,6 @@ const ProfileHeader = () => {
                                 className="w-full h-full"
                             />
                         </div>
-                        {/* Mobile Floating Share Icon */}
                         <button
                             onClick={handleShare}
                             className="absolute -top-1 -right-1 size-9 flex sm:hidden items-center justify-center rounded-full bg-gray-400/40 hover:bg-gray-400/60 text-white border-4 border-background shadow-xl active:scale-90 transition-all z-20 cursor-pointer"
@@ -194,12 +182,9 @@ const ProfileHeader = () => {
                         </div>
 
                         <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3 pt-1">
-                            {/* Website Link */}
                             <a href="#" className="p-2 hidden sm:flex rounded-xl border border-default hover:bg-primary/5 hover:border-primary/50 text-muted hover:text-primary transition-all shadow-sm">
                                 <HiOutlineGlobeAlt className="text-lg" />
                             </a>
-
-                            {/* Share Link */}
                             <button
                                 onClick={handleShare}
                                 className="p-2 hidden sm:flex rounded-xl border border-default hover:bg-primary/5 hover:border-primary/50 text-muted hover:text-primary transition-all shadow-sm cursor-pointer"
@@ -207,8 +192,6 @@ const ProfileHeader = () => {
                             >
                                 <HiOutlineShare className="text-lg" />
                             </button>
-
-                            {/* Admin Dashboard */}
                             {isAdmin && (
                                 <Link
                                     to="/admin/dashboard"
@@ -219,8 +202,6 @@ const ProfileHeader = () => {
                                     <span className="text-[10px] font-black uppercase tracking-widest px-1">Admin</span>
                                 </Link>
                             )}
-
-                            {/* Theme Toggle */}
                             <button
                                 onClick={handleThemeToggle}
                                 className="p-2 sm:hidden flex rounded-xl border border-default hover:bg-primary/10 hover:border-primary/50 text-muted hover:text-primary transition-all shadow-sm cursor-pointer"
@@ -232,12 +213,9 @@ const ProfileHeader = () => {
                                     <HiOutlineMoon className="text-lg transition-transform duration-300 hover:-rotate-12" />
                                 )}
                             </button>
-
-                            {/* Bookmarks & Notifications (Separated) */}
                             <Link to="/bookmarks" className="p-2 sm:hidden flex rounded-xl border border-default hover:bg-primary/5 hover:border-primary/50 text-muted hover:text-primary transition-all shadow-sm">
                                 <IoBookmarksOutline className="text-xl" />
                             </Link>
-
                             <Link to="/notifications" className="p-2 sm:hidden flex rounded-xl border border-default hover:bg-primary/5 hover:border-primary/50 text-muted hover:text-primary transition-all shadow-sm relative">
                                 <IoNotificationsOutline className="text-xl" />
                                 <span className="absolute top-2.5 right-2.5 flex h-2 w-2">
@@ -281,7 +259,6 @@ const ProfileHeader = () => {
                 </div>
             </div>
 
-            {/* Profile Stats Bar (Condensed) */}
             <div className="grid grid-cols-3 gap-4 mt-6 pt-6 border-t border-default">
                 <div className="text-center group cursor-pointer">
                     <p className="text-2xl font-black group-hover:text-primary transition-colors">{postsCount || 0}</p>
