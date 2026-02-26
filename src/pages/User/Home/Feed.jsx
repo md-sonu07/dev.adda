@@ -292,15 +292,6 @@ const ArticleCard = ({ article, formatTime, fetchPriority = "auto" }) => {
 
     const getTagColor = (index) => tagColors[index % tagColors.length];
 
-    // Author color fallback
-    const authorColors = [
-        "bg-primary", "bg-purple-500", "bg-orange-500", "bg-teal-500", "bg-red-500"
-    ];
-    const getAuthorColor = (name) => {
-        if (!name) return authorColors[0];
-        const charCodeSum = name.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
-        return authorColors[charCodeSum % authorColors.length];
-    };
     const handleCardClick = () => {
         navigate(`/article/${article?._id}`);
     };
@@ -423,7 +414,7 @@ const ArticleCard = ({ article, formatTime, fetchPriority = "auto" }) => {
                         <div className="flex items-center gap-2">
                             <SkeletonImage
                                 src={article.author?.avatar}
-                                alt=""
+                                alt={article.author?.fullName || "A"}
                                 className="h-6 w-6 rounded-full border border-white/20"
                             />
                             <span className="text-[10px] font-semibold text-white truncate">

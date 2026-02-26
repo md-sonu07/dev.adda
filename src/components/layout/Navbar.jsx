@@ -239,10 +239,10 @@ function Navbar() {
                     {!loading && (
                         <Link
                             to={user ? "/create-post" : "/login"}
-                            className="hidden md:flex items-center gap-2 px-5 py-2.5 rounded-[12px] bg-primary text-white text-sm font-bold shadow-lg shadow-primary/20 hover:shadow-primary/40 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300 slant-glow group"
+                            className="hidden md:flex items-center gap-1 px-4 py-2.5 rounded-[12px] bg-primary text-white text-[12px] font-medium uppercase shadow-lg shadow-primary/20 hover:shadow-primary/40 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300 slant-glow group"
                         >
-                            <IoAdd className="text-xl group-hover:rotate-90 transition-transform duration-500" />
-                            <span className="tracking-tight">Story</span>
+                            <IoAdd className="text-xl group-hover:rotate-90 transition-transform duration-300" />
+                            <span className="tracking-wide">Story</span>
                         </Link>
                     )}
 

@@ -28,7 +28,7 @@ const HomeThumbnail = () => {
                 <div className="max-w-5xl space-y-8 md:space-y-10 mt-10 md:mt-20">
                     {/* Headline Architecture */}
                     <div className="space-y-4">
-                        <h1 className="text-5xl sm:text-5xl md:text-7xl font-black text-white/80 leading-[0.9] tracking-tighter drop-shadow-2xl">
+                        <h1 className="text-5xl sm:text-5xl md:text-7xl font-bold text-white/80 leading-[0.9] tracking-tighter drop-shadow-2xl">
                             The Revolution <br />
                             <span className="text-primary-light italic">of Neural Flux</span>
                         </h1>
@@ -39,7 +39,7 @@ const HomeThumbnail = () => {
 
                     {/* Action Hub - Responsive stacking and stability */}
                     <div className="flex flex-wrap items-center gap-4 sm:gap-6 pt-2">
-                        <Link to="/create-post" className="w-max px-8 sm:px-10 py-3.5 sm:py-4 cursor-pointer bg-primary text-white rounded-xl font-black uppercase text-[10px] sm:text-[11px] tracking-[0.2em] shadow-[0_15px_40px_rgba(19,91,236,0.3)] hover:shadow-primary/50 hover:-translate-y-1 active:translate-y-0 transition-all slant-glow flex items-center justify-center sm:justify-start gap-4 group/btn">
+                        <Link to="/create-post" className="w-max px-8 sm:px-10 py-3.5 sm:py-4 cursor-pointer bg-primary text-white rounded-xl font-bold uppercase text-[10px] sm:text-[11px] tracking-[0.2em] shadow-[0_15px_40px_rgba(19,91,236,0.3)] hover:shadow-primary/50 hover:-translate-y-1 active:translate-y-0 transition-all slant-glow flex items-center justify-center sm:justify-start gap-4 group/btn">
                             Write Your Own Story
                             <HiArrowRight className="text-xl group-hover/btn:translate-x-2 transition-transform duration-500" />
                         </Link>
@@ -49,7 +49,7 @@ const HomeThumbnail = () => {
                                 <div className="p-2 bg-primary/10 rounded-lg">
                                     <HiClock className="text-primary text-lg" />
                                 </div>
-                                <span className="text-white/90 text-[10px] font-black uppercase tracking-wider whitespace-nowrap">
+                                <span className="text-white/90 text-[10px] font-bold uppercase tracking-wider whitespace-nowrap">
                                     {user?.createdAt ? `Joined ${user.createdAt.slice(0, 10)}` : 'Joined Recently'}
                                 </span>
                             </div>
@@ -58,7 +58,7 @@ const HomeThumbnail = () => {
                                 <div className="p-2 bg-primary/10 rounded-lg">
                                     <HiUser className="text-primary text-lg" />
                                 </div>
-                                <span className="text-white/90 text-[10px] font-black uppercase tracking-wider whitespace-nowrap">
+                                <span className="text-white/90 text-[10px] font-bold uppercase tracking-wider whitespace-nowrap">
                                     {user?.fullName || 'Guest User'}
                                 </span>
                             </div>
