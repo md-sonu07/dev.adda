@@ -21,6 +21,9 @@ const PostEditor = ({ postData, updatePostData, handlePublish, handleSaveDraft, 
     const { categories } = useSelector((state) => state.category);
     const { tags: availableTags } = useSelector((state) => state.tag);
     const { loading: quickPostLoading, error: quickPostError, success: quickPostSuccess } = useSelector((state) => state.quickPost);
+    const { isAdmin } = useSelector((state) => state.auth);
+
+    const ADMIN_ONLY_TAGS = ['ad', 'add', 'advertisement', 'advertisment'];
 
     const [isImportModalOpen, setIsImportModalOpen] = useState(false);
     const [importInput, setImportInput] = useState('');
@@ -127,6 +130,12 @@ const hello = "world";
     const handleAddTag = (e) => {
         if (e.key === 'Enter' || e.type === 'blur') {
             const val = newTagInput.trim().toLowerCase();
+            if (val && ADMIN_ONLY_TAGS.includes(val) && !isAdmin) {
+                toast.error(`The tag "${val}" is restricted to admins only`);
+                setNewTagInput('');
+                setIsAddingTag(false);
+                return;
+            }
             if (val && !tags.includes(val)) {
                 updatePostData({ tags: [...tags, val] });
             }
@@ -137,6 +146,11 @@ const hello = "world";
 
     const handleSelectTag = (tagName) => {
         const val = tagName.trim().toLowerCase();
+        if (val && ADMIN_ONLY_TAGS.includes(val) && !isAdmin) {
+            toast.error(`The tag "${val}" is restricted to admins only`);
+            setIsTagDropdownOpen(false);
+            return;
+        }
         if (val && !tags.includes(val)) {
             updatePostData({ tags: [...tags, val] });
         }
@@ -542,23 +556,23 @@ const hello = "world";
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
                     <div className="absolute inset-0 bg-background/60 backdrop-blur-md transition-all duration-300" onClick={() => setIsImportModalOpen(false)}></div>
                     <div className="relative w-full max-w-2xl max-h-[90vh] bg-background rounded-xl shadow-2xl border border-default overflow-hidden flex flex-col animate-in fade-in zoom-in duration-300">
-                        <div className="p-6 border-b border-default flex items-center justify-between bg-background z-10">
-                            <div className="flex items-center gap-4">
-                                <div className="p-2.5 rounded-lg bg-primary/10 text-primary"><HiOutlineSparkles className="text-xl" /></div>
+                        <div className="p-4 sm:p-6 border-b border-default flex items-center justify-between bg-background z-10">
+                            <div className="flex items-center gap-3 sm:gap-4">
+                                <div className="p-2 sm:p-2.5 rounded-lg bg-primary/10 text-primary"><HiOutlineSparkles className="text-lg sm:text-xl" /></div>
                                 <div>
-                                    <h3 className="text-lg font-black leading-none">Smart Quick Import</h3>
-                                    <p className="text-[10px] text-muted font-black uppercase tracking-[0.15em] mt-1.5">Paste JSON or Markdown content</p>
+                                    <h3 className="text-base sm:text-lg font-black leading-none">Smart Quick Import</h3>
+                                    <p className="text-[9px] sm:text-[10px] text-muted font-black uppercase tracking-[0.15em] mt-1 sm:mt-1.5">Paste JSON or Markdown content</p>
                                 </div>
                             </div>
                             <button onClick={() => setIsImportModalOpen(false)} className="p-2 hover:bg-primary/5 rounded-full transition-colors"><HiXMark className="text-xl text-muted" /></button>
                         </div>
-                        <div className="flex-1 overflow-y-auto p-6 no-scrollbar">
-                            <div className="mb-6 flex items-center justify-between">
+                        <div className="flex-1 overflow-y-auto p-4 sm:p-6 no-scrollbar">
+                            <div className="mb-4 sm:mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-0">
                                 <div className="flex items-center gap-2 text-amber-500">
                                     <HiOutlineInformationCircle className="text-lg" />
-                                    <span className="text-[11px] font-bold uppercase tracking-wider">Auto-detecting format...</span>
+                                    <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider">Auto-detecting format...</span>
                                 </div>
-                                <div className="flex gap-2">
+                                <div className="flex justify-center flex-wrap gap-2">
                                     <input
                                         type="file"
                                         ref={importFileRef}
@@ -566,7 +580,7 @@ const hello = "world";
                                         accept=".md,.markdown,.json,.txt"
                                         className="hidden"
                                     />
-                                    <button 
+                                    <button
                                         onClick={() => importFileRef.current?.click()}
                                         className="px-3 py-1.5 text-[10px] font-black uppercase tracking-widest text-primary bg-primary/5 hover:bg-primary/10 rounded-lg transition-all border border-primary/10 flex items-center gap-2"
                                     >
@@ -574,24 +588,24 @@ const hello = "world";
                                         Upload File
                                     </button>
                                     <button onClick={() => setImportInput('')} className="px-3 py-1.5 text-[10px] font-black uppercase tracking-widest text-muted hover:text-red-500 transition-colors">Clear</button>
-                                    <button onClick={prettifyJson} className="px-3 py-1.5 text-[10px] font-black uppercase tracking-widest text-primary bg-primary/5 hover:bg-primary/10 rounded-lg transition-all border border-primary/10">Prettify (if JSON)</button>
+                                    <button onClick={prettifyJson} className="px-3 py-1.5 text-[10px] font-black uppercase tracking-widest text-primary bg-primary/5 hover:bg-primary/10 rounded-lg transition-all border border-primary/10">Prettify</button>
                                 </div>
                             </div>
                             <textarea
                                 value={importInput}
                                 onChange={(e) => setImportInput(e.target.value)}
-                                className="w-full h-80 outline-none font-mono text-[13px] leading-relaxed p-6 rounded-xl border-2 border-default focus:border-primary/30 focus:ring-0 transition-all resize-none shadow-inner no-scrollbar text-body"
+                                className="w-full h-48 sm:h-80 outline-none font-mono text-xs sm:text-[13px] leading-relaxed p-4 sm:p-6 rounded-xl border-2 border-default focus:border-primary/30 focus:ring-0 transition-all resize-none shadow-inner no-scrollbar text-body"
                                 placeholder={`Paste either:\n1. A JSON object with fields like title, content, etc.\n2. Raw Markdown content starting with an # H1 Title`}
                             ></textarea>
-                            <div className="mt-8 flex gap-4 sticky bottom-0 bg-background pt-4 pb-2">
-                                <button onClick={() => setIsImportModalOpen(false)} className="flex-1 py-3 text-xs font-black uppercase tracking-[0.2em] text-muted hover:bg-primary/5 rounded-lg transition-all border border-transparent">Cancel</button>
+                            <div className="mt-4 sm:mt-8 flex flex-col sm:flex-row gap-3 sm:gap-4 sticky bottom-0 bg-background pt-4 pb-2">
+                                <button onClick={() => setIsImportModalOpen(false)} className="sm:flex-1 py-3 text-xs font-black uppercase tracking-[0.2em] text-muted hover:bg-primary/5 rounded-lg transition-all border border-default sm:border-transparent order-2 sm:order-1">Cancel</button>
                                 <button
                                     onClick={handleQuickImport}
                                     disabled={quickPostLoading}
-                                    className="flex-2 py-3 bg-primary text-white text-xs font-black uppercase tracking-[0.2em] rounded-lg shadow-xl shadow-primary/20 hover:shadow-primary/40 hover:-translate-y-0.5 active:translate-y-0 transition-all flex items-center justify-center gap-2 px-8"
+                                    className="sm:flex-2 py-3 bg-primary text-white text-xs font-black uppercase tracking-[0.2em] rounded-lg shadow-xl shadow-primary/20 hover:shadow-primary/40 hover:-translate-y-0.5 active:translate-y-0 transition-all flex items-center justify-center gap-2 px-8 order-1 sm:order-2"
                                 >
                                     {quickPostLoading ? <div className="size-4 border-2 border-white/20 border-t-white rounded-full animate-spin" /> : <HiOutlineSparkles className="text-lg" />}
-                                    {quickPostLoading ? 'Importing...' : 'Magic Import & Publish'}
+                                    {quickPostLoading ? 'Importing...' : 'Quick Import & Publish'}
                                 </button>
                             </div>
                         </div>
@@ -605,27 +619,27 @@ const hello = "world";
                     <div className="absolute inset-0 bg-background/60 backdrop-blur-md transition-all duration-300" onClick={() => { setIsFormatModalOpen(false); setCopiedFormat(false); }}></div>
                     <div className="relative w-full max-w-2xl max-h-[90vh] bg-background rounded-xl shadow-2xl border border-default overflow-hidden flex flex-col animate-in fade-in zoom-in duration-300">
                         {/* Header */}
-                        <div className="p-6 border-b border-default flex items-center justify-between bg-background z-10">
-                            <div className="flex items-center gap-4">
-                                <div className="p-2.5 rounded-lg bg-primary/10 text-primary"><HiOutlineInformationCircle className="text-xl" /></div>
+                        <div className="p-4 sm:p-6 border-b border-default flex items-center justify-between bg-background z-10">
+                            <div className="flex items-center gap-3 sm:gap-4">
+                                <div className="p-2 sm:p-2.5 rounded-lg bg-primary/10 text-primary"><HiOutlineInformationCircle className="text-lg sm:text-xl" /></div>
                                 <div>
-                                    <h3 className="text-lg font-black leading-none">File Format Reference</h3>
-                                    <p className="text-[10px] text-muted font-black uppercase tracking-[0.15em] mt-1.5">Copy & use in the import fields</p>
+                                    <h3 className="text-base sm:text-lg font-black leading-none">File Format Reference</h3>
+                                    <p className="text-[9px] sm:text-[10px] text-muted font-black uppercase tracking-[0.15em] mt-1 sm:mt-1.5">Copy & use in the import fields</p>
                                 </div>
                             </div>
                             <div className="flex items-center gap-2">
                                 {/* Copy Button */}
                                 <button
                                     onClick={handleCopyFormat}
-                                    className={`flex items-center gap-2 px-4 py-2 text-[10px] font-black uppercase tracking-widest rounded-lg transition-all border active:scale-95 ${copiedFormat
+                                    className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 text-[9px] sm:text-[10px] font-black uppercase tracking-widest rounded-lg transition-all border active:scale-95 ${copiedFormat
                                         ? 'text-green-600 bg-green-500/10 border-green-500/20'
                                         : 'text-primary bg-primary/5 hover:bg-primary/10 border-primary/20 hover:border-primary/40'
                                         }`}
                                 >
                                     {copiedFormat ? (
-                                        <><HiCheckCircle className="text-base" /> Copied!</>
+                                        <><HiCheckCircle className="text-base" /> <span className="hidden sm:inline">Copied!</span></>
                                     ) : (
-                                        <><HiOutlineClipboardDocument className="text-base" /> Copy</>
+                                        <><HiOutlineClipboardDocument className="text-base" /> <span className="hidden sm:inline">Copy</span></>
                                     )}
                                 </button>
                                 <button onClick={() => { setIsFormatModalOpen(false); setCopiedFormat(false); }} className="p-2 hover:bg-primary/5 rounded-full transition-colors">
@@ -637,35 +651,35 @@ const hello = "world";
                         <div className="flex border-b border-default">
                             <button
                                 onClick={() => { setFormatTab('json'); setCopiedFormat(false); }}
-                                className={`flex-1 flex items-center justify-center gap-2.5 px-6 py-3.5 text-[10px] font-black uppercase tracking-[0.2em] transition-all relative ${formatTab === 'json'
+                                className={`flex-1 flex items-center justify-center gap-1.5 sm:gap-2.5 px-3 sm:px-6 py-3 sm:py-3.5 text-[9px] sm:text-[10px] font-black uppercase tracking-[0.15em] sm:tracking-[0.2em] transition-all relative ${formatTab === 'json'
                                     ? 'text-primary'
                                     : 'text-muted hover:text-body'
                                     }`}
                             >
-                                <HiOutlineCommandLine className="text-lg" />
-                                JSON Format
+                                <HiOutlineCommandLine className="text-base sm:text-lg" />
+                                JSON
                                 {formatTab === 'json' && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary"></div>}
                             </button>
                             <button
                                 onClick={() => { setFormatTab('markdown'); setCopiedFormat(false); }}
-                                className={`flex-1 flex items-center justify-center gap-2.5 px-6 py-3.5 text-[10px] font-black uppercase tracking-[0.2em] transition-all relative ${formatTab === 'markdown'
+                                className={`flex-1 flex items-center justify-center gap-1.5 sm:gap-2.5 px-3 sm:px-6 py-3 sm:py-3.5 text-[9px] sm:text-[10px] font-black uppercase tracking-[0.15em] sm:tracking-[0.2em] transition-all relative ${formatTab === 'markdown'
                                     ? 'text-primary'
                                     : 'text-muted hover:text-body'
                                     }`}
                             >
-                                <HiOutlineDocumentText className="text-lg" />
-                                Markdown Format
+                                <HiOutlineDocumentText className="text-base sm:text-lg" />
+                                Markdown
                                 {formatTab === 'markdown' && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary"></div>}
                             </button>
                         </div>
                         {/* Content */}
-                        <div className="flex-1 overflow-y-auto p-6 no-scrollbar">
-                            <pre className="w-full font-mono text-[13px] leading-relaxed p-6 rounded-xl border-2 border-default shadow-inner text-body overflow-x-auto whitespace-pre-wrap">
+                        <div className="flex-1 overflow-y-auto p-4 sm:p-6 no-scrollbar">
+                            <pre className="w-full font-mono text-xs sm:text-[13px] leading-relaxed p-4 sm:p-6 rounded-xl border-2 border-default shadow-inner text-body overflow-x-auto whitespace-pre-wrap">
                                 {formatTab === 'json' ? jsonFormatTemplate : markdownFormatTemplate}
                             </pre>
                         </div>
                         {/* Footer */}
-                        <div className="p-6 pt-0">
+                        <div className="p-4 sm:p-6 pt-0">
                             <button
                                 onClick={() => { setIsFormatModalOpen(false); setCopiedFormat(false); }}
                                 className="w-full py-3 text-xs font-black uppercase tracking-[0.2em] text-muted hover:bg-primary/5 rounded-lg transition-all border border-default"

@@ -20,11 +20,13 @@ function CategoryFilter() {
     // 1. Standard Filters
     const standardFilters = ['Latest', 'Trending', 'Following', 'Authors'];
 
-    // 2. Derived Tags
-    const derivedTags = Array.from(new Set(
-        posts.flatMap(post => post.tags || [])
-    )).slice(0, 5);
-    const tags = derivedTags.length > 0 ? derivedTags : ['AI', 'React', 'Tech'];
+    // 2. Tags from most liked posts (top 4)
+    const mostLikedTags = Array.from(new Set(
+        [...posts]
+            .sort((a, b) => (b.likesCount || 0) - (a.likesCount || 0))
+            .flatMap(post => post.tags || [])
+    )).slice(0, 4);
+    const tags = mostLikedTags;
 
     const handleSelect = (category) => {
         dispatch(setCategory(category));

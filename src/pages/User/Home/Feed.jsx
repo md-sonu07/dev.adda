@@ -232,7 +232,7 @@ const ArticleCard = ({ article, formatTime, fetchPriority = "auto" }) => {
     const likeInfo = postLikes[article?._id] || { count: article.likesCount || 0, isLiked: false };
 
     const isAd = article.tags?.some(tag =>
-        ['ADD', 'ADVERTISEMENT', 'ADVERSTIMENT'].includes(tag.toUpperCase())
+        ['AD', 'ADD', 'ADVERTISEMENT', 'ADVERSTIMENT'].includes(tag.toUpperCase())
     );
 
     if (isHidden) return null;
